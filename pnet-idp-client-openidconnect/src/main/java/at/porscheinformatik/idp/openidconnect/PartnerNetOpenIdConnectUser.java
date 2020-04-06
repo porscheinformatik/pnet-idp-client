@@ -61,7 +61,9 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
 
     public boolean isSupportDataAvailable()
     {
-        return idTokenClaim(ID_TOKEN_SUPPORT_AVAILABLE);
+        Boolean value = idTokenClaim(ID_TOKEN_SUPPORT_AVAILABLE);
+
+        return value == null ? false : value.booleanValue();
     }
 
     public int getNistAuthenticationLevel()
