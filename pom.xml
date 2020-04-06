@@ -18,7 +18,18 @@
         <java.version>1.8</java.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>at.porscheinformatik.pnet</groupId>
+                <artifactId>pnet-idp-client-openidconnect</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <modules>
         <module>pnet-idp-client-showcase</module>
+        <module>pnet-idp-client-openidconnect</module>
     </modules>
 </project>
