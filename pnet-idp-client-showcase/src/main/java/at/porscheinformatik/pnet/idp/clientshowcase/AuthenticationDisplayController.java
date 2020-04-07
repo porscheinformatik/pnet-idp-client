@@ -43,6 +43,12 @@ public class AuthenticationDisplayController
         return "index";
     }
 
+    @GetMapping("/logoutinfo")
+    public String getLogout() throws JsonProcessingException
+    {
+        return "logout";
+    }
+
     private AuthenticationDTO buildAuthentication()
     {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

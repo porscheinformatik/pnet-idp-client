@@ -42,9 +42,19 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
                 .clientId(environment.getProperty("oidc.client.id"))
                 .clientSecret(environment.getProperty("oidc.client.secret")));
 
+        http.logout(logout -> {
+            logout.logoutSuccessUrl("/logoutinfo");
+            logout.deleteCookies("JSESSIONID");
+        });
+
         http.exceptionHandling().authenticationEntryPoint(new DecidingAuthenticationEntryPoint());
 
-        http.authorizeRequests().anyRequest().fullyAuthenticated();
+        http //
+            .authorizeRequests()
+            .antMatchers("/logoutinfo/**", "/logout/**")
+            .permitAll()
+            .antMatchers("/**")
+            .fullyAuthenticated();
         http.requiresChannel().anyRequest().requiresSecure();
     }
 
