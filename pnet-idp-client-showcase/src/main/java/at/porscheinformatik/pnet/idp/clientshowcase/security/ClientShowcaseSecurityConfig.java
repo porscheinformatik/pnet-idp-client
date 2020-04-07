@@ -68,12 +68,12 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
 
         if (environment.acceptsProfiles(QA))
         {
-            return PartnerNetOpenIdConnectProvider.PROD;
+            return PartnerNetOpenIdConnectProvider.QA;
         }
 
         if (environment.acceptsProfiles(DEV))
         {
-            return PartnerNetOpenIdConnectProvider.PROD;
+            return PartnerNetOpenIdConnectProvider.DEV;
         }
 
         if (environment.acceptsProfiles(LOCAL))
