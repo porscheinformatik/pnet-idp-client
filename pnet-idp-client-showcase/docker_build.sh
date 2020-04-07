@@ -17,4 +17,4 @@ fi
 
 mvn -f ../pom.xml -am -pl pnet-idp-client-showcase install
 mvn docker:build -Ddocker.tag=$USERNAME -Dimage.name.prefix=$IMAGE_PREFIX -Dimage.baseimage=$BASE_IMAGE
-mvn docker:push -Ddocker.tag=$USERNAME
+mvn docker:push -Ddocker.tag=$USERNAME -Dimage.name.prefix=$IMAGE_PREFIX
