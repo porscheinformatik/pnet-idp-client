@@ -33,10 +33,11 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
     @Override
     protected void configure(HttpSecurity http) throws Exception
     {
-        /*
-         * TODO:
-         *  - Multifactor authentication
-         */
+        if (environment.acceptsProfiles(LOCAL))
+        {
+            http.headers().httpStrictTransportSecurity().disable();
+        }
+
         http
             .apply(new PartnerNetOpenIdConnectConfigurer(getPartnerNetProvider())
                 .clientId(environment.getProperty("oidc.client.id"))

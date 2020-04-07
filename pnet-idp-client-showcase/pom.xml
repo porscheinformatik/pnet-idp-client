@@ -40,6 +40,59 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker-maven-plugin.version}</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <!-- how to use placeholders: see http://dmp.fabric8.io/#configuration -->
+                            <name>${image.name.prefix}/pnet/%a:${docker.tag}</name>
+                            <build>
+                                <from>${image.baseimage}</from>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                                <volumes>
+                                    <volume>/tmp</volume>
+                                </volumes>
+
+                                <labels>
+                                    <vendor>Porsche Informatik</vendor>
+                                    <name>Pnet IDP Showcase</name>
+                                    <version>${project.version}</version>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <groupId>${project.groupId}</groupId>
+                                </labels>
+
+                                <env>
+                                    <JAVA_OPTS>-Dspring.profiles.active=dev</JAVA_OPTS>
+                                </env>
+
+                                <workdir>/opt/app-root</workdir>
+
+                                <entryPoint>
+                                    <shell>java $JAVA_OPTS -jar pnet-idp-client-showcase-${version}.jar</shell>
+                                </entryPoint>
+
+                                <assembly>
+                                    <inline>
+                                        <files>
+                                            <file>
+                                                <source>${project.build.directory}/${project.build.finalName}.jar
+                                                </source>
+                                                <outputDirectory>.</outputDirectory>
+                                            </file>
+                                        </files>
+                                    </inline>
+                                </assembly>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

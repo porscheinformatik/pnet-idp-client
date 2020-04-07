@@ -17,6 +17,9 @@
     <properties>
         <java.version>1.8</java.version>
 
+        <docker-maven-plugin.version>0.33.0</docker-maven-plugin.version>
+        <docker.tag>latest</docker.tag>
+
         <!-- Have to set this to the newest version for the latest fixes -->
         <spring-security.version>5.2.3.RELEASE</spring-security.version>
     </properties>
