@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import at.porscheinformatik.idp.openidconnect.PartnerNetOAuth2AuthorizationRequestResolver;
 
 /**
  * This authentication entry point decides what authentication should be used based on the "authenticationType" query
@@ -26,12 +29,12 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
     public void commence(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException authException) throws IOException, ServletException
     {
-        String uri = buildUri(request);
+        String uri = buildUri(request).toUriString();
 
         response.sendRedirect(uri);
     }
 
-    private String buildUri(HttpServletRequest request)
+    private UriComponentsBuilder buildUri(HttpServletRequest request)
     {
         String authentiationType = request.getParameter("authenticationType");
 
@@ -43,8 +46,12 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         switch (authentiationType)
         {
             case "oidc":
-                return "/oauth2/authorization/pnet";
+                return UriComponentsBuilder.fromPath("/oauth2/authorization/pnet");
 
+            // OpenID Connect with multifactor authentication
+            case "oidc_mfa":
+                return PartnerNetOAuth2AuthorizationRequestResolver
+                    .requestNistAuthenticationLevels(UriComponentsBuilder.fromPath("/oauth2/authorization/pnet"), 3);
             default:
                 throw new IllegalArgumentException("Unsupported authenticationType " + authentiationType);
         }
