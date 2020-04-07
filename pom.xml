@@ -16,6 +16,9 @@
 
     <properties>
         <java.version>1.8</java.version>
+
+        <!-- Have to set this to the newest version for the latest fixes -->
+        <spring-security.version>5.2.3.RELEASE</spring-security.version>
     </properties>
 
     <dependencyManagement>

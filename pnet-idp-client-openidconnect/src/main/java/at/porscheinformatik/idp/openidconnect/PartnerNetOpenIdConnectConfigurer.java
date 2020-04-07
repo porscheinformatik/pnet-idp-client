@@ -5,10 +5,14 @@ package at.porscheinformatik.idp.openidconnect;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 
 /**
  * @author Daniel Furtlehner
@@ -64,10 +68,31 @@ public class PartnerNetOpenIdConnectConfigurer
     @Override
     public void init(HttpSecurity builder) throws Exception
     {
+        final ClientRegistrationRepository clientRegistrationRepository = getClientRegistrationRepository();
+        final PartnerNetOpenIdConnectUserService userService = new PartnerNetOpenIdConnectUserService();
+        final OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient =
+            new DefaultAuthorizationCodeTokenResponseClient();
+
+        builder
+            .authenticationProvider(
+                new PartnerNetOpenIdConnectAuthenticationProvider(accessTokenResponseClient, userService));
+
         builder.oauth2Login(oauth2Login -> {
-            oauth2Login.clientRegistrationRepository(getClientRegistrationRepository());
+            oauth2Login.clientRegistrationRepository(clientRegistrationRepository);
+
+            oauth2Login.authorizationEndpoint(authorizationEndpoint -> {
+                authorizationEndpoint
+                    .authorizationRequestResolver(
+                        new PartnerNetOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
+                            OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI));
+            });
+
+            oauth2Login.tokenEndpoint(tokenEnpoint -> {
+                tokenEnpoint.accessTokenResponseClient(accessTokenResponseClient);
+            });
+
             oauth2Login.userInfoEndpoint(userInfoEndpoint -> {
-                userInfoEndpoint.oidcUserService(new PartnerNetOpenIdConnectUserService());
+                userInfoEndpoint.oidcUserService(userService);
             });
         });
     }
