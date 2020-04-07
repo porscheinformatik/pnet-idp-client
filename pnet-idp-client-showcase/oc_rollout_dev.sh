@@ -37,10 +37,9 @@ then
 fi
 
 read -r -d '' J_OPTS << EOM
-    -Dspring.profiles.active=local,docker
+    -Dspring.profiles.active=dev,docker
     -Doidc.client.id=$CLIENT_ID
     -Doidc.client.secret=$CLIENT_SECRET
-    -Dspring.profiles.active=dev,docker
 EOM
 
 oc project $PROJECT &>/dev/null
