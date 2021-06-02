@@ -52,6 +52,14 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
             case "oidc_mfa":
                 return PartnerNetOAuth2AuthorizationRequestResolver
                     .requestNistAuthenticationLevels(UriComponentsBuilder.fromPath("/oauth2/authorization/pnet"), 3);
+
+            case "saml2":
+                return UriComponentsBuilder.fromPath("/saml2/authenticate/pnet");
+
+            // SAML 2 with multifactor authentication
+            case "saml2_mfa":
+                throw new UnsupportedOperationException("Implementation needed");
+
             default:
                 throw new IllegalArgumentException("Unsupported authenticationType " + authentiationType);
         }

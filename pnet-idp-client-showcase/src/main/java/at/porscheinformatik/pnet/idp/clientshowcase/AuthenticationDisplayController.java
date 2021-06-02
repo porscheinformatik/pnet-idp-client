@@ -15,12 +15,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
+import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
 
 /**
  * @author Daniel Furtlehner
  */
 @Controller
-@RequestMapping("/")
+@RequestMapping({"/", "/data/authorization"})
 public class AuthenticationDisplayController
 {
     private final ObjectMapper objectMapper;
@@ -57,6 +58,11 @@ public class AuthenticationDisplayController
         if (principal instanceof PartnerNetOpenIdConnectUser)
         {
             return AuthenticationDTO.of((PartnerNetOpenIdConnectUser) principal);
+        }
+
+        if (principal instanceof PartnerNetSaml2AuthenticationPrincipal)
+        {
+            return AuthenticationDTO.of((PartnerNetSaml2AuthenticationPrincipal) principal);
         }
 
         return AuthenticationDTO.info(String.format("Unsupported authentication principal %s", principal.getClass()));

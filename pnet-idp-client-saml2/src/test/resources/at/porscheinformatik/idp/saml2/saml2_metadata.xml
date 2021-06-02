@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    entityID="https://qa-identity.auto-partner.net/identity/saml2" validUntil="${validUntil}">
+    <md:Extensions>
+        <mdattr:EntityAttributes xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="urn:oasis:names:tc:SAML:profiles:subject-id:req"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">subject-id</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/person_id"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End User's internal identitfier.
+                    This claim is only available for legacy applications, so they can migrate to the new sub claim on
+                    the fly.</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/guid"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End-User's Volkswagen Global
+                    Unique Identifier</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/personnel_number"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End-User's Porsche Holding
+                    Personnel Number</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/functional_numbers"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of functional numbers the user
+                    has assigned. A functional number is assigend to a user based of his job description (or more
+                    specific functions)in the company e.g. Salesnumber. Not all users have a functional number, but a
+                    functional number is unique for a certain company.
+
+                    This value has the following structure: 'companyId;matchcode;number'.
+                    - companyId: The companies unique identifier. This identifier will not change over time.
+                    - matchcode: The unique identifier of the number type.
+                    - number: The actual number.
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/academic_title"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The users academic titles that should
+                    be placed before the persons name. A user can have more than one academic title separated by space
+                    characters</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/academic_title_post_nominal"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The users academic titles that should
+                    be placed after the persons name. A user can have more than one academic title separated by space
+                    characters</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/firstname"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">Given name(s) or first name(s) of the
+                    End-User. Note that in some cultures, people can have multiple given names. All can be present, with
+                    the names being separated by space characters</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/lastname"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">Surname(s) or last name(s) of the
+                    End-User. Note that in some cultures, people can have multiple family names or no family name. All
+                    can be present, with the names being separated by space characters</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/email"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End-User's e-mail address. The
+                    value conforms to the RFC 5322 addr-spec syntax and MUST not be considered as unique
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/gender"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End-User's gender
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/additional_languages"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of additional locales the
+                    End-User speaks in order of preference. Each entry represented as a BCP47 language tag. For example,
+                    en-US, es-CL</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/language"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End-User's preferred locale,
+                    represented as a BCP47 language tag. For example, en-US, es-CL</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/phone_number"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End-User's phone number. The
+                    value conforms to the RFC 5322 addr-spec syntax and MUST not be considered as unique
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/lastupdate"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">Time the End-User's information was
+                    last updated. A number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC
+                    until the date/time</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/contact_company"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The id of the company the person is
+                    mainly busy at.</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/cost_center"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The cost centre the End-User is
+                    assigned to</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/employment"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of companies the End-User is
+                    assigned to
+
+                    This value has the following structure: 'companyId;[companyNumber];companyName'.
+                    - companyId: The companies unique identifier. This identifier will not change over time.
+                    - companyNumber: optional. A unique Number of the company that can be used to identify the company across different
+                    systems. This identifier might change over time. The number will be prefixed with zeros
+                    - companyName: The companie's name
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/employment_contracts"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of contracts for each brand of
+                    the companies the End-User is assigend to.Note that a End-User can have multiple contracts for a
+                    company and brand. Therefore a company and brand tuple can be in this list multiple times.
+
+                    This value has the following structure: 'companyId;[brandId];contractMatchcode'.
+                    - companyId: The companies unique identifier. This identifier will not change over time.
+                    - brandId: The unique identifier of the brand. For Example V, L. Can be null for companies that have no brand
+                    assigned.
+                    - contractMatchcode: The code is case sensitive and will not change over time.
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/employment_address"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of addresses for the companies
+                    the End-User is assigned to
+
+                    This value has the following structure: 'companyId;;[street_address];;[postalCode];;[locality];;[country_code]'.
+                    - companyId: The companies unique identifier. This identifier will not change over time.
+                    - street_address: optional. Full street address component, which MAY include house number, street name, Post Office
+                    Box, and multi-line extended street address information. This field MAY contain multiple lines,
+                    separated by newlines. Newlines can be represented either as a carriage return/line feed pair
+                    ("\r\n") or as a single line feed character ("\n")
+                    - postalCode: optional. Zip code or postal code component
+                    - locality: optional. City or locality component
+                    - country_code: optional. The ISO 3166-1 alpha-2 country code
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/employment_companytypes"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of companytypes for each
+                    company the End-User is assigend to.Note that a End-User can have multiple company types for a
+                    company. Therefore a company can be in this list multiple times.
+
+                    This value has the following structure: 'companyId;companyTypeMatchcode'.
+                    - companyId: The companies unique identifier. This identifier will not change over time.
+                    - companyTypeMatchcode: The code is case sensitive and will not change over time.
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/roles"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of roles the End-User has
+                    assigend for each company and brand. Note that a End-User can have multiple roles for a company and
+                    brand. Therefore a company and brand tuple can be in this list multiple times.
+
+                    This value has the following structure: 'companyId;[brandId];roleMatchcode'.
+                    - companyId: The companies unique identifier. This identifier will not change over time.
+                    - brandId: The unique identifier of the brand. For Example V, L. Can be null for companies that have no brand
+                    assigned.
+                    - roleMatchcode: A unique code that identifies a role. The code is case sensitive and will not change over time.
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/tenant"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The Partner.Net is available in
+                    multiple countries. A End-User account can be active in multiple countries at once. This field
+                    contains the country the End-User is currently logged in to. It is a ISO 3166-1 alpha-2 country code
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/support_employment"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of companies the technical
+                    support is allowed to see for troubleshooting. You can decide how you want to use this data. You may
+                    display data for this companies to the user but prevent him from ordering something. The technical
+                    support is NOT employed at this companies at all.</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/support_contact_company"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">An ordered list of contact company
+                    ids the technical support is allowed to see for troubleshooting.</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/support_employment_address"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of companies addresses the
+                    technical support is allowed to see for troubleshooting. The technical support is NOT employed at
+                    this companies at all.</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/support_roles"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of roles the technical support
+                    is allowed to have for each company and brand. Note that a user can have multiple roles for a
+                    company and brand. Therefore a company and brand tuple can be in this list multiple times.The
+                    technical support is NOT employed at this companies at all.</saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/support_employment_contracts"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">A list of contracts for each brand of
+                    the companies the technical support is allowed to have.Note that a user can have multiple contracts
+                    for a company and brand. Therefore a company and brand tuple can be in this list multiple times.The
+                    technical support is NOT employed at this companies at all.</saml2:AttributeValue>
+            </saml2:Attribute>
+        </mdattr:EntityAttributes>
+        <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+            <mdui:DisplayName>Partner.Net</mdui:DisplayName>
+            <mdui:InformationURL>https://qa-identity.auto-partner.net/identity/about</mdui:InformationURL>
+            <mdui:PrivacyStatementURL>https://qa-identity.auto-partner.net/identity/privacypolicy
+            </mdui:PrivacyStatementURL>
+            <mdui:Logo height="60" width="80">https://qa-identity.auto-partner.net/identity/logos/partnernet_80x60.png
+            </mdui:Logo>
+            <mdui:Logo height="16" width="16">https://qa-identity.auto-partner.net/identity/logos/partnernet_16x16.png
+            </mdui:Logo>
+        </mdui:UIInfo>
+        <alg:DigestMethod xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport"
+            Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+        <alg:SigningMethod xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport"
+            Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+        <alg:SigningMethod xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport"
+            Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256" />
+    </md:Extensions>
+    <md:IDPSSODescriptor WantAuthnRequestsSigned="false"
+        protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:KeyDescriptor use="signing">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIFrTCCA5WgAwIBAgIEUM6dXDANBgkqhkiG9w0BAQsFADCBhjELMAkGA1UEBhMCQVQxETAPBgNVBAgTCFNhbHpidXJnMREwDwYDVQQHEwhTYWx6YnVyZzEYMBYGA1UEChMPUG9yc2NoZSBIb2xkaW5nMRswGQYDVQQLExJQb3JzY2hlIEluZm9ybWF0aWsxGjAYBgNVBAMTEVBhcnRuZXIuTmV0IFNBTUwyMB4XDTE4MTEwNTEzMTUwN1oXDTIxMTAyMDEzMTUwN1owgYYxCzAJBgNVBAYTAkFUMREwDwYDVQQIEwhTYWx6YnVyZzERMA8GA1UEBxMIU2FsemJ1cmcxGDAWBgNVBAoTD1BvcnNjaGUgSG9sZGluZzEbMBkGA1UECxMSUG9yc2NoZSBJbmZvcm1hdGlrMRowGAYDVQQDExFQYXJ0bmVyLk5ldCBTQU1MMjCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAI1KjXSZmiV14H8c/jUaUzSjuCY5AzmM4Cw7RcUohSi5YNHn+dZuViPztbCm1nLjyHmPmkGt/nBW0Ghw3XwGt1JREynuvmy4TcxhoQX9c77XY+SoYZMf/aEQFdFy5YhDcGHDo5RRZB/6vnkgSuCrvrUriL87UcuXtOuq2f9xz4kQjBtPhdjl9d3CRr8mF5t3LuIBmVsJixr/r7snCJHVX/DYTJYhy97GKr1iuZwzXS83FAOGyEhh5PgLY82kaC5/iftdkxTsSQdCZT5bkjKkfECCeoVUY+LR5Gi0/odzHgAO71Gw36OWPt9dOdCzPynvVHuMd1ZuVotQUYGv/HMZG+6cw0l7h7m9R3Lxe0VPsxlzpLmKYYvV+haP1iE8yI/CESH4X1mfyHyyZ2nRrxTVbXaRjExeq/G4ldfuqiaKsbhoQ3WjJQ1EjgMbNZM+gKN+QD+udJyGJeGBp+fWSKFcvDecYrDuYZn7KsirhIxB6yWoRj8O1FVDi45YL6R8F9XePsx+4Z16QkoHA5CkbFgidDJwhwQ9zYd5kUtPTL3ZE0NgTZk8CRbB1gcPO+Q2uj5B9oIdy9WFshaO66z7/jcW2p15jfhK7p1vO/JNUKkVMpZkO52ukl3B/J0l7MEbLeZfw7MGRQbMDxjbvL1LDeXN5q5mviYAgnklp2B2o3gS41pNAgMBAAGjITAfMB0GA1UdDgQWBBQ2XPoaTIQn4PS7fNWlY+YLfkCBOzANBgkqhkiG9w0BAQsFAAOCAgEAJZqjZ8HclxkuqrtVvL/esrPgFxd5awAc0jXpckJgFMOMZ3y6G7isREY/QlfyCjVvx+5EB29dfPbhAc7835IPzgsfCbZGLqNIC45CDDDeZjocPR3OJ7njGa3piywgI1lLv8dS1MpQWVrjxuh8mB1pZ8cGf5OFxo5GNrNJFmwAsRhWcTsJ2/9EHgmp7MlOnrDmhQfx0H2dHTY90F7spX0Q20M3PXqmi7sc8eQ1U1uFg4vnkY+dS7NeMuTZ9R70qnjWfhJXK4yGg65fvGfl5mD/MgJlF2qyr5aQiE3Tr74NYswBGg7ZrpWGGmEi1dx+SaQYKE5b3bOReuHLnjbSAUP5FNfUSokKJwL2FE8+41p3sTrQPGdcI+xneyA+qaPEJTR54zobPnvjllaCfxXBJc98bzdH4OyL3a50p5TZrDVdhi+oWkdVMdJmI3E93z+Ta6I88++2GS2yxwxCxr9TSX1MFHohmR7Tn+0Rz4y9xXOPISZ/lukre9eyWL3I4Qv6Iwru8bdIkiFTIQyfWVXXA3zKKRWJFJWSiTE+sV779XqY66RFNH460gogTXjzeREeH8/MStbmm4jAN//ULL2izuarGAjj0YT8m2KoyCKyqJMHojo9fQm8VBlJe+83vf2wwgsSNax9yFG2wmYfyUYInk+0+krU0B3xPutOx6d0vItfHPQ=
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            Location="https://qa-identity.auto-partner.net/identity/saml2/logout/redirect" />
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            Location="https://qa-identity.auto-partner.net/identity/saml2/authorize/redirect" />
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            Location="https://qa-identity.auto-partner.net/identity/saml2/authorize/post" />
+    </md:IDPSSODescriptor>
+</md:EntityDescriptor>

@@ -5,6 +5,8 @@ package at.porscheinformatik.pnet.idp.clientshowcase;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
@@ -12,6 +14,7 @@ import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
+import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
 
 /**
  * @author Daniel Furtlehner
@@ -26,14 +29,31 @@ public class AuthenticationDTO
 
     public static AuthenticationDTO of(PartnerNetOpenIdConnectUser principal)
     {
+        List<Locale> locales = principal //
+            .getAdditionalLocales()
+            .stream()
+            .map(Locale::forLanguageTag)
+            .collect(Collectors.toList());
+
         return new AuthenticationDTO("OpenId Connect", principal.getExternalId(),
             principal.getNistAuthenticationLevel() > 2, principal.getTransientSessionId(),
             principal.isSupportDataAvailable(), principal.getNistAuthenticationLevel(), principal.getName(),
             principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(), principal.getGuid(),
-            principal.getCostcentre(), principal.getCountry(), principal.getAdditionalLocales(),
-            principal.getFunctionalNumbers(), principal.getCompanies(), principal.getCompaniesAddress(),
-            principal.getRoles(), principal.getContracts(), principal.getSupportCompanies(),
-            principal.getSupportCompaniesAddress(), principal.getSupportRoles(), principal.getSupportContract());
+            principal.getCostcentre(), principal.getCountry(), locales, principal.getFunctionalNumbers(),
+            principal.getCompanies(), principal.getCompaniesAddress(), principal.getRoles(), principal.getContracts(),
+            principal.getSupportCompanies(), principal.getSupportCompaniesAddress(), principal.getSupportRoles(),
+            principal.getSupportContract());
+    }
+
+    public static AuthenticationDTO of(PartnerNetSaml2AuthenticationPrincipal principal)
+    {
+        return new AuthenticationDTO("Saml2.0", principal.getSubjectIdentifier(), false,
+            principal.getTransientSessionId(), principal.isSupportDataAvailable(), 0, principal.getName(),
+            principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(), principal.getGuid(),
+            principal.getCostCenter(), principal.getTenant(), principal.getAdditionalLanguages(),
+            principal.getFunctionalNumbers(), principal.getEmployments(), principal.getEmploymentsAddress(),
+            principal.getRoles(), principal.getContracts(), principal.getSupportEmployments(),
+            principal.getSupportEmploymentsAddress(), principal.getSupportRoles(), principal.getSupportContracts());
     }
 
     private final String info;
@@ -49,7 +69,7 @@ public class AuthenticationDTO
     private final String guid;
     private final String costcentre;
     private final String country;
-    private final List<String> additionalLocales;
+    private final List<Locale> additionalLocales;
     private final Collection<PartnerNetFunctionalNumberDTO> functionalNumbers;
     private final Collection<PartnerNetCompanyDTO> companies;
     private final Collection<PartnerNetCompanyAddressDTO> companiesAddress;
@@ -62,7 +82,7 @@ public class AuthenticationDTO
 
     public AuthenticationDTO(String info, String externalId, boolean secondFactorUsed, String transientSessionId,
         boolean supportDataAvailable, int nistAuthenticationLevel, String name, String academicTitle,
-        String academicTitlePostNominal, String guid, String costcentre, String country, List<String> additionalLocales,
+        String academicTitlePostNominal, String guid, String costcentre, String country, List<Locale> additionalLocales,
         Collection<PartnerNetFunctionalNumberDTO> functionalNumbers, Collection<PartnerNetCompanyDTO> companies,
         Collection<PartnerNetCompanyAddressDTO> companiesAddress, Collection<PartnerNetRoleDTO> roles,
         Collection<PartnerNetContractDTO> contracts, Collection<PartnerNetCompanyDTO> supportCompanies,
@@ -155,7 +175,7 @@ public class AuthenticationDTO
         return country;
     }
 
-    public List<String> getAdditionalLocales()
+    public List<Locale> getAdditionalLocales()
     {
         return additionalLocales;
     }

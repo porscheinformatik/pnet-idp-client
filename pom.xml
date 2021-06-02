@@ -17,11 +17,8 @@
     <properties>
         <java.version>1.8</java.version>
 
-        <docker-maven-plugin.version>0.33.0</docker-maven-plugin.version>
+        <docker-maven-plugin.version>0.35.0</docker-maven-plugin.version>
         <docker.tag>latest</docker.tag>
-
-        <!-- Have to set this to the newest version for the latest fixes -->
-        <spring-security.version>5.2.3.RELEASE</spring-security.version>
     </properties>
 
     <dependencyManagement>
@@ -37,6 +34,12 @@
                 <artifactId>pnet-idp-client-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>at.porscheinformatik.pnet</groupId>
+                <artifactId>pnet-idp-client-saml2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -44,5 +47,6 @@
         <module>pnet-idp-client-showcase</module>
         <module>pnet-idp-client-openidconnect</module>
         <module>pnet-idp-client-core</module>
+        <module>pnet-idp-client-saml2</module>
     </modules>
 </project>
