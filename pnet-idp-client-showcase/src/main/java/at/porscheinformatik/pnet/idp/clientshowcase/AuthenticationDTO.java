@@ -6,12 +6,12 @@ package at.porscheinformatik.pnet.idp.clientshowcase;
 import java.util.Collection;
 import java.util.List;
 
-import at.porscheinformatik.idp.openidconnect.PartnerNetCompanyAddressDTO;
-import at.porscheinformatik.idp.openidconnect.PartnerNetCompanyDTO;
-import at.porscheinformatik.idp.openidconnect.PartnerNetContractDTO;
-import at.porscheinformatik.idp.openidconnect.PartnerNetFunctionalNumberDTO;
+import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
+import at.porscheinformatik.idp.PartnerNetCompanyDTO;
+import at.porscheinformatik.idp.PartnerNetContractDTO;
+import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
+import at.porscheinformatik.idp.PartnerNetRoleDTO;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
-import at.porscheinformatik.idp.openidconnect.PartnerNetRoleDTO;
 
 /**
  * @author Daniel Furtlehner

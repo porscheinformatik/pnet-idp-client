@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.springframework.core.convert.converter.Converter;
 
-import at.porscheinformatik.idp.openidconnect.PartnerNetCompanyAddressDTO;
+import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 
 /**
  * @author Daniel Furtlehner

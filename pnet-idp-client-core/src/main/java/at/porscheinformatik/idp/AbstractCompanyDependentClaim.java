@@ -1,7 +1,7 @@
 /**
  *
  */
-package at.porscheinformatik.idp.openidconnect;
+package at.porscheinformatik.idp;
 
 import java.io.Serializable;
 

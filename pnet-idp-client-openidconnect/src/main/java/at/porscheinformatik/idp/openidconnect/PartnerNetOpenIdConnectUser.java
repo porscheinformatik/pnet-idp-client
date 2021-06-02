@@ -11,6 +11,12 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
+import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
+import at.porscheinformatik.idp.PartnerNetCompanyDTO;
+import at.porscheinformatik.idp.PartnerNetContractDTO;
+import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
+import at.porscheinformatik.idp.PartnerNetRoleDTO;
+
 /**
  * @author Daniel Furtlehner
  */

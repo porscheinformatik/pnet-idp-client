@@ -31,11 +31,18 @@
                 <artifactId>pnet-idp-client-openidconnect</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>at.porscheinformatik.pnet</groupId>
+                <artifactId>pnet-idp-client-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>pnet-idp-client-showcase</module>
         <module>pnet-idp-client-openidconnect</module>
+        <module>pnet-idp-client-core</module>
     </modules>
 </project>
