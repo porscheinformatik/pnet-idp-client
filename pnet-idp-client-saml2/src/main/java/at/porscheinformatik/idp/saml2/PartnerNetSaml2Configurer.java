@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,8 +25,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.provider.service.authentication.OpenSamlAuthenticationRequestFactory;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationRequestFactory;
+import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
+import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -38,6 +42,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 {
     private static final String DEFAULT_REGISTRATION_ID = "pnet";
     private static final String DEFAULT_LOGIN_PROCESSING_URL = "/saml2/sso/post/{registrationId}";
+    private static final String DEFAULT_ENTITY_ID_PATH = "/saml2/{registrationId}";
 
     private final String entityId;
     private final String metadataUrl;
@@ -50,6 +55,8 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper;
     private AuthenticationFailureHandler failureHandler;
     private String failureUrl;
+
+    private Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyResolver;
 
     public PartnerNetSaml2Configurer(PartnerNetSaml2Provider provider)
     {
@@ -192,8 +199,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         Saml2CredentialsManager credManager = getCredentialsManager();
         RelyingPartyRegistrationRepository relyingPartyRegistrationRepository =
             getRelyingPartyRegistrationRepository(credManager);
-        Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyResolver =
-            new DefaultRelyingPartyRegistrationResolver(relyingPartyRegistrationRepository);
+        relyingPartyResolver = new DefaultRelyingPartyRegistrationResolver(relyingPartyRegistrationRepository);
 
         builder.authenticationProvider(buildAuthenticationProvider());
 
@@ -232,7 +238,19 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     @Override
     public void configure(HttpSecurity builder) throws Exception
     {
+        builder.addFilterBefore(buildMetadataFilter(), Saml2WebSsoAuthenticationFilter.class);
         builder.saml2Login().authenticationManager(builder.getSharedObject(AuthenticationManager.class));
+
+        builder
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
+            .permitAll();
+    }
+
+    private Filter buildMetadataFilter()
+    {
+        Saml2MetadataResolver metadataResolver = new PartnerNetSaml2MetadataResolver();
+        return new Saml2ServiceProviderMetadataFilter(DEFAULT_ENTITY_ID_PATH, relyingPartyResolver, metadataResolver);
     }
 
     private AuthenticationProvider buildAuthenticationProvider()
@@ -283,7 +301,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     {
         ReloadingRelyingPartyRegistrationRepository repository =
             new ReloadingRelyingPartyRegistrationRepository(DEFAULT_REGISTRATION_ID, this.entityId, this.metadataUrl,
-                credManager, clientFactory, DEFAULT_LOGIN_PROCESSING_URL);
+                credManager, clientFactory, DEFAULT_LOGIN_PROCESSING_URL, DEFAULT_ENTITY_ID_PATH);
 
         if (failOnStartup)
         {

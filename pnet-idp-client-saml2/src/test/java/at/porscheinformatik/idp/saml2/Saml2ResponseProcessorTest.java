@@ -34,7 +34,6 @@ import org.opensaml.security.SecurityException;
 import org.opensaml.xmlsec.encryption.support.EncryptionException;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.saml2.core.OpenSamlInitializationService;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationToken;
@@ -57,7 +56,7 @@ public class Saml2ResponseProcessorTest
 
     static
     {
-        OpenSamlInitializationService.initialize();
+        Saml2Initializer.initialize();
     }
 
     private final Saml2CredentialsManager credentialsManager;
@@ -449,7 +448,7 @@ public class Saml2ResponseProcessorTest
             response.setID(Saml2ObjectUtils.generateId());
         }
 
-        String stringResponse = Saml2ObjectUtils.marshall(response);
+        String stringResponse = XmlUtils.marshall(response);
         String base64Response = Base64.encodeBase64String(stringResponse.getBytes(StandardCharsets.UTF_8));
 
         MockHttpServletRequest request = buildRequestFromUrl(RESPONSE_DESTINATION);
@@ -502,7 +501,7 @@ public class Saml2ResponseProcessorTest
 
         Attribute attribute = Saml2ObjectUtils.attribute(name, Attribute.URI_REFERENCE);
 
-        attribute.getAttributeValues().add(Saml2ObjectUtils.xmlString(value));
+        attribute.getAttributeValues().add(XmlUtils.xmlString(value));
 
         return attribute;
     }

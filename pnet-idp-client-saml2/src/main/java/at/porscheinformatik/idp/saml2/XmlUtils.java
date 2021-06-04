@@ -16,23 +16,31 @@ import javax.xml.namespace.QName;
 import org.apache.commons.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSBoolean;
+import org.opensaml.core.xml.schema.XSBooleanValue;
 import org.opensaml.core.xml.schema.XSDateTime;
 import org.opensaml.core.xml.schema.XSInteger;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
+import org.w3c.dom.Element;
+
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
  * @author Daniel Furtlehner
@@ -204,7 +212,33 @@ public final class XmlUtils
         return samlIssuer;
     }
 
-    private static <T extends SAMLObject> T createSamlObject(QName defaultName)
+    /**
+     * @param object to marshall
+     * @return marshalled object.
+     * @throws MarshallingException if an exception occurs while marshalling
+     */
+    public static String marshall(SAMLObject object) throws MarshallingException
+    {
+        return serialize(XMLObjectSupport.marshall(object), false);
+    }
+
+    /**
+     * @param element the element to transform to its string representation
+     * @param prettyprint when true a formatted xml will be produced. Should only be used for testing because the
+     *            Signature is not valid on pretty printed xmls.
+     * @return the string representation of the given element
+     */
+    private static String serialize(Element element, boolean prettyprint)
+    {
+        if (prettyprint)
+        {
+            return SerializeSupport.prettyPrintXML(element);
+        }
+
+        return SerializeSupport.nodeToString(element);
+    }
+
+    public static <T extends SAMLObject> T createSamlObject(QName defaultName)
     {
         XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
@@ -213,4 +247,75 @@ public final class XmlUtils
 
         return builder.buildObject();
     }
+
+    public static <T extends XMLObject> T createXmlObject(QName defaultName)
+    {
+        XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory();
+
+        @SuppressWarnings("unchecked")
+        XMLObjectBuilder<T> builder = (XMLObjectBuilder<T>) factory.getBuilder(defaultName);
+
+        return builder.buildObject(defaultName);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends XMLObject> T createXMLObject(QName typeName, QName defaultName)
+    {
+        XMLObjectBuilder<?> builder = XMLObjectSupport.getBuilder(typeName);
+
+        return (T) builder.buildObject(defaultName, typeName);
+    }
+
+    public static XSInteger xmlInt(Integer value)
+    {
+        XSInteger xsInteger = createXMLObject(XSInteger.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
+
+        if (value == null)
+        {
+            xsInteger.setNil(Boolean.TRUE);
+        }
+        else
+        {
+            xsInteger.setValue(value);
+        }
+
+        return xsInteger;
+    }
+
+    public static XSBoolean xmlBoolean(Boolean value)
+    {
+        XSBoolean xsBoolean = createXMLObject(XSBoolean.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
+
+        if (value == null)
+        {
+            xsBoolean.setNil(Boolean.TRUE);
+        }
+        else
+        {
+            xsBoolean.setValue(new XSBooleanValue(value, false));
+        }
+
+        return xsBoolean;
+    }
+
+    /**
+     * @param value - String
+     * @return XML String
+     */
+    public static XSString xmlString(String value)
+    {
+        XSString xsstring = createXMLObject(XSString.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
+
+        if (value == null)
+        {
+            xsstring.setNil(Boolean.TRUE);
+        }
+        else
+        {
+            xsstring.setValue(value);
+        }
+
+        return xsstring;
+    }
+
 }

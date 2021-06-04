@@ -213,17 +213,17 @@ public interface SamlResponseCustomizer
 
     static SamlResponseCustomizer singleStringAttribute(String name, String value)
     {
-        return attribute(name, () -> asList(Saml2ObjectUtils.xmlString(value)));
+        return attribute(name, () -> asList(XmlUtils.xmlString(value)));
     }
 
     static SamlResponseCustomizer singleIntegerAttribute(String name, Integer value)
     {
-        return attribute(name, () -> asList(Saml2ObjectUtils.xmlInt(value)));
+        return attribute(name, () -> asList(XmlUtils.xmlInt(value)));
     }
 
     static SamlResponseCustomizer singleBooleanAttribute(String name, Boolean value)
     {
-        return attribute(name, () -> asList(Saml2ObjectUtils.xmlBoolean(value)));
+        return attribute(name, () -> asList(XmlUtils.xmlBoolean(value)));
     }
 
     static SamlResponseCustomizer multiStringAttribute(String name, String... values)
@@ -232,7 +232,7 @@ public interface SamlResponseCustomizer
 
         for (String value : values)
         {
-            xmlValues.add(Saml2ObjectUtils.xmlString(value));
+            xmlValues.add(XmlUtils.xmlString(value));
         }
 
         return attribute(name, () -> xmlValues);

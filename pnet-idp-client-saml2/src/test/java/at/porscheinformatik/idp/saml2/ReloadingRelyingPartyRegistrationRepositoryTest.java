@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.security.saml2.core.OpenSamlInitializationService;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration.AssertingPartyDetails;
@@ -22,7 +21,7 @@ class ReloadingRelyingPartyRegistrationRepositoryTest
 
     static
     {
-        OpenSamlInitializationService.initialize();
+        Saml2Initializer.initialize();
     }
 
     @Test
@@ -90,7 +89,8 @@ class ReloadingRelyingPartyRegistrationRepositoryTest
     {
         Saml2CredentialsManager credentialsManager = Saml2TestUtils.defaultCredentialsManager();
         return new ReloadingRelyingPartyRegistrationRepository("rpId", entityId, metadataUrl, credentialsManager,
-            new TestClientFactory(metadataFile, metadataUrl), "/saml2/sso/post/{registrationId}");
+            new TestClientFactory(metadataFile, metadataUrl), "/saml2/sso/post/{registrationId}",
+            "/saml2/{registrationId}");
     }
 
 }

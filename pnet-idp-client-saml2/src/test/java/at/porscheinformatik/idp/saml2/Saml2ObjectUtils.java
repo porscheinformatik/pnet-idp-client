@@ -4,8 +4,10 @@
 package at.porscheinformatik.idp.saml2;
 
 import static java.util.Objects.*;
+import static org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport.*;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -15,15 +17,10 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
-import org.opensaml.core.xml.schema.XSBoolean;
-import org.opensaml.core.xml.schema.XSBooleanValue;
-import org.opensaml.core.xml.schema.XSInteger;
-import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -31,7 +28,6 @@ import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
-import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -65,11 +61,10 @@ import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.SignatureSupport;
 import org.springframework.security.saml2.core.Saml2X509Credential;
-import org.w3c.dom.Element;
 
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 /**
  * @author Daniel Furtlehner
@@ -180,88 +175,6 @@ public final class Saml2ObjectUtils
     }
 
     //
-    //    /**
-    //     * @param entityId the saml identifier
-    //     * @param validUntil how long the metadata should be valid. Around a week or so is good.
-    //     * @return The entity descriptor
-    //     */
-    //    public static EntityDescriptor entityDescriptor(String entityId, LocalDateTime validUntil)
-    //    {
-    //        EntityDescriptor entityDescriptor = createSamlObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
-    //        entityDescriptor.setEntityID(entityId);
-    //        entityDescriptor.setValidUntil(new DateTime(DateUtils.toUTCDate(validUntil)));
-    //
-    //        return entityDescriptor;
-    //    }
-    //
-    //    public static SPSSODescriptor spSsoDescriptor(boolean signedRequests)
-    //    {
-    //        SPSSODescriptor descriptor = createSamlObject(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-    //        descriptor.addSupportedProtocol(SAMLConstants.SAML20P_NS);
-    //        descriptor.getNameIDFormats().add(nameIdFormat(NameIDType.TRANSIENT));
-    //        descriptor.setAuthnRequestsSigned(signedRequests);
-    //
-    //        return descriptor;
-    //    }
-    //
-    //    public static AssertionConsumerService assertionConsumerService(String bindingName, String endpointUrl)
-    //    {
-    //        AssertionConsumerService service = createSamlObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
-    //        service.setBinding(bindingName);
-    //        service.setLocation(endpointUrl);
-    //
-    //        return service;
-    //    }
-    //
-    //    public static SigningMethod signingMethod(String algorithm)
-    //    {
-    //        SigningMethod method = createSamlObject(SigningMethod.DEFAULT_ELEMENT_NAME);
-    //        method.setAlgorithm(algorithm);
-    //
-    //        return method;
-    //    }
-    //
-    //    public static DigestMethod digestMethod(String algorithm)
-    //    {
-    //        DigestMethod method = createSamlObject(DigestMethod.DEFAULT_ELEMENT_NAME);
-    //        method.setAlgorithm(algorithm);
-    //
-    //        return method;
-    //    }
-    //
-    //    public static NameIDFormat nameIdFormat(String nameIdFormat)
-    //    {
-    //        NameIDFormat format = createSamlObject(NameIDFormat.DEFAULT_ELEMENT_NAME);
-    //        format.setFormat(nameIdFormat);
-    //
-    //        return format;
-    //    }
-    //
-    //    public static List<KeyDescriptor> keyDescriptors(List<Saml2KeyInfo> keyInfos) throws CertificateEncodingException
-    //    {
-    //        List<KeyDescriptor> keyDescriptors = new ArrayList<>();
-    //
-    //        for (Saml2KeyInfo keyInfo : keyInfos)
-    //        {
-    //            KeyDescriptor keyDescriptor = keyDescritor(keyInfo.getPublicKey(), keyInfo.getUsage());
-    //
-    //            keyDescriptors.add(keyDescriptor);
-    //        }
-    //
-    //        return keyDescriptors;
-    //    }
-    //
-    //    public static <RequestT extends RequestAbstractType> MessageContext<SAMLObject> buildMessageContext(
-    //        RequestT samlRequest, Endpoint singleSignOnEndpoint)
-    //    {
-    //        MessageContext<SAMLObject> messageContext = new MessageContext<>();
-    //        messageContext.setMessage(samlRequest);
-    //
-    //        SAMLPeerEntityContext peerContext = messageContext.getSubcontext(SAMLPeerEntityContext.class, true);
-    //        peerContext.getSubcontext(SAMLEndpointContext.class, true).setEndpoint(singleSignOnEndpoint);
-    //
-    //        return messageContext;
-    //    }
     //
     /**
      * Creates a SAML attribute.
@@ -279,26 +192,6 @@ public final class Saml2ObjectUtils
         return attribute;
     }
 
-    /**
-     * @param value - String
-     * @return XML String
-     */
-    public static XSString xmlString(String value)
-    {
-        XSString xsstring = createXMLObject(XSString.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
-
-        if (value == null)
-        {
-            xsstring.setNil(Boolean.TRUE);
-        }
-        else
-        {
-            xsstring.setValue(value);
-        }
-
-        return xsstring;
-    }
-
     public static <T extends SAMLObject> T createSamlObject(QName defaultName)
     {
         XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory();
@@ -307,79 +200,6 @@ public final class Saml2ObjectUtils
         SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) factory.getBuilder(defaultName);
 
         return builder.buildObject();
-    }
-
-    //
-    //    @SuppressWarnings("unchecked")
-    //    private static <T extends XMLObject> T createXMLObject(QName defaultName)
-    //    {
-    //        return (T) XMLObjectSupport.buildXMLObject(defaultName);
-    //    }
-    //
-    @SuppressWarnings("unchecked")
-    public static <T extends XMLObject> T createXMLObject(QName typeName, QName defaultName)
-    {
-        XMLObjectBuilder<?> builder = XMLObjectSupport.getBuilder(typeName);
-
-        return (T) builder.buildObject(defaultName, typeName);
-    }
-
-    public static XSInteger xmlInt(Integer value)
-    {
-        XSInteger xsInteger = createXMLObject(XSInteger.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
-
-        if (value == null)
-        {
-            xsInteger.setNil(Boolean.TRUE);
-        }
-        else
-        {
-            xsInteger.setValue(value);
-        }
-
-        return xsInteger;
-    }
-
-    public static XSBoolean xmlBoolean(Boolean value)
-    {
-        XSBoolean xsBoolean = createXMLObject(XSBoolean.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
-
-        if (value == null)
-        {
-            xsBoolean.setNil(Boolean.TRUE);
-        }
-        else
-        {
-            xsBoolean.setValue(new XSBooleanValue(value, false));
-        }
-
-        return xsBoolean;
-    }
-
-    /**
-     * @param object to marshall
-     * @return marshalled object.
-     * @throws MarshallingException if an exception occurs while marshalling
-     */
-    public static String marshall(SAMLObject object) throws MarshallingException
-    {
-        return serialize(XMLObjectSupport.marshall(object), false);
-    }
-
-    /**
-     * @param element the element to transform to its string representation
-     * @param prettyprint when true a formatted xml will be produced. Should only be used for testing because the
-     *            Signature is not valid on pretty printed xmls.
-     * @return the string representation of the given element
-     */
-    private static String serialize(Element element, boolean prettyprint)
-    {
-        if (prettyprint)
-        {
-            return SerializeSupport.prettyPrintXML(element);
-        }
-
-        return SerializeSupport.nodeToString(element);
     }
 
     @Nonnull
@@ -515,5 +335,21 @@ public final class Saml2ObjectUtils
         context.setAuthnContextClassRef(classRef);
 
         return context;
+    }
+
+    /**
+     * Creates a saml object from the given string representations
+     *
+     * @param xmlAsString the xml representation to unmarshal
+     * @param <T> the type of object returned
+     * @return the element
+     * @throws XMLParserException Wenn beim Parsen was schiefgeht
+     * @throws UnmarshallingException - Wenn beim unmarshall was schiefgeht
+     * @throws XMLParserException - when something goes wrong
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T unmarshal(String xmlAsString) throws UnmarshallingException, XMLParserException
+    {
+        return (T) XMLObjectSupport.unmarshallFromReader(getParserPool(), new StringReader(xmlAsString));
     }
 }

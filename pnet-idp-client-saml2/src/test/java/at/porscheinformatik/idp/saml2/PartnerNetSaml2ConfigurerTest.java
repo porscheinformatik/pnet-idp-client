@@ -19,13 +19,13 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.saml2.core.OpenSamlInitializationService;
 import org.springframework.security.saml2.provider.service.authentication.OpenSamlAuthenticationRequestFactory;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationRequestFilter;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
 import org.springframework.security.saml2.provider.service.web.Saml2AuthenticationTokenConverter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 
@@ -38,7 +38,7 @@ public class PartnerNetSaml2ConfigurerTest
 
     static
     {
-        OpenSamlInitializationService.initialize();
+        Saml2Initializer.initialize();
     }
 
     @Test
@@ -78,6 +78,20 @@ public class PartnerNetSaml2ConfigurerTest
             "relyingPartyRegistrationResolver", DefaultRelyingPartyRegistrationResolver.class);
         assertFieldValue(resolver, "relyingPartyRegistrationRepository",
             ReloadingRelyingPartyRegistrationRepository.class);
+    }
+
+    @Test
+    public void metadataFilterIsConfigured() throws Exception
+    {
+        HttpSecurity http = buildHttpSecurity();
+        PartnerNetSaml2Configurer configurer = new PartnerNetSaml2Configurer(IDP_ENTITY_ID) //
+            .credentials(Saml2TestUtils::defaultCredentials);
+
+        DefaultSecurityFilterChain filterChain = build(configurer, http);
+
+        Saml2ServiceProviderMetadataFilter filter = assertFilter(filterChain, Saml2ServiceProviderMetadataFilter.class);
+        AntPathRequestMatcher matcher = assertFieldValue(filter, "requestMatcher", AntPathRequestMatcher.class);
+        assertThat(matcher, equalTo(new AntPathRequestMatcher("/saml2/{registrationId}", "GET")));
     }
 
     @Test

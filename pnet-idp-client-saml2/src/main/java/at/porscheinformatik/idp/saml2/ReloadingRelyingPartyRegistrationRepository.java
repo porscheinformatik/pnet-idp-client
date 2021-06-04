@@ -39,9 +39,11 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
     private final RelyingPartyRegistrationMetadataResolver resolver;
     private final HttpClientFactory clientFactory;
     private final String loginProcessingUrl;
+    private final String entityIdPath;
 
     public ReloadingRelyingPartyRegistrationRepository(String registrationId, String idpEntityId, String idpMetadataUrl,
-        Saml2CredentialsManager credentialsManager, HttpClientFactory clientFactory, String loginProcessingUrl)
+        Saml2CredentialsManager credentialsManager, HttpClientFactory clientFactory, String loginProcessingUrl,
+        String entityIdPath)
     {
         super();
 
@@ -49,6 +51,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         this.credentialsManager = credentialsManager;
         this.clientFactory = clientFactory;
         this.loginProcessingUrl = loginProcessingUrl;
+        this.entityIdPath = entityIdPath;
         this.resolver = buildResolver(idpEntityId, idpMetadataUrl);
     }
 
@@ -82,7 +85,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         {
             RelyingPartyRegistrationMetadataResolver resolver =
                 new RelyingPartyRegistrationMetadataResolver(clientFactory.newClient(), entityId, metadataUrl,
-                    registrationId, loginProcessingUrl, credentialsManager);
+                    registrationId, loginProcessingUrl, entityIdPath, credentialsManager);
 
             return resolver;
         }
@@ -98,18 +101,20 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         private final String registrationId;
         private final Saml2CredentialsManager credentialsManager;
         private final String loginProcessingUrl;
+        private final String entityIdPath;
 
         private RelyingPartyRegistration registration;
 
         public RelyingPartyRegistrationMetadataResolver(HttpClient client, String idpEntityId, String idpMetadataUrl,
-            String registrationId, String loginProcessingUrl, Saml2CredentialsManager credentialsManager)
-            throws ResolverException
+            String registrationId, String loginProcessingUrl, String entityIdPath,
+            Saml2CredentialsManager credentialsManager) throws ResolverException
         {
             super(client, idpMetadataUrl);
 
             this.idpEntityId = idpEntityId;
             this.registrationId = registrationId;
             this.loginProcessingUrl = loginProcessingUrl;
+            this.entityIdPath = entityIdPath;
             this.credentialsManager = credentialsManager;
 
             this.credentialsManager.onUpdate(() -> {
@@ -157,7 +162,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         private RelyingPartyRegistration parseDescriptor(EntityDescriptor descriptor)
         {
             return withRegistrationId(registrationId)
-                .entityId("{baseUrl}/saml2/{registrationId}")
+                .entityId("{baseUrl}" + entityIdPath)
                 .assertionConsumerServiceBinding(Saml2MessageBinding.POST)
                 .assertionConsumerServiceLocation("{baseUrl}" + loginProcessingUrl)
                 .decryptionX509Credentials(credentials -> credentials

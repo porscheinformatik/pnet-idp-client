@@ -16,7 +16,7 @@ public class PartnerNetSaml2Configuration
 
     static
     {
-        OpenSamlInitializationService.initialize();
+        Saml2Initializer.initialize();
     }
 
     @Bean
