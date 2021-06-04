@@ -2,6 +2,8 @@ package at.porscheinformatik.idp.saml2;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.web.util.UriComponentsBuilder;
+
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
@@ -12,7 +14,8 @@ public class Saml2Utils
     public static final int CLOCK_SKEW_IN_MINUTES = 5;
 
     private static final String AUTHN_REQUEST_ID_ATTR = "poi.saml2.authn_request_id";
-    private static final String FORCE_AUTHENTICATION = "poi.saml2.force_authn";
+    private static final String FORCE_AUTHENTICATION_PARAM = "forceAuthn";
+
     //Specification says between 128 and 160 bit are perfect
     private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy(20);
 
@@ -34,14 +37,14 @@ public class Saml2Utils
         return (String) request.getSession().getAttribute(AUTHN_REQUEST_ID_ATTR);
     }
 
-    public static void forceAuthentication(HttpServletRequest request)
+    public static UriComponentsBuilder forceAuthentication(UriComponentsBuilder uriComponentsBuilder)
     {
-        request.getSession().setAttribute(FORCE_AUTHENTICATION, Boolean.TRUE);
+        return uriComponentsBuilder.queryParam(FORCE_AUTHENTICATION_PARAM, true);
     }
 
     public static boolean isForceAuthentication(HttpServletRequest request)
     {
-        return Boolean.TRUE.equals(request.getSession().getAttribute(FORCE_AUTHENTICATION));
+        return Boolean.valueOf(request.getParameter(FORCE_AUTHENTICATION_PARAM));
     }
 
     public static String getRelayState(HttpServletRequest request)

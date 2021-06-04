@@ -140,12 +140,13 @@ public final class XmlUtils
     }
 
     public static AuthnRequest authnRequest(String spEntityId, String destination, String assertionConsumerServiceUrl,
-        String id)
+        String id, boolean forceAuthn)
     {
         AuthnRequest request = createSamlObject(AuthnRequest.DEFAULT_ELEMENT_NAME);
         request.setID(id);
         request.setVersion(SAMLVersion.VERSION_20);
         request.setIssueInstant(DateTime.now());
+        request.setForceAuthn(forceAuthn);
 
         request.setIssuer(issuer(spEntityId));
 

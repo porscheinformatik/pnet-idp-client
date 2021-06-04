@@ -3,6 +3,7 @@
  */
 package at.porscheinformatik.idp.saml2;
 
+import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationRequestContextResolver.*;
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import static at.porscheinformatik.idp.saml2.SamlResponseCustomizer.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -439,7 +440,7 @@ public class Saml2ResponseProcessorTest
 
         if (forceAuthn)
         {
-            Saml2Utils.forceAuthentication(request);
+            storeForceAuthentication(request, true);
         }
 
         request.addParameter("SAMLResponse", base64Response);

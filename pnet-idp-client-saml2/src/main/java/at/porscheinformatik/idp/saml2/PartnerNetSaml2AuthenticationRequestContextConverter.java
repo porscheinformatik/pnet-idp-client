@@ -26,7 +26,8 @@ public class PartnerNetSaml2AuthenticationRequestContextConverter
 
         return XmlUtils
             .authnRequest(partnerNetContext.getIssuer(), partnerNetContext.getDestination(),
-                partnerNetContext.getAssertionConsumerServiceUrl(), partnerNetContext.getAuthnRequestId());
+                partnerNetContext.getAssertionConsumerServiceUrl(), partnerNetContext.getAuthnRequestId(),
+                partnerNetContext.isForceAuthn());
     }
 
 }

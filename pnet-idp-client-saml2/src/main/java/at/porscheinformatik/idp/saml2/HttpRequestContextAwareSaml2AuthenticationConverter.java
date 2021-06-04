@@ -1,5 +1,8 @@
 package at.porscheinformatik.idp.saml2;
 
+import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationRequestContextResolver.*;
+import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
+
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +68,7 @@ public class HttpRequestContextAwareSaml2AuthenticationConverter implements Auth
 
         public String getAuthnRequestId()
         {
-            return Saml2Utils.retrieveAuthnRequestId(getRequest());
+            return retrieveAuthnRequestId(getRequest());
         }
 
         public String getClientAddress()
@@ -75,7 +78,7 @@ public class HttpRequestContextAwareSaml2AuthenticationConverter implements Auth
 
         public boolean isForceAuthentication()
         {
-            return Saml2Utils.isForceAuthentication(request);
+            return forceAuthenticationRequested(request);
         }
     }
 }

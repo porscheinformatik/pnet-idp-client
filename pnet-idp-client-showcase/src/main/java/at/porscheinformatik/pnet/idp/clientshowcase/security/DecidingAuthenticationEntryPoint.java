@@ -14,6 +14,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import at.porscheinformatik.idp.openidconnect.PartnerNetOAuth2AuthorizationRequestResolver;
+import at.porscheinformatik.idp.saml2.Saml2Utils;
 
 /**
  * This authentication entry point decides what authentication should be used based on the "authenticationType" query
@@ -55,6 +56,10 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
 
             case "saml2":
                 return UriComponentsBuilder.fromPath("/saml2/authenticate/pnet");
+
+            // SAML 2 with forced authentication
+            case "saml2_force":
+                return Saml2Utils.forceAuthentication(UriComponentsBuilder.fromPath("/saml2/authenticate/pnet"));
 
             // SAML 2 with multifactor authentication
             case "saml2_mfa":
