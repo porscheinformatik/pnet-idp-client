@@ -83,10 +83,10 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
             contractsList(data, attributeName("support_employment_contracts"));
 
         return new PartnerNetSaml2AuthenticationPrincipal(data.getSubjectIdentifier(), data.getRelayState(),
-            data.getNameId(), guid, personnelNumber, legacyId, academicTitle, academicTitlePostNominal, firstname,
-            lastname, gender, language, additionalLanguages, mailAddress, phoneNumber, tenant, costCenter,
-            functionalNumbers, employments, employmentsAddress, roles, contracts, supportData, supportEmployments,
-            supportEmploymentsAddress, supportRoles, supportContracts);
+            data.getNameId(), data.getAuthnContextClass(), guid, personnelNumber, legacyId, academicTitle,
+            academicTitlePostNominal, firstname, lastname, gender, language, additionalLanguages, mailAddress,
+            phoneNumber, tenant, costCenter, functionalNumbers, employments, employmentsAddress, roles, contracts,
+            supportData, supportEmployments, supportEmploymentsAddress, supportRoles, supportContracts);
     }
 
     private List<Locale> localeList(Saml2Data data, String attributeName)

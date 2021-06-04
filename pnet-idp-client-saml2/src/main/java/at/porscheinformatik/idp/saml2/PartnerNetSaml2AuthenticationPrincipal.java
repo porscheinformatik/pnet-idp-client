@@ -17,6 +17,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     private final String subjectIdentifier;
     private final String relayState;
     private final String transientSessionId;
+    private final AuthnContextClass authnContextClass;
 
     private final String guid;
     private final String personnelNumber;
@@ -50,20 +51,21 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     private final List<PartnerNetContractDTO> supportContracts;
 
     public PartnerNetSaml2AuthenticationPrincipal(String subjectIdentifier, String relayState,
-        String transientSessionId, String guid, String personnelNumber, Integer legacyId, String academicTitle,
-        String academicTitlePostNominal, String firstname, String lastname, Gender gender, Locale language,
-        List<Locale> additionalLanguages, String mailAddress, String phoneNumber, String tenant, String costCenter,
-        List<PartnerNetFunctionalNumberDTO> functionalNumbers, List<PartnerNetCompanyDTO> employments,
-        List<PartnerNetCompanyAddressDTO> employmentsAddress, List<PartnerNetRoleDTO> roles,
-        List<PartnerNetContractDTO> contracts, boolean supportData, List<PartnerNetCompanyDTO> supportEmployments,
-        List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress, List<PartnerNetRoleDTO> supportRoles,
-        List<PartnerNetContractDTO> supportContracts)
+        String transientSessionId, AuthnContextClass authnContextClass, String guid, String personnelNumber,
+        Integer legacyId, String academicTitle, String academicTitlePostNominal, String firstname, String lastname,
+        Gender gender, Locale language, List<Locale> additionalLanguages, String mailAddress, String phoneNumber,
+        String tenant, String costCenter, List<PartnerNetFunctionalNumberDTO> functionalNumbers,
+        List<PartnerNetCompanyDTO> employments, List<PartnerNetCompanyAddressDTO> employmentsAddress,
+        List<PartnerNetRoleDTO> roles, List<PartnerNetContractDTO> contracts, boolean supportData,
+        List<PartnerNetCompanyDTO> supportEmployments, List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
+        List<PartnerNetRoleDTO> supportRoles, List<PartnerNetContractDTO> supportContracts)
     {
         super();
 
         this.subjectIdentifier = subjectIdentifier;
         this.relayState = relayState;
         this.transientSessionId = transientSessionId;
+        this.authnContextClass = authnContextClass;
         this.guid = guid;
         this.personnelNumber = personnelNumber;
         this.legacyId = legacyId;
@@ -236,6 +238,16 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     public String getTransientSessionId()
     {
         return transientSessionId;
+    }
+
+    public AuthnContextClass getAuthnContextClass()
+    {
+        return authnContextClass;
+    }
+
+    public boolean isStronglyAuthenticated()
+    {
+        return authnContextClass.isStrongerThan(AuthnContextClass.USERPASS);
     }
 
 }

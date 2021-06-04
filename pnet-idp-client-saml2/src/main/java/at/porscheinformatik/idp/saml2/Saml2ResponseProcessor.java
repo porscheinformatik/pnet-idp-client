@@ -4,7 +4,6 @@
 package at.porscheinformatik.idp.saml2;
 
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
-import static java.util.Objects.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,7 @@ import at.porscheinformatik.idp.saml2.response.CheckSubjectIdentifierMessageHand
 import at.porscheinformatik.idp.saml2.response.CheckSubjectMessageHandler;
 import at.porscheinformatik.idp.saml2.response.DecryptAssertionsMessageHandler;
 import at.porscheinformatik.idp.saml2.response.ThrowOnMissingIdMessageHandler;
+import at.porscheinformatik.idp.saml2.response.VerifyAuthenticationStrenghMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifyAuthnInstantMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifySignatureMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifyStatusMessageHandler;
@@ -53,13 +53,14 @@ public class Saml2ResponseProcessor
         handlers.add(new CheckIssuerMessageHandler());
         handlers.add(new VerifySignatureMessageHandler()); // Have to check signature before decryption
         handlers.add(new DecryptAssertionsMessageHandler()); // Decrypt all assertions and add them to the normal assertions
+        handlers.add(new VerifyStatusMessageHandler());
         handlers.add(new CheckAssertionStructureMessageHandler());
         handlers.add(new CheckSubjectMessageHandler());
         handlers.add(new CheckAudienceRestrictionMessageHandler());
         handlers.add(new CheckEndpointMessageHandler());
         handlers.add(new VerifyAuthnInstantMessageHandler());
         handlers.add(new CheckSubjectIdentifierMessageHandler());
-        handlers.add(new VerifyStatusMessageHandler());
+        handlers.add(new VerifyAuthenticationStrenghMessageHandler());
 
         return new Saml2ResponseProcessor(handlers);
     }

@@ -47,13 +47,14 @@ public class AuthenticationDTO
 
     public static AuthenticationDTO of(PartnerNetSaml2AuthenticationPrincipal principal)
     {
-        return new AuthenticationDTO("Saml2.0", principal.getSubjectIdentifier(), false,
-            principal.getTransientSessionId(), principal.isSupportDataAvailable(), 0, principal.getName(),
-            principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(), principal.getGuid(),
-            principal.getCostCenter(), principal.getTenant(), principal.getAdditionalLanguages(),
-            principal.getFunctionalNumbers(), principal.getEmployments(), principal.getEmploymentsAddress(),
-            principal.getRoles(), principal.getContracts(), principal.getSupportEmployments(),
-            principal.getSupportEmploymentsAddress(), principal.getSupportRoles(), principal.getSupportContracts());
+        return new AuthenticationDTO("Saml2.0", principal.getSubjectIdentifier(), principal.isStronglyAuthenticated(),
+            principal.getTransientSessionId(), principal.isSupportDataAvailable(),
+            principal.getAuthnContextClass().getNistLevel(), principal.getName(), principal.getAcademicTitle(),
+            principal.getAcademicTitlePostNominal(), principal.getGuid(), principal.getCostCenter(),
+            principal.getTenant(), principal.getAdditionalLanguages(), principal.getFunctionalNumbers(),
+            principal.getEmployments(), principal.getEmploymentsAddress(), principal.getRoles(),
+            principal.getContracts(), principal.getSupportEmployments(), principal.getSupportEmploymentsAddress(),
+            principal.getSupportRoles(), principal.getSupportContracts());
     }
 
     private final String info;

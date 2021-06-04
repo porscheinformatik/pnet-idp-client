@@ -296,7 +296,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnUnsignedRequest() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(false, false, false, false);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(false, false, false, false, null);
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Response must be signed but no signature present");
@@ -305,7 +305,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnWrongSignature() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, true, false, false);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, true, false, false, null);
 
         testException(tokenAndResponse, MessageHandlerException.class, "Error validating signature");
     }
@@ -322,7 +322,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnToOldAuthnInstantWhenForcedAuthentication() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, true, oldAuthnInstant());
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, true, null, oldAuthnInstant());
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Outdated AuthnInstant found for forced authentication.");
@@ -339,7 +339,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnMissingSubjectIdentifier() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, noAttributes());
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, noAttributes());
 
         testException(tokenAndResponse, MessageHandlerException.class, "No subject-identifier found in Response");
     }
@@ -347,10 +347,29 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnErrorResponse() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, true, false);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, true, false, null);
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Unsuccessful Response: urn:oasis:names:tc:SAML:2.0:status:Requester ");
+    }
+
+    @Test
+    public void failsOnWeakAuthentication() throws Exception
+    {
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 3);
+
+        testException(tokenAndResponse, MessageHandlerException.class,
+            "Authentication strength USERPASS is weaker than requested strength 3");
+    }
+
+    @Test
+    public void succesOnStrongEnoughAuthentication() throws Exception
+    {
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2);
+
+        Saml2ResponseProcessor processor = Saml2ResponseProcessor.withDefaultHandlers();
+
+        processor.process(tokenAndResponse.getToken(), tokenAndResponse.getResponse());
     }
 
     private void testException(TokenAndResponse tokenAndResponse, Class<MessageHandlerException> expectedException,
@@ -368,11 +387,11 @@ public class Saml2ResponseProcessorTest
         throws MarshallingException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
         SecurityException, SignatureException, IOException, EncryptionException
     {
-        return buildTokenAndResponse(true, false, false, false, customizers);
+        return buildTokenAndResponse(true, false, false, false, null, customizers);
     }
 
     protected TokenAndResponse buildTokenAndResponse(boolean signed, boolean invalidateSignature, boolean errorResponse,
-        boolean forceAuthn, SamlResponseCustomizer... customizers)
+        boolean forceAuthn, Integer nistLevel, SamlResponseCustomizer... customizers)
         throws MarshallingException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
         SecurityException, SignatureException, IOException, EncryptionException
     {
@@ -442,6 +461,8 @@ public class Saml2ResponseProcessorTest
         {
             storeForceAuthentication(request, true);
         }
+
+        storeNistLevel(request, nistLevel);
 
         request.addParameter("SAMLResponse", base64Response);
 

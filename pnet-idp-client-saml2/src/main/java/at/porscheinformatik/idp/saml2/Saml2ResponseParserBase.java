@@ -15,6 +15,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.saml2.Saml2Exception;
@@ -43,6 +44,7 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
         String nameId = assertion.getSubject().getNameID().getValue();
 
         AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
+        AuthnStatement authnStatement = assertion.getAuthnStatements().get(0);
 
         for (Attribute attribute : attributeStatement.getAttributes())
         {
@@ -67,7 +69,11 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
             }
         }
 
-        return new Saml2Data(subjectIdentifier, nameId, additionalAttributes, relayState);
+        AuthnContextClass authnContextClass = AuthnContextClass
+            .fromReference(authnStatement.getAuthnContext().getAuthnContextClassRef().getAuthnContextClassRef())
+            .orElse(AuthnContextClass.NONE);
+
+        return new Saml2Data(subjectIdentifier, nameId, additionalAttributes, relayState, authnContextClass);
     }
 
     private boolean isSubjectIdentifierAttribute(Attribute attribute)
@@ -82,13 +88,16 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
         private final String nameId;
         private final Map<String, Serializable> samlAttributes;
         private final String relayState;
+        private final AuthnContextClass authnContextClass;
 
-        Saml2Data(String subjectIdentifier, String nameId, Map<String, Serializable> samlAttributes, String relayState)
+        Saml2Data(String subjectIdentifier, String nameId, Map<String, Serializable> samlAttributes, String relayState,
+            AuthnContextClass authnContextClass)
         {
             this.subjectIdentifier = subjectIdentifier;
             this.nameId = nameId;
             this.samlAttributes = samlAttributes;
             this.relayState = relayState;
+            this.authnContextClass = authnContextClass;
         }
 
         public String getSubjectIdentifier()
@@ -115,6 +124,11 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
         public <T> T getAttribute(String name)
         {
             return (T) samlAttributes.get(name);
+        }
+
+        public AuthnContextClass getAuthnContextClass()
+        {
+            return authnContextClass;
         }
 
     }

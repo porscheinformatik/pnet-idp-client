@@ -7,7 +7,9 @@ import static java.util.Objects.*;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
@@ -26,8 +28,11 @@ import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
+import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 
 /**
  * @author Daniel Furtlehner
@@ -140,16 +145,14 @@ public final class XmlUtils
     }
 
     public static AuthnRequest authnRequest(String spEntityId, String destination, String assertionConsumerServiceUrl,
-        String id, boolean forceAuthn)
+        String id, boolean forceAuthn, @Nonnull List<AuthnContextClass> authnContextClasses)
     {
         AuthnRequest request = createSamlObject(AuthnRequest.DEFAULT_ELEMENT_NAME);
         request.setID(id);
         request.setVersion(SAMLVersion.VERSION_20);
         request.setIssueInstant(DateTime.now());
         request.setForceAuthn(forceAuthn);
-
         request.setIssuer(issuer(spEntityId));
-
         request.setAssertionConsumerServiceURL(assertionConsumerServiceUrl);
 
         if (destination != null)
@@ -157,7 +160,34 @@ public final class XmlUtils
             request.setDestination(destination);
         }
 
+        if (!authnContextClasses.isEmpty())
+        {
+            request.setRequestedAuthnContext(requestedAuthnContext(authnContextClasses));
+        }
+
         return request;
+    }
+
+    private static RequestedAuthnContext requestedAuthnContext(List<AuthnContextClass> authnContextClasses)
+    {
+        RequestedAuthnContext authnContext = createSamlObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        authnContext.setComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);
+
+        authnContextClasses.forEach(entry -> {
+            AuthnContextClassRef reference = authnContextClassRef(entry.getSamlReference());
+
+            authnContext.getAuthnContextClassRefs().add(reference);
+        });
+
+        return authnContext;
+    }
+
+    private static AuthnContextClassRef authnContextClassRef(String reference)
+    {
+        AuthnContextClassRef authnContext = createSamlObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        authnContext.setAuthnContextClassRef(reference);
+
+        return authnContext;
     }
 
     /**

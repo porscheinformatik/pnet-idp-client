@@ -63,7 +63,8 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
 
             // SAML 2 with multifactor authentication
             case "saml2_mfa":
-                throw new UnsupportedOperationException("Implementation needed");
+                return Saml2Utils
+                    .requestNistAuthenticationLevel(UriComponentsBuilder.fromPath("/saml2/authenticate/pnet"), 3);
 
             default:
                 throw new IllegalArgumentException("Unsupported authenticationType " + authentiationType);

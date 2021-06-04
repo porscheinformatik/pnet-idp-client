@@ -12,6 +12,7 @@ import org.springframework.security.saml2.provider.service.web.Saml2Authenticati
 public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml2AuthenticationRequestContextResolver
 {
     private static final String FORCE_AUTHENTICATION_ATTR = "poi.saml2.force_authn";
+    private static final String NIST_LEVEL_ATTR = "poi.saml2.nist_level";
 
     private Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyRegistrationResolver;
 
@@ -27,13 +28,15 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
 
         String authnRequestId = Saml2Utils.generateId();
         boolean forceAuthn = Saml2Utils.isForceAuthentication(request);
+        Integer nistLevel = Saml2Utils.getRequestedNistAuthenticationLevel(request);
 
         storeForceAuthentication(request, forceAuthn);
         storeAuthnRequestId(request, authnRequestId);
+        storeNistLevel(request, nistLevel);
 
         return new PartnerNetSaml2AuthenticationRequestContext(relyingParty, relyingParty.getEntityId(),
             relyingParty.getAssertionConsumerServiceLocation(), Saml2Utils.getRelayState(request), authnRequestId,
-            forceAuthn);
+            forceAuthn, nistLevel);
     }
 
     public void setRelyingPartyRegistrationResolver(
@@ -46,15 +49,17 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
     {
         private final String authnRequestId;
         private final boolean forceAuthn;
+        private final Integer nistLevel;
 
         public PartnerNetSaml2AuthenticationRequestContext(RelyingPartyRegistration relyingPartyRegistration,
             String issuer, String assertionConsumerServiceUrl, String relayState, String authnRequestId,
-            boolean forceAuthn)
+            boolean forceAuthn, Integer nistLevel)
         {
             super(relyingPartyRegistration, issuer, assertionConsumerServiceUrl, relayState);
 
             this.authnRequestId = authnRequestId;
             this.forceAuthn = forceAuthn;
+            this.nistLevel = nistLevel;
         }
 
         public String getAuthnRequestId()
@@ -65,6 +70,11 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
         public boolean isForceAuthn()
         {
             return forceAuthn;
+        }
+
+        public Integer getNistLevel()
+        {
+            return nistLevel;
         }
     }
 
@@ -83,5 +93,22 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
     public static boolean forceAuthenticationRequested(HttpServletRequest request)
     {
         return Boolean.TRUE.equals(request.getSession().getAttribute(FORCE_AUTHENTICATION_ATTR));
+    }
+
+    public static void storeNistLevel(HttpServletRequest request, Integer nistLevel)
+    {
+        if (nistLevel != null)
+        {
+            request.getSession().setAttribute(NIST_LEVEL_ATTR, nistLevel);
+        }
+        else
+        {
+            request.getSession().removeAttribute(NIST_LEVEL_ATTR);
+        }
+    }
+
+    public static Integer getRequestedNistLevel(HttpServletRequest request)
+    {
+        return (Integer) request.getSession().getAttribute(NIST_LEVEL_ATTR);
     }
 }
