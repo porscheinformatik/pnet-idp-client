@@ -241,6 +241,11 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
                 saml2Login.failureUrl(failureUrl);
             }
         });
+
+        builder
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
+            .permitAll();
     }
 
     private AuthenticationSuccessHandler getSuccessHandler()
@@ -272,11 +277,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     {
         builder.addFilterBefore(buildMetadataFilter(), Saml2WebSsoAuthenticationFilter.class);
         builder.saml2Login().authenticationManager(builder.getSharedObject(AuthenticationManager.class));
-
-        builder
-            .authorizeRequests()
-            .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
-            .permitAll();
     }
 
     private Filter buildMetadataFilter()
