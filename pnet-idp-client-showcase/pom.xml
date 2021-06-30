@@ -12,12 +12,6 @@
     <name>Partner.Net IDP Client Showcase</name>
     <description>Showcase for the client side of single sign on via the Patner.Net Identity Provider</description>
 
-    <scm>
-        <connection>scm:git:https://github.com/porscheinformatik/pnet-idp-client.git</connection>
-        <developerConnection>scm:git:https://github.com/porscheinformatik/pnet-idp-client.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
