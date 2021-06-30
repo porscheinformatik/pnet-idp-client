@@ -31,6 +31,8 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
 import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
@@ -55,6 +57,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper;
     private AuthenticationFailureHandler failureHandler;
     private String failureUrl;
+    private AuthenticationSuccessHandler successHandler;
 
     private Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyResolver;
 
@@ -193,6 +196,21 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         return this;
     }
 
+    /**
+     * Override the default {@link AuthenticationSuccessHandler} with a custom implementation. The default handler is
+     * based on the {@link SavedRequestAwareAuthenticationSuccessHandler} and sanitizes the redirectUrl to strip off all
+     * SAML Processing related query parameters.
+     * 
+     * @param successHandler the {@link AuthenticationSuccessHandler} to use
+     * @return the builder for a fluent api
+     */
+    public PartnerNetSaml2Configurer successHandler(AuthenticationSuccessHandler successHandler)
+    {
+        this.successHandler = successHandler;
+
+        return this;
+    }
+
     @Override
     public void init(HttpSecurity builder) throws Exception
     {
@@ -212,6 +230,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
                 .authenticationConverter(new HttpRequestContextAwareSaml2AuthenticationConverter(relyingPartyResolver));
 
             saml2Login.loginProcessingUrl(DEFAULT_LOGIN_PROCESSING_URL);
+            saml2Login.successHandler(getSuccessHandler());
 
             if (failureHandler != null)
             {
@@ -222,6 +241,19 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
                 saml2Login.failureUrl(failureUrl);
             }
         });
+    }
+
+    private AuthenticationSuccessHandler getSuccessHandler()
+    {
+        if (successHandler != null)
+        {
+            return successHandler;
+        }
+
+        SavedRequestAwareAuthenticationSuccessHandler handler = new SavedRequestAwareAuthenticationSuccessHandler();
+        handler.setRedirectStrategy(new Saml2UrlSanitizingRedirectStrategy());
+
+        return handler;
     }
 
     private void customizeRequestContextResolver(HttpSecurity builder,
