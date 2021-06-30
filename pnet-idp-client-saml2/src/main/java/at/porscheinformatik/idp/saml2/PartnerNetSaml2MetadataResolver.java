@@ -5,6 +5,7 @@ import static at.porscheinformatik.idp.saml2.XmlUtils.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
@@ -233,12 +234,12 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
     {
         EncryptionConfiguration config = SecurityConfigurationSupport.getGlobalEncryptionConfiguration();
 
-        List<String> allowedAlgorithms = config //
+        Set<String> allowedAlgorithms = config //
             .getDataEncryptionAlgorithms()
             .stream()
             .filter(algorithm -> AlgorithmSupport
                 .validateAlgorithmURI(algorithm, config.getWhitelistedAlgorithms(), config.getBlacklistedAlgorithms()))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
 
         for (String allowedAlgorithm : allowedAlgorithms)
         {

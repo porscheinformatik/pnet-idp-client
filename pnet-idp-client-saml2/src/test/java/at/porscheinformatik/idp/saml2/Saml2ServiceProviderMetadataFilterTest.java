@@ -112,8 +112,8 @@ public class Saml2ServiceProviderMetadataFilterTest
             .stream()
             .map(EncryptionMethod::getAlgorithm)
             .collect(Collectors.toList());
-        assertThat(encryptionMethods, containsInAnyOrder(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM,
-            EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256_GCM));
+        assertThat(encryptionMethods.toString(), encryptionMethods, containsInAnyOrder(
+            EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM, EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256_GCM));
 
         EntityAttributes entityAttributes =
             getObjectOfType(entityDescriptor.getExtensions().getUnknownXMLObjects(), EntityAttributes.class);
