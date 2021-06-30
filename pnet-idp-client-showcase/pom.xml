@@ -79,7 +79,7 @@
                                 <workdir>/opt/app-root</workdir>
 
                                 <entryPoint>
-                                    <shell>java $JAVA_OPTS -jar pnet-idp-client-showcase-${version}.jar</shell>
+                                    <shell>java $JAVA_OPTS -jar pnet-idp-client-showcase-${project.version}.jar</shell>
                                 </entryPoint>
 
                                 <assembly>
