@@ -24,22 +24,25 @@ public class VerifyAuthnInstantMessageHandler extends AbstractSuccessResponseMes
     {
         HttpRequestContext httpRequestContext = getHttpRequestContext(messageContext);
 
-        // When authentication is not forced, also old authentications are valid.
-        if (!httpRequestContext.isForceAuthentication())
-        {
-            return;
-        }
-
         AuthnStatement authnStatement = response.getAssertions().get(0).getAuthnStatements().get(0);
         DateTime authnInstant = authnStatement.getAuthnInstant();
 
-        if (isOutdated(authnInstant))
+        // When authentication is not forced, also old authentications are valid.
+        if (httpRequestContext.isForceAuthentication() && isOutdated(authnInstant, 5 * 60))
         {
             throw new MessageHandlerException("Outdated AuthnInstant found for forced authentication.");
         }
+
+        Integer sessionAge = httpRequestContext.getSessionAge();
+
+        if (sessionAge != null && isOutdated(authnInstant, sessionAge))
+        {
+            throw new MessageHandlerException(
+                String.format("Outdated AuthnInstant found for requested session age %s seconds.", sessionAge));
+        }
     }
 
-    private boolean isOutdated(DateTime authnInstant)
+    private boolean isOutdated(DateTime authnInstant, int sessionAgeSeconds)
     {
         if (authnInstant == null)
         {
@@ -47,8 +50,8 @@ public class VerifyAuthnInstantMessageHandler extends AbstractSuccessResponseMes
         }
 
         DateTime now = DateTime.now();
-        // The user must be authenticated in the last 5 minutes. Account for clock skew here.
-        DateTime expiration = authnInstant.plusMinutes(CLOCK_SKEW_IN_MINUTES).plusMinutes(5);
+        // Account for clock skew here.
+        DateTime expiration = authnInstant.plusMinutes(CLOCK_SKEW_IN_MINUTES).plusSeconds(sessionAgeSeconds);
         return expiration.isBefore(now);
     }
 

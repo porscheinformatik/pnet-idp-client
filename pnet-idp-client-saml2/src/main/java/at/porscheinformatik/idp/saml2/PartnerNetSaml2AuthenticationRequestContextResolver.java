@@ -12,6 +12,7 @@ import org.springframework.security.saml2.provider.service.web.Saml2Authenticati
 public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml2AuthenticationRequestContextResolver
 {
     private static final String FORCE_AUTHENTICATION_ATTR = "poi.saml2.force_authn";
+    private static final String SESSION_AGE_ATTR = "poi.saml2.session_age";
     private static final String NIST_LEVEL_ATTR = "poi.saml2.nist_level";
 
     private Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyRegistrationResolver;
@@ -28,6 +29,7 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
 
         String authnRequestId = Saml2Utils.generateId();
         boolean forceAuthn = Saml2Utils.isForceAuthentication(request);
+        Integer maxSessionAge = Saml2Utils.retrieveMaxSessionAge(request);
         Integer nistLevel = Saml2Utils.getRequestedNistAuthenticationLevel(request);
 
         storeForceAuthentication(request, forceAuthn);
@@ -36,7 +38,7 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
 
         return new PartnerNetSaml2AuthenticationRequestContext(relyingParty, relyingParty.getEntityId(),
             relyingParty.getAssertionConsumerServiceLocation(), Saml2Utils.getRelayState(request), authnRequestId,
-            forceAuthn, nistLevel);
+            forceAuthn, maxSessionAge, nistLevel);
     }
 
     public void setRelyingPartyRegistrationResolver(
@@ -49,16 +51,18 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
     {
         private final String authnRequestId;
         private final boolean forceAuthn;
+        private final Integer maxSessionAge;
         private final Integer nistLevel;
 
         public PartnerNetSaml2AuthenticationRequestContext(RelyingPartyRegistration relyingPartyRegistration,
             String issuer, String assertionConsumerServiceUrl, String relayState, String authnRequestId,
-            boolean forceAuthn, Integer nistLevel)
+            boolean forceAuthn, Integer maxSessionAge, Integer nistLevel)
         {
             super(relyingPartyRegistration, issuer, assertionConsumerServiceUrl, relayState);
 
             this.authnRequestId = authnRequestId;
             this.forceAuthn = forceAuthn;
+            this.maxSessionAge = maxSessionAge;
             this.nistLevel = nistLevel;
         }
 
@@ -70,6 +74,11 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
         public boolean isForceAuthn()
         {
             return forceAuthn;
+        }
+
+        public Integer getMaxSessionAge()
+        {
+            return maxSessionAge;
         }
 
         public Integer getNistLevel()
@@ -93,6 +102,16 @@ public class PartnerNetSaml2AuthenticationRequestContextResolver implements Saml
     public static boolean forceAuthenticationRequested(HttpServletRequest request)
     {
         return Boolean.TRUE.equals(request.getSession().getAttribute(FORCE_AUTHENTICATION_ATTR));
+    }
+
+    public static void storeSessionAge(HttpServletRequest request, Integer maxSessionAge)
+    {
+        request.getSession().setAttribute(SESSION_AGE_ATTR, maxSessionAge);
+    }
+
+    public static Integer sessionAgeRequested(HttpServletRequest request)
+    {
+        return (Integer) request.getSession().getAttribute(SESSION_AGE_ATTR);
     }
 
     public static void storeNistLevel(HttpServletRequest request, Integer nistLevel)

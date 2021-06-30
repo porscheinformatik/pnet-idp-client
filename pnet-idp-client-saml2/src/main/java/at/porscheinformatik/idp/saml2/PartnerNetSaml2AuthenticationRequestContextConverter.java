@@ -37,7 +37,7 @@ public class PartnerNetSaml2AuthenticationRequestContextConverter
         return XmlUtils
             .authnRequest(partnerNetContext.getIssuer(), partnerNetContext.getDestination(),
                 partnerNetContext.getAssertionConsumerServiceUrl(), partnerNetContext.getAuthnRequestId(),
-                partnerNetContext.isForceAuthn(), authnContextClasses);
+                partnerNetContext.isForceAuthn(), partnerNetContext.getMaxSessionAge(), authnContextClasses);
     }
 
 }

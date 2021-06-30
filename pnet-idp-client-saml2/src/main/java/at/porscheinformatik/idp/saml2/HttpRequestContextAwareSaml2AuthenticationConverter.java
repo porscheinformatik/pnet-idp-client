@@ -80,5 +80,10 @@ public class HttpRequestContextAwareSaml2AuthenticationConverter implements Auth
         {
             return forceAuthenticationRequested(request);
         }
+
+        public Integer getSessionAge()
+        {
+            return sessionAgeRequested(request);
+        }
     }
 }

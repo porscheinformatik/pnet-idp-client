@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.opensaml.core.config.ConfigurationService;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.impl.BasicDecryptionConfiguration;
@@ -19,6 +21,10 @@ import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 import org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.springframework.security.saml2.core.OpenSamlInitializationService;
+
+import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeBuilder;
+import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeMarshaller;
+import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeUnmarshaller;
 
 /**
  * @author Daniel Furtlehner
@@ -42,8 +48,18 @@ public final class Saml2Initializer
     {
         OpenSamlInitializationService.initialize();
 
+        setupExtensions();
         setupSignatureAlgorithmWhitelists();
         setupEncryptionAlgorithmWhitelist();
+    }
+
+    private static void setupExtensions()
+    {
+        XMLObjectProviderRegistry registry = ConfigurationService.get(XMLObjectProviderRegistry.class);
+
+        registry
+            .registerObjectProvider(XmlUtils.MAX_SESSION_AGE_ELEMENT_NAME, new MaxSessionAgeBuilder(),
+                new MaxSessionAgeMarshaller(), new MaxSessionAgeUnmarshaller());
     }
 
     private static void setupSignatureAlgorithmWhitelists()
