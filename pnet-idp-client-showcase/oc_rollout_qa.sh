@@ -32,14 +32,14 @@ then
 fi
 
 read -r -d '' J_OPTS << EOM
-    -Dspring.profiles.active=dev,docker
+    -Dspring.profiles.active=qa,docker
     -Doidc.client.id=$CLIENT_ID
     -Doidc.client.secret=$CLIENT_SECRET
 EOM
 
 oc project $PROJECT &>/dev/null
 
-oc process -f oc_template.yml ENVIRONMENT=dev IMAGE_NAME="$IMAGE_NAME" ROUTE_URL="$ROUTE_URL" JAVA_OPTS="$J_OPTS" | oc apply -f -
-oc import-image $PROJECT/pnet-idp-client-showcase-dev:latest
-oc rollout status dc/pnet-idp-client-showcase-dev
+oc process -f oc_template.yml ENVIRONMENT=qa IMAGE_NAME="$IMAGE_NAME" ROUTE_URL="$ROUTE_URL" JAVA_OPTS="$J_OPTS" | oc apply -f -
+oc import-image $PROJECT/pnet-idp-client-showcase-qa:latest
+oc rollout status dc/pnet-idp-client-showcase-qa
 
