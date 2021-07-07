@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -78,6 +79,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
         return OAuth2AuthorizationRequest
             .from(authorizationRequest) //
+            .scope(OidcScopes.OPENID)
             .additionalParameters(additionalParameters)
             .attributes(attributes)
             .build();
