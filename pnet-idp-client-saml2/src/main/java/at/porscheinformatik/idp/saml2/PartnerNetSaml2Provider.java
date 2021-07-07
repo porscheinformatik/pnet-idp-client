@@ -30,7 +30,7 @@ public enum PartnerNetSaml2Provider
         @Override
         public String getEntityId()
         {
-            return "https://pnet-identity-web-app-dev.ext.ocp.porscheinformatik.cloud/identity/saml2";
+            return "https://pnet-identity-web-app-dev.nonprod1.ocp.porscheinformatik.cloud/identity/saml2";
         }
     },
     LOCAL
@@ -41,17 +41,6 @@ public enum PartnerNetSaml2Provider
             return "https://localhost:5443/identity/saml2";
         }
     };
-
-    //    /**
-    //     * Create a new {@link org.springframework.security.oauth2.client.registration.ClientRegistration.Builder
-    //     * ClientRegistration.Builder} pre-configured with provider defaults.
-    //     * 
-    //     * @return a builder instance
-    //     */
-    //    public ClientRegistration.Builder getBuilder()
-    //    {
-    //        return ClientRegistrations.fromOidcIssuerLocation(getIssuer()).registrationId("pnet");
-    //    }
 
     /**
      * Get the entity id of the Identity Provider
