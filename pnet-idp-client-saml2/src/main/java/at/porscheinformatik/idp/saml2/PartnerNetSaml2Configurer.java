@@ -297,7 +297,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     {
         if (responseParser == null)
         {
-            return new PartnerNetSaml2ResponseParser(entityId, getAuthoritiesMapper());
+            return new PartnerNetSaml2ResponseParser(getAuthoritiesMapper());
         }
 
         return responseParser;

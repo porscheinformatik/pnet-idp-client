@@ -31,15 +31,14 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
     private final String attributePrefix;
     private final BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper;
 
-    public PartnerNetSaml2ResponseParser(String idpEntityId,
+    public PartnerNetSaml2ResponseParser(
         BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper)
     {
         super();
 
-        Assert.notNull(idpEntityId, "The Identity Provider ID must not be null");
         Assert.notNull(authoritiesMapper, "authoritiesMapper must not be null");
 
-        attributePrefix = idpEntityId + "/attributes/";
+        attributePrefix = "https://identity.auto-partner.net/identity/saml2/attributes/";
         this.authoritiesMapper = authoritiesMapper;
     }
 
