@@ -89,12 +89,12 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
     private void addRequestedPreselectTenantParameter(HttpServletRequest request, Map<String, Object> additionalParameters)
     {
-      String[] tenant = request.getParameterValues(PRESELECT_TENANT_PARAM);
-      if (tenant == null)
+      String tenant = request.getParameter(PRESELECT_TENANT_PARAM);
+      if (tenant == null || "null".equals(tenant))
       {
         return;
       }
-      additionalParameters.put(PRESELECT_TENANT_PARAM, tenant[0]);
+      additionalParameters.put(PRESELECT_TENANT_PARAM, tenant);
     }
 
     private void addRequestedAcrParameter(HttpServletRequest request, Map<String, Object> additionalParameters,
