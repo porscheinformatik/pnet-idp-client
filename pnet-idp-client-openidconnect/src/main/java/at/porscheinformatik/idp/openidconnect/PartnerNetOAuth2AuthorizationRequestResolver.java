@@ -26,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver
 {
     public static final String ACR_PARAM = "acr";
+    public static final String PRESELECT_TENANT_PARAM = "preselect_tenant";
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
 
     public static UriComponentsBuilder requestNistAuthenticationLevels(UriComponentsBuilder uri,
@@ -76,6 +77,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         Map<String, Object> attributes = new LinkedHashMap<>(authorizationRequest.getAttributes());
 
         addRequestedAcrParameter(request, additionalParameters, attributes);
+        addRequestedPreselectTenantParameter(request, additionalParameters);
 
         return OAuth2AuthorizationRequest
             .from(authorizationRequest) //
@@ -83,6 +85,16 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
             .additionalParameters(additionalParameters)
             .attributes(attributes)
             .build();
+    }
+
+    private void addRequestedPreselectTenantParameter(HttpServletRequest request, Map<String, Object> additionalParameters)
+    {
+      String[] tenant = request.getParameterValues(PRESELECT_TENANT_PARAM);
+      if (tenant == null)
+      {
+        return;
+      }
+      additionalParameters.put(PRESELECT_TENANT_PARAM, tenant[0]);
     }
 
     private void addRequestedAcrParameter(HttpServletRequest request, Map<String, Object> additionalParameters,
