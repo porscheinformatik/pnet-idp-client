@@ -40,6 +40,16 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         return uri;
     }
 
+    public static UriComponentsBuilder requestPreselectTenant(UriComponentsBuilder uri,
+    String preseletedTenant)
+    {
+      if (preseletedTenant != null)
+      {
+        uri = uri.queryParam(PRESELECT_TENANT_PARAM, preseletedTenant);
+      }
+      return uri;
+    }
+
     public PartnerNetOAuth2AuthorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository,
         String authorizationRequestBaseUri)
     {
