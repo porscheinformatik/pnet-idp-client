@@ -3,6 +3,8 @@
  */
 package at.porscheinformatik.idp.openidconnect;
 
+import static java.util.Objects.*;
+
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -30,7 +32,7 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
     {
         this.issuerUrl = issuerUrl;
         this.registrationId = registrationId;
-        this.clientId = clientId;
+        this.clientId = requireNonNull(clientId, "Client Id must not be null");
         this.clientSecret = clientSecret;
     }
 
