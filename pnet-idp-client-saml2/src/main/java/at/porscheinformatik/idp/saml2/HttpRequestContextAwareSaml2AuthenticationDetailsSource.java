@@ -7,32 +7,18 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationToken;
-import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
-import org.springframework.security.saml2.provider.service.web.Saml2AuthenticationTokenConverter;
-import org.springframework.security.web.authentication.AuthenticationConverter;
 
-public class HttpRequestContextAwareSaml2AuthenticationConverter implements AuthenticationConverter
+import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
+
+public class HttpRequestContextAwareSaml2AuthenticationDetailsSource
+    implements AuthenticationDetailsSource<HttpServletRequest, HttpRequestContext>
 {
-
-    private final Saml2AuthenticationTokenConverter delegate;
-
-    public HttpRequestContextAwareSaml2AuthenticationConverter(
-        Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyRegistrationResolver)
-    {
-        delegate = new Saml2AuthenticationTokenConverter(relyingPartyRegistrationResolver);
-    }
-
     @Override
-    public Authentication convert(HttpServletRequest request)
+    public HttpRequestContext buildDetails(HttpServletRequest request)
     {
-        Saml2AuthenticationToken authentication = delegate.convert(request);
-
-        authentication.setDetails(new HttpRequestContext(request));
-
-        return authentication;
+        return new HttpRequestContext(request);
     }
 
     public static class HttpRequestContext
@@ -86,4 +72,5 @@ public class HttpRequestContextAwareSaml2AuthenticationConverter implements Auth
             return sessionAgeRequested(request);
         }
     }
+
 }

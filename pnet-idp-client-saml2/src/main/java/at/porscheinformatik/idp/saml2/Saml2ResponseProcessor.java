@@ -21,7 +21,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationToken;
 
-import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationConverter.HttpRequestContext;
+import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
 import at.porscheinformatik.idp.saml2.response.CheckAssertionStructureMessageHandler;
 import at.porscheinformatik.idp.saml2.response.CheckAudienceRestrictionMessageHandler;
 import at.porscheinformatik.idp.saml2.response.CheckEndpointMessageHandler;

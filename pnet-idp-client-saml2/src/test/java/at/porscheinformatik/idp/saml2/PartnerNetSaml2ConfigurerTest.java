@@ -70,8 +70,8 @@ public class PartnerNetSaml2ConfigurerTest
         DefaultSecurityFilterChain filterChain = build(configurer, http);
 
         Saml2WebSsoAuthenticationFilter filter = assertFilter(filterChain, Saml2WebSsoAuthenticationFilter.class);
-        HttpRequestContextAwareSaml2AuthenticationConverter converter = assertFieldValue(filter,
-            "authenticationConverter", HttpRequestContextAwareSaml2AuthenticationConverter.class);
+        HttpRequestContextAwareSaml2AuthenticationDetailsSource converter = assertFieldValue(filter,
+            "authenticationConverter", HttpRequestContextAwareSaml2AuthenticationDetailsSource.class);
         Saml2AuthenticationTokenConverter delegate =
             assertFieldValue(converter, "delegate", Saml2AuthenticationTokenConverter.class);
         DefaultRelyingPartyRegistrationResolver resolver = assertFieldValue(delegate,

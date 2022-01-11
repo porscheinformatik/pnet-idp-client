@@ -9,7 +9,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationToken;
 
-import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationConverter.HttpRequestContext;
+import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
 import at.porscheinformatik.idp.saml2.Saml2ResponseProcessor.Saml2AuthenticationTokenContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

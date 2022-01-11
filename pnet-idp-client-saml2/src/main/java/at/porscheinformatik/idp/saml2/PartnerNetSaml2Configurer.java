@@ -226,8 +226,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
         builder.saml2Login(saml2Login -> {
             saml2Login.relyingPartyRegistrationRepository(relyingPartyRegistrationRepository);
-            saml2Login
-                .authenticationConverter(new HttpRequestContextAwareSaml2AuthenticationConverter(relyingPartyResolver));
+            saml2Login.authenticationDetailsSource(new HttpRequestContextAwareSaml2AuthenticationDetailsSource());
 
             saml2Login.loginProcessingUrl(DEFAULT_LOGIN_PROCESSING_URL);
             saml2Login.successHandler(getSuccessHandler());
