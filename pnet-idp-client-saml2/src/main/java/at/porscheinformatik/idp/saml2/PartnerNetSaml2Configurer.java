@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
@@ -36,6 +37,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
 import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
+import at.porscheinformatik.idp.saml2.workaround.SerializingFixHttpSessionSaml2AuthenticationRequestRepository;
 
 /**
  * @author Daniel Furtlehner
@@ -223,6 +225,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
         builder.setSharedObject(Saml2AuthenticationRequestFactory.class, buildRequestFactory());
         customizeRequestContextResolver(builder, relyingPartyResolver);
+        customizeSerializationFix(builder, relyingPartyResolver);
 
         builder.saml2Login(saml2Login -> {
             saml2Login.relyingPartyRegistrationRepository(relyingPartyRegistrationRepository);
@@ -245,6 +248,25 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
             .permitAll();
+    }
+
+    private void customizeSerializationFix(HttpSecurity builder,
+        Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyResolver2)
+    {
+        ApplicationContext appContext =
+            requireNonNull(builder.getSharedObject(ApplicationContext.class), "No application context configured");
+
+        try
+        {
+            SerializingFixHttpSessionSaml2AuthenticationRequestRepository repository =
+                appContext.getBean(SerializingFixHttpSessionSaml2AuthenticationRequestRepository.class);
+
+            repository.setRelyingPartyRegistrationResolver(relyingPartyResolver);
+        }
+        catch (NoSuchBeanDefinitionException e)
+        {
+            // If not registered, nothing to do
+        }
     }
 
     private AuthenticationSuccessHandler getSuccessHandler()

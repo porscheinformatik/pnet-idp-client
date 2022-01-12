@@ -26,7 +26,7 @@ import at.porscheinformatik.idp.saml2.Saml2CredentialsProperties;
 @Configuration
 @EnableWebSecurity
 @EnablePartnerNetOpenIdConnect
-@EnablePartnerNetSaml2
+@EnablePartnerNetSaml2(registerSerializationFix = true)
 public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter implements EnvironmentAware
 {
     private static final Profiles PROD = Profiles.of("prod");
