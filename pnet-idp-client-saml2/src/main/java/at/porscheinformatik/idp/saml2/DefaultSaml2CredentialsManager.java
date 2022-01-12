@@ -32,6 +32,8 @@ import org.springframework.util.Assert;
 
 public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
 {
+    private static final String MISSING_KEYINFO_MESSAGE =
+        "At least one Saml2KeyInfoConfiguration with usage = DECRYPTION must be set. Partner.Net Authentication does not work without a decryption key.";
     private static final Duration WARNING_TRESHOLD = Duration.ofDays(60);
     private static final long NOTIFICATION_INTERVAL_MILLIS = 24 * 60 * 60 * 1000L;
     private static final Logger LOG = LoggerFactory.getLogger(Saml2CredentialsManager.class);
@@ -126,9 +128,9 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
 
     private void setupEntries(List<Saml2CredentialsConfig> newConfig) throws Exception
     {
-        List<Saml2X509Credential> newEntries = new ArrayList<>();
+        validateNewConfig(newConfig);
 
-        Assert.notEmpty(newConfig, "At least one Saml2KeyInfoConfiguration must be set");
+        List<Saml2X509Credential> newEntries = new ArrayList<>();
 
         //Create a key info for each config entry
         for (Saml2CredentialsConfig config : newConfig)
@@ -164,6 +166,17 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
         removeOutdatedCertificates(newEntries);
 
         credentials = newEntries;
+    }
+
+    private void validateNewConfig(List<Saml2CredentialsConfig> newConfig)
+    {
+        Assert.notEmpty(newConfig, MISSING_KEYINFO_MESSAGE);
+
+        newConfig
+            .stream()
+            .filter(entry -> entry.getUsage() == Saml2X509CredentialType.DECRYPTION)
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException(MISSING_KEYINFO_MESSAGE));
     }
 
     /**
