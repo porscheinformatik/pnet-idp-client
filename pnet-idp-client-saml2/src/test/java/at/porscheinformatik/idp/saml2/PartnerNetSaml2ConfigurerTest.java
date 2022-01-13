@@ -22,8 +22,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.saml2.provider.service.authentication.OpenSamlAuthenticationRequestFactory;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationRequestFilter;
-import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
-import org.springframework.security.saml2.provider.service.web.Saml2AuthenticationTokenConverter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.ReflectionUtils;
@@ -70,14 +68,8 @@ public class PartnerNetSaml2ConfigurerTest
         DefaultSecurityFilterChain filterChain = build(configurer, http);
 
         Saml2WebSsoAuthenticationFilter filter = assertFilter(filterChain, Saml2WebSsoAuthenticationFilter.class);
-        HttpRequestContextAwareSaml2AuthenticationDetailsSource converter = assertFieldValue(filter,
-            "authenticationConverter", HttpRequestContextAwareSaml2AuthenticationDetailsSource.class);
-        Saml2AuthenticationTokenConverter delegate =
-            assertFieldValue(converter, "delegate", Saml2AuthenticationTokenConverter.class);
-        DefaultRelyingPartyRegistrationResolver resolver = assertFieldValue(delegate,
-            "relyingPartyRegistrationResolver", DefaultRelyingPartyRegistrationResolver.class);
-        assertFieldValue(resolver, "relyingPartyRegistrationRepository",
-            ReloadingRelyingPartyRegistrationRepository.class);
+        assertFieldValue(filter, "authenticationDetailsSource",
+            HttpRequestContextAwareSaml2AuthenticationDetailsSource.class);
     }
 
     @Test
