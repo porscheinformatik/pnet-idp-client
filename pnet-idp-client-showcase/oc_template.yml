@@ -66,6 +66,13 @@ objects:
           env:
           - name: JAVA_OPTS
             value: ${JAVA_OPTS}
+          envFrom:
+            - secretRef:
+                name: ${APPLICATION_NAME}-${ENVIRONMENT}
+          volumeMounts:
+          - name: certificate-volume
+            mountPath: "/opt/app-root/certificates"
+            readOnly: true
           readinessProbe:
             tcpSocket:
               port: ${{HTTP_PORT}}
@@ -81,6 +88,10 @@ objects:
             limits:
               cpu: 200m
               memory: 550Mi
+        volumes:
+        - name: certificate-volume
+          secret:
+           secretName: ${APPLICATION_NAME}-${ENVIRONMENT}-certificates
     triggers:
     - type: "ConfigChange"
     - type: "ImageChange"
