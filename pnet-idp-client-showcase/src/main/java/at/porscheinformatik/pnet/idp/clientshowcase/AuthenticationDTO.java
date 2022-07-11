@@ -29,11 +29,17 @@ public class AuthenticationDTO
 
     public static AuthenticationDTO of(PartnerNetOpenIdConnectUser principal)
     {
-        List<Locale> locales = principal //
-            .getAdditionalLocales()
-            .stream()
-            .map(Locale::forLanguageTag)
-            .collect(Collectors.toList());
+        List<Locale> locales = null;
+
+        if (principal //
+            .getAdditionalLocales() != null)
+        {
+            locales = principal //
+                .getAdditionalLocales()
+                .stream()
+                .map(Locale::forLanguageTag)
+                .collect(Collectors.toList());
+        }
 
         return new AuthenticationDTO("OpenId Connect", principal.getExternalId(),
             principal.getNistAuthenticationLevel() > 2, principal.getTransientSessionId(),
