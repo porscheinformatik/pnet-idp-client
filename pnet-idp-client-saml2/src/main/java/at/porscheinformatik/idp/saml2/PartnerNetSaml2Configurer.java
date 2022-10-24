@@ -13,23 +13,20 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import javax.servlet.Filter;
-import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.saml2.provider.service.authentication.OpenSamlAuthenticationRequestFactory;
-import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationRequestFactory;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
-import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
+import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml3AuthenticationRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.Saml2AuthenticationRequestResolver;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -59,7 +56,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private String failureUrl;
     private AuthenticationSuccessHandler successHandler;
 
-    private Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyResolver;
+    private RelyingPartyRegistrationResolver relyingPartyResolver;
 
     public PartnerNetSaml2Configurer(PartnerNetSaml2Provider provider)
     {
@@ -221,12 +218,10 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
         builder.authenticationProvider(buildAuthenticationProvider());
 
-        builder.setSharedObject(Saml2AuthenticationRequestFactory.class, buildRequestFactory());
-        customizeRequestContextResolver(builder, relyingPartyResolver);
-
         builder.saml2Login(saml2Login -> {
             saml2Login.relyingPartyRegistrationRepository(relyingPartyRegistrationRepository);
             saml2Login.authenticationDetailsSource(new HttpRequestContextAwareSaml2AuthenticationDetailsSource());
+            saml2Login.authenticationRequestResolver(buildRequestResolver(relyingPartyResolver));
 
             saml2Login.loginProcessingUrl(DEFAULT_LOGIN_PROCESSING_URL);
             saml2Login.successHandler(getSuccessHandler());
@@ -258,17 +253,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         handler.setRedirectStrategy(new Saml2UrlSanitizingRedirectStrategy());
 
         return handler;
-    }
-
-    private void customizeRequestContextResolver(HttpSecurity builder,
-        Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyResolver)
-    {
-        ApplicationContext appContext =
-            requireNonNull(builder.getSharedObject(ApplicationContext.class), "No application context configured");
-
-        PartnerNetSaml2AuthenticationRequestContextResolver resolver =
-            appContext.getBean(PartnerNetSaml2AuthenticationRequestContextResolver.class);
-        resolver.setRelyingPartyRegistrationResolver(relyingPartyResolver);
     }
 
     @Override
@@ -343,10 +327,12 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         return repository;
     }
 
-    private Saml2AuthenticationRequestFactory buildRequestFactory()
+    private Saml2AuthenticationRequestResolver buildRequestResolver(
+        RelyingPartyRegistrationResolver relyingPartyRegistrationResolver)
     {
-        OpenSamlAuthenticationRequestFactory factory = new OpenSamlAuthenticationRequestFactory();
-        factory.setAuthenticationRequestContextConverter(new PartnerNetSaml2AuthenticationRequestContextConverter());
+        OpenSaml3AuthenticationRequestResolver factory =
+            new OpenSaml3AuthenticationRequestResolver(relyingPartyRegistrationResolver);
+        factory.setAuthnRequestCustomizer(new PartnerNetSaml2AuthnRequestCustomizer());
 
         return factory;
     }

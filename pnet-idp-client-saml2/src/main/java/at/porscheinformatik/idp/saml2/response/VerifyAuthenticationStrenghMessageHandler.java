@@ -1,7 +1,7 @@
 package at.porscheinformatik.idp.saml2.response;
 
 import static at.porscheinformatik.idp.saml2.AuthnContextClass.*;
-import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationRequestContextResolver.*;
+import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationRequestUtils.*;
 import static org.springframework.util.CollectionUtils.*;
 
 import org.opensaml.messaging.context.MessageContext;

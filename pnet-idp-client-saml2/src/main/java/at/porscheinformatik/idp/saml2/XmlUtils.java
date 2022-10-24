@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
@@ -31,12 +30,9 @@ import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
-import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.w3c.dom.Element;
@@ -157,39 +153,8 @@ public final class XmlUtils
 
     }
 
-    public static AuthnRequest authnRequest(String spEntityId, String destination, String assertionConsumerServiceUrl,
-        String id, boolean forceAuthn, Integer sessionAgeInSeconds,
-        @Nonnull List<AuthnContextClass> authnContextClasses)
-    {
-        AuthnRequest request = createSamlObject(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        request.setID(id);
-        request.setVersion(SAMLVersion.VERSION_20);
-        request.setIssueInstant(DateTime.now());
-        request.setForceAuthn(forceAuthn);
-        request.setIssuer(issuer(spEntityId));
-        request.setAssertionConsumerServiceURL(assertionConsumerServiceUrl);
 
-        if (destination != null)
-        {
-            request.setDestination(destination);
-        }
-
-        if (!authnContextClasses.isEmpty())
-        {
-            request.setRequestedAuthnContext(requestedAuthnContext(authnContextClasses));
-        }
-
-        if (sessionAgeInSeconds != null)
-        {
-            request.setExtensions(createSamlObject(Extensions.DEFAULT_ELEMENT_NAME));
-
-            request.getExtensions().getUnknownXMLObjects().add(maxSessionAgeRequest(sessionAgeInSeconds));
-        }
-
-        return request;
-    }
-
-    private static MaxSessionAge maxSessionAgeRequest(Integer sessionAgeInSeconds)
+    public static MaxSessionAge maxSessionAgeRequest(Integer sessionAgeInSeconds)
     {
         MaxSessionAge sessionAgeRequest = createXmlObject(MAX_SESSION_AGE_ELEMENT_NAME);
 
@@ -198,7 +163,7 @@ public final class XmlUtils
         return sessionAgeRequest;
     }
 
-    private static RequestedAuthnContext requestedAuthnContext(List<AuthnContextClass> authnContextClasses)
+    public static RequestedAuthnContext requestedAuthnContext(List<AuthnContextClass> authnContextClasses)
     {
         RequestedAuthnContext authnContext = createSamlObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
         authnContext.setComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);

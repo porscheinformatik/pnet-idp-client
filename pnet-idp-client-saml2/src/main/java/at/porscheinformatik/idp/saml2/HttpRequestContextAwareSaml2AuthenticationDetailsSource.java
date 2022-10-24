@@ -1,6 +1,6 @@
 package at.porscheinformatik.idp.saml2;
 
-import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationRequestContextResolver.*;
+import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationRequestUtils.*;
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 
 import java.util.Objects;

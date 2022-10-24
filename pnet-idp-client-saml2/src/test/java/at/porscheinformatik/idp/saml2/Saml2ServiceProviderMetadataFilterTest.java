@@ -34,7 +34,6 @@ import org.opensaml.security.credential.UsageType;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.X509Data;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;
@@ -44,6 +43,7 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.Saml2MessageBinding;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
+import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -187,7 +187,7 @@ public class Saml2ServiceProviderMetadataFilterTest
 
     private Saml2ServiceProviderMetadataFilter buildFilter() throws Exception
     {
-        Converter<HttpServletRequest, RelyingPartyRegistration> registrationResolver =
+        RelyingPartyRegistrationResolver registrationResolver =
             new DefaultRelyingPartyRegistrationResolver(buildRelyingPartyRepository());
         Saml2MetadataResolver metadataResolver = new PartnerNetSaml2MetadataResolver();
 

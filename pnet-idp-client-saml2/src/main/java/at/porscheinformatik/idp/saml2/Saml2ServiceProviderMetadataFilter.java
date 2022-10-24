@@ -10,10 +10,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
+import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,12 +24,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter
 {
     private final RequestMatcher requestMatcher;
-    private final Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyRegistrationResolver;
+    private final RelyingPartyRegistrationResolver relyingPartyRegistrationResolver;
     private final Saml2MetadataResolver metadataResolver;
 
     public Saml2ServiceProviderMetadataFilter(String metadataProcessingUrl,
-        Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyRegistrationResolver,
-        Saml2MetadataResolver metadataResolver)
+        RelyingPartyRegistrationResolver relyingPartyRegistrationResolver, Saml2MetadataResolver metadataResolver)
     {
         super();
 
@@ -51,7 +50,7 @@ public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter
 
         try
         {
-            RelyingPartyRegistration relyingPartyRegistration = relyingPartyRegistrationResolver.convert(request);
+            RelyingPartyRegistration relyingPartyRegistration = relyingPartyRegistrationResolver.resolve(request, null);
             String metadata = metadataResolver.resolve(relyingPartyRegistration);
 
             response.setContentType("application/samlmetadata+xml");

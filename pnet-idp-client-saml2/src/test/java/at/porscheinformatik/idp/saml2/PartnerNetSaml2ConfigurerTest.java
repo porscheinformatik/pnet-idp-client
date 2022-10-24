@@ -19,9 +19,9 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.saml2.provider.service.authentication.OpenSamlAuthenticationRequestFactory;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationRequestFilter;
+import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml3AuthenticationRequestResolver;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.ReflectionUtils;
@@ -50,12 +50,9 @@ public class PartnerNetSaml2ConfigurerTest
 
         Saml2WebSsoAuthenticationRequestFilter filter =
             assertFilter(filterChain, Saml2WebSsoAuthenticationRequestFilter.class);
-        assertFieldValue(filter, "authenticationRequestContextResolver",
-            PartnerNetSaml2AuthenticationRequestContextResolver.class);
-        OpenSamlAuthenticationRequestFactory factory =
-            assertFieldValue(filter, "authenticationRequestFactory", OpenSamlAuthenticationRequestFactory.class);
-        assertFieldValue(factory, "authenticationRequestContextConverter",
-            PartnerNetSaml2AuthenticationRequestContextConverter.class);
+        OpenSaml3AuthenticationRequestResolver resolver =
+            assertFieldValue(filter, "authenticationRequestResolver", OpenSaml3AuthenticationRequestResolver.class);
+        assertFieldValue(resolver, "contextConsumer", PartnerNetSaml2AuthnRequestCustomizer.class);
     }
 
     @Test
@@ -151,7 +148,6 @@ public class PartnerNetSaml2ConfigurerTest
     {
         ObjectPostProcessor<Object> objectPostProcessor = new NoopPostProcessor();
         StaticApplicationContext applicationContext = new StaticApplicationContext();
-        applicationContext.registerBean(PartnerNetSaml2AuthenticationRequestContextResolver.class);
         applicationContext.refresh();
 
         AuthenticationManagerBuilder authenticationBuilder = new AuthenticationManagerBuilder(objectPostProcessor);
