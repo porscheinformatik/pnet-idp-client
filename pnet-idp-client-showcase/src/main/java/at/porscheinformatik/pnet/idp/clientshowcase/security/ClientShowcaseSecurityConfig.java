@@ -52,10 +52,10 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
                 .clientId(environment.getProperty("oidc.client.id"))
                 .clientSecret(environment.getProperty("oidc.client.secret")));
 
-        http
-            .apply(new PartnerNetSaml2Configurer(getPartnerNetSaml2Provider()) //
-                .credentials(samlCredentialsConfig)
-                .failureUrl("/loginerror"));
+        PartnerNetSaml2Configurer
+            .apply(http, getPartnerNetSaml2Provider(), false)
+            .credentials(samlCredentialsConfig)
+            .failureUrl("/loginerror");
 
         http.logout(logout -> {
             logout.logoutSuccessUrl("/logoutinfo");

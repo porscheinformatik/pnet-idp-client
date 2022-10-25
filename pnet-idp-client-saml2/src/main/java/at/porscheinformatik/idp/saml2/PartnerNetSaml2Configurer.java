@@ -39,6 +39,79 @@ import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
  */
 public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNetSaml2Configurer, HttpSecurity>
 {
+    /**
+     * 
+     */
+    /**
+     * @param http the http security to configure
+     * @param provider the authentication provider to use.
+     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
+     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
+     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
+     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
+     * @return the configurer for further customization
+     * @throws Exception when an exception occurs while configuring
+     */
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider,
+        boolean useAuthorizeHttpRequests) throws Exception
+    {
+        return apply(http, provider.getEntityId(), useAuthorizeHttpRequests);
+    }
+
+    /**
+     * @param http the http security to configure
+     * @param entityId the entity id of the identity provider to use
+     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
+     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
+     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
+     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
+     * @return the configurer for further customization
+     * @throws Exception when an exception occurs while configuring
+     */
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, boolean useAuthorizeHttpRequests)
+        throws Exception
+    {
+        return apply(http, entityId, entityId, useAuthorizeHttpRequests);
+    }
+
+    /**
+     * @param http the http security to configure
+     * @param entityId the entity id of the identity provider to use
+     * @param metadataUrl the URL pointing to the identity providers metadata
+     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
+     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
+     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
+     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
+     * @return the configurer for further customization
+     * @throws Exception when an exception occurs while configuring
+     */
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl,
+        boolean useAuthorizeHttpRequests) throws Exception
+    {
+        if (useAuthorizeHttpRequests)
+        {
+            http
+                .authorizeHttpRequests()
+                .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
+                .permitAll();
+        }
+        else
+        {
+            http
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
+                .permitAll();
+        }
+
+        return http.apply(new PartnerNetSaml2Configurer(entityId, metadataUrl));
+    }
+
     private static final String DEFAULT_REGISTRATION_ID = "pnet";
     private static final String DEFAULT_LOGIN_PROCESSING_URL = "/saml2/sso/post/{registrationId}";
     private static final String DEFAULT_ENTITY_ID_PATH = "/saml2/{registrationId}";
@@ -58,17 +131,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     private RelyingPartyRegistrationResolver relyingPartyResolver;
 
-    public PartnerNetSaml2Configurer(PartnerNetSaml2Provider provider)
-    {
-        this(provider.getEntityId());
-    }
-
-    public PartnerNetSaml2Configurer(String entityId)
-    {
-        this(entityId, entityId);
-    }
-
-    public PartnerNetSaml2Configurer(String entityId, String metadataUrl)
+    private PartnerNetSaml2Configurer(String entityId, String metadataUrl)
     {
         super();
 
@@ -235,11 +298,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
                 saml2Login.failureUrl(failureUrl);
             }
         });
-
-        builder
-            .authorizeRequests()
-            .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
-            .permitAll();
     }
 
     private AuthenticationSuccessHandler getSuccessHandler()

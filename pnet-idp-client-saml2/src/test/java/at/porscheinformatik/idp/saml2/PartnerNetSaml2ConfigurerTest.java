@@ -43,10 +43,9 @@ public class PartnerNetSaml2ConfigurerTest
     public void requestFilterIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer configurer = new PartnerNetSaml2Configurer(IDP_ENTITY_ID) //
-            .credentials(Saml2TestUtils::defaultCredentials);
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID, false).credentials(Saml2TestUtils::defaultCredentials);
 
-        DefaultSecurityFilterChain filterChain = build(configurer, http);
+        DefaultSecurityFilterChain filterChain = http.build();
 
         Saml2WebSsoAuthenticationRequestFilter filter =
             assertFilter(filterChain, Saml2WebSsoAuthenticationRequestFilter.class);
@@ -59,10 +58,11 @@ public class PartnerNetSaml2ConfigurerTest
     public void authenticationFilterIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer configurer = new PartnerNetSaml2Configurer(IDP_ENTITY_ID) //
+        PartnerNetSaml2Configurer
+            .apply(http, IDP_ENTITY_ID, false) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
-        DefaultSecurityFilterChain filterChain = build(configurer, http);
+        DefaultSecurityFilterChain filterChain = http.build();
 
         Saml2WebSsoAuthenticationFilter filter = assertFilter(filterChain, Saml2WebSsoAuthenticationFilter.class);
         assertFieldValue(filter, "authenticationDetailsSource",
@@ -73,10 +73,11 @@ public class PartnerNetSaml2ConfigurerTest
     public void metadataFilterIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer configurer = new PartnerNetSaml2Configurer(IDP_ENTITY_ID) //
+        PartnerNetSaml2Configurer
+            .apply(http, IDP_ENTITY_ID, false) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
-        DefaultSecurityFilterChain filterChain = build(configurer, http);
+        DefaultSecurityFilterChain filterChain = http.build();
 
         Saml2ServiceProviderMetadataFilter filter = assertFilter(filterChain, Saml2ServiceProviderMetadataFilter.class);
         AntPathRequestMatcher matcher = assertFieldValue(filter, "requestMatcher", AntPathRequestMatcher.class);
@@ -87,10 +88,11 @@ public class PartnerNetSaml2ConfigurerTest
     public void authenticationProviderIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer configurer = new PartnerNetSaml2Configurer(IDP_ENTITY_ID) //
+        PartnerNetSaml2Configurer
+            .apply(http, IDP_ENTITY_ID, false) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
-        DefaultSecurityFilterChain filterChain = build(configurer, http);
+        DefaultSecurityFilterChain filterChain = http.build();
 
         Saml2WebSsoAuthenticationFilter filter = assertFilter(filterChain, Saml2WebSsoAuthenticationFilter.class);
         ProviderManager manager = assertFieldValue(filter, "authenticationManager", ProviderManager.class);
@@ -107,9 +109,9 @@ public class PartnerNetSaml2ConfigurerTest
     public void missingCredentialsThrowsException() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer configurer = new PartnerNetSaml2Configurer(IDP_ENTITY_ID);
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID, false);
 
-        NullPointerException e = assertThrows(NullPointerException.class, () -> build(configurer, http));
+        NullPointerException e = assertThrows(NullPointerException.class, () -> http.build());
         assertThat(e.getMessage(), equalTo("No credentials configured"));
     }
 
@@ -135,13 +137,6 @@ public class PartnerNetSaml2ConfigurerTest
             .map(filter -> (FilterT) filter)
             .findAny()
             .orElse(null);
-    }
-
-    private DefaultSecurityFilterChain build(PartnerNetSaml2Configurer configurer, HttpSecurity http) throws Exception
-    {
-        http.apply(configurer);
-
-        return http.build();
     }
 
     private HttpSecurity buildHttpSecurity()
