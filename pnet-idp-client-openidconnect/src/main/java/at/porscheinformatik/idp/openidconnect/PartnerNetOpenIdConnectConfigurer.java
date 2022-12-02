@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
@@ -25,6 +26,8 @@ public class PartnerNetOpenIdConnectConfigurer
     private boolean failOnStartup;
     private String clientId;
     private String clientSecret;
+
+    private OidcUserService userService = new PartnerNetOpenIdConnectUserService();
 
     public PartnerNetOpenIdConnectConfigurer(PartnerNetOpenIdConnectProvider provider)
     {
@@ -65,11 +68,17 @@ public class PartnerNetOpenIdConnectConfigurer
         return this;
     }
 
+    public PartnerNetOpenIdConnectConfigurer userService(OidcUserService userService)
+    {
+        this.userService = userService;
+
+        return this;
+    }
+
     @Override
     public void init(HttpSecurity builder) throws Exception
     {
         final ClientRegistrationRepository clientRegistrationRepository = getClientRegistrationRepository();
-        final PartnerNetOpenIdConnectUserService userService = new PartnerNetOpenIdConnectUserService();
         final OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient =
             new DefaultAuthorizationCodeTokenResponseClient();
 
