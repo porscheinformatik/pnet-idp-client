@@ -8,7 +8,7 @@
 
     <groupId>at.porscheinformatik.pnet</groupId>
     <artifactId>pnet-idp-client</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <version>0.2.4</version>
     <packaging>pom</packaging>
     <name>Partner.Net Identity Provider Client Parent</name>
     <description>Parent Library for Identity Provider Client implementations</description>
@@ -16,7 +16,7 @@
     <scm>
         <connection>scm:git:https://github.com/porscheinformatik/pnet-idp-client.git</connection>
         <developerConnection>scm:git:https://github.com/porscheinformatik/pnet-idp-client.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>pnet-idp-client-0.2.4</tag>
     </scm>
 
     <properties>
