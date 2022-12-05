@@ -21,7 +21,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationRequestFilter;
-import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml3AuthenticationRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.Saml2AuthenticationRequestResolver;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.ReflectionUtils;
@@ -49,9 +49,8 @@ public class PartnerNetSaml2ConfigurerTest
 
         Saml2WebSsoAuthenticationRequestFilter filter =
             assertFilter(filterChain, Saml2WebSsoAuthenticationRequestFilter.class);
-        OpenSaml3AuthenticationRequestResolver resolver =
-            assertFieldValue(filter, "authenticationRequestResolver", OpenSaml3AuthenticationRequestResolver.class);
-        assertFieldValue(resolver, "contextConsumer", PartnerNetSaml2AuthnRequestCustomizer.class);
+
+        assertFieldValue(filter, "authenticationRequestResolver", Saml2AuthenticationRequestResolver.class);
     }
 
     @Test
@@ -123,7 +122,7 @@ public class PartnerNetSaml2ConfigurerTest
 
         Object value = callback.value;
 
-        assertThat(value, Matchers.isA(expectedClass));
+        assertThat(value, Matchers.instanceOf(expectedClass));
 
         return (T) value;
     }

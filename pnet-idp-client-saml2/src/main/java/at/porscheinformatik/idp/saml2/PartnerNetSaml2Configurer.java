@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.saml2;
 
@@ -14,6 +14,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import javax.servlet.Filter;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +24,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.saml2.Saml2LoginConfigurer;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.saml2.provider.service.authentication.AbstractSaml2AuthenticationRequest;
+import org.springframework.security.saml2.provider.service.authentication.Saml2PostAuthenticationRequest;
+import org.springframework.security.saml2.provider.service.authentication.Saml2RedirectAuthenticationRequest;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
@@ -33,6 +38,8 @@ import org.springframework.security.saml2.provider.service.web.authentication.Sa
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
 import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
@@ -42,9 +49,9 @@ import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
  */
 public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNetSaml2Configurer, HttpSecurity>
 {
-    /**
-     * 
-     */
+    private static final RequestMatcher REQUEST_MATCHER =
+        new AntPathRequestMatcher("/saml2/authenticate/{registrationId}");
+
     /**
      * @param http the http security to configure
      * @param provider the authentication provider to use.
@@ -148,7 +155,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     /**
      * When called, that application will fail to start, when the metadata of the provider could not be loaded.
      * Otherwise it will gracefully start, and try to load the metadata until the metadata could be fetched.
-     * 
+     *
      * @return the builder for a fluent api
      */
     public PartnerNetSaml2Configurer failOnStartup()
@@ -180,7 +187,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     /**
      * Override the default client factory to be used for loading SAML metadata
-     * 
+     *
      * @param clientFactory the client factory to use
      * @return the builder for a fluent api
      * @see HttpClientFactory#defaultClient()
@@ -194,7 +201,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     /**
      * Override the default response processor
-     * 
+     *
      * @param responseProcessor the response processor to use
      * @return the builder for a fluent api
      */
@@ -207,7 +214,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     /**
      * Override the default response parser
-     * 
+     *
      * @param responseParser the response parser to use
      * @return the builder for a fluent api
      */
@@ -220,7 +227,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     /**
      * Override the default authorities mapper
-     * 
+     *
      * @param authoritiesMapper the new authoritiesmapper to use
      * @return the builder for a fluent api
      */
@@ -235,14 +242,14 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     /**
      * Set the URL to redirect to on authentication failure. This will override the registered
      * {@link #failureHandler(AuthenticationFailureHandler) if any.
-     * 
+     *
      * @param failureUrl the new failureUrl to use
      * @return the builder for a fluent api
      */
     public PartnerNetSaml2Configurer failureUrl(String failureUrl)
     {
         this.failureUrl = failureUrl;
-        this.failureHandler = null;
+        failureHandler = null;
 
         return this;
     }
@@ -250,14 +257,14 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     /**
      * Set the {@link AuthenticationFailureHandler} to use on authentication failure. This will override the registered
      * {@link #failureUrl(String)} if any.
-     * 
+     *
      * @param failureHandler the new failure handler to use
      * @return the builder for a fluent api
      */
     public PartnerNetSaml2Configurer failureHandler(AuthenticationFailureHandler failureHandler)
     {
         this.failureHandler = failureHandler;
-        this.failureUrl = null;
+        failureUrl = null;
 
         return this;
     }
@@ -266,7 +273,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * Override the default {@link AuthenticationSuccessHandler} with a custom implementation. The default handler is
      * based on the {@link SavedRequestAwareAuthenticationSuccessHandler} and sanitizes the redirectUrl to strip off all
      * SAML Processing related query parameters.
-     * 
+     *
      * @param successHandler the {@link AuthenticationSuccessHandler} to use
      * @return the builder for a fluent api
      */
@@ -397,13 +404,13 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         Saml2CredentialsManager credManager)
     {
         ReloadingRelyingPartyRegistrationRepository repository =
-            new ReloadingRelyingPartyRegistrationRepository(DEFAULT_REGISTRATION_ID, this.entityId, this.metadataUrl,
-                credManager, clientFactory, DEFAULT_LOGIN_PROCESSING_URL, DEFAULT_ENTITY_ID_PATH);
+            new ReloadingRelyingPartyRegistrationRepository(DEFAULT_REGISTRATION_ID, entityId, metadataUrl, credManager,
+                clientFactory, DEFAULT_LOGIN_PROCESSING_URL, DEFAULT_ENTITY_ID_PATH);
 
         if (failOnStartup)
         {
             requireNonNull(repository.findByRegistrationId(DEFAULT_REGISTRATION_ID),
-                format("No RelyingPartyRegistration for metadata %s found", this.metadataUrl));
+                format("No RelyingPartyRegistration for metadata %s found", metadataUrl));
         }
 
         return repository;
@@ -414,9 +421,58 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     {
         OpenSaml3AuthenticationRequestResolver factory =
             new OpenSaml3AuthenticationRequestResolver(relyingPartyRegistrationResolver);
+
         factory.setAuthnRequestCustomizer(new PartnerNetSaml2AuthnRequestCustomizer());
 
-        return factory;
-    }
+        // TODO: With Spring Security 6 there will be a customer to set the relay state without this workaround
+        // see https://github.com/spring-projects/spring-security/issues/11065
+        return new Saml2AuthenticationRequestResolver()
+        {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <T extends AbstractSaml2AuthenticationRequest> T resolve(HttpServletRequest request)
+            {
+                RequestMatcher.MatchResult result = REQUEST_MATCHER.matcher(request);
 
+                if (!result.isMatch())
+                {
+                    return null;
+                }
+
+                String registrationId = result.getVariables().get("registrationId");
+
+                RelyingPartyRegistration registration =
+                    relyingPartyRegistrationResolver.resolve(request, registrationId);
+
+                if (registration == null)
+                {
+                    return null;
+                }
+
+                T authenticationRequest = factory.resolve(request);
+                String samlRequest = authenticationRequest.getSamlRequest();
+                String relayState = Saml2Utils.getRelayState(request);
+
+                if (authenticationRequest instanceof Saml2PostAuthenticationRequest)
+                {
+                    return (T) Saml2PostAuthenticationRequest
+                        .withRelyingPartyRegistration(registration)
+                        .samlRequest(samlRequest)
+                        .relayState(relayState)
+                        .build();
+                }
+
+                String sigAlg = ((Saml2RedirectAuthenticationRequest) authenticationRequest).getSigAlg();
+                String signature = ((Saml2RedirectAuthenticationRequest) authenticationRequest).getSignature();
+
+                return (T) Saml2RedirectAuthenticationRequest
+                    .withRelyingPartyRegistration(registration)
+                    .samlRequest(samlRequest)
+                    .relayState(relayState)
+                    .sigAlg(sigAlg)
+                    .signature(signature)
+                    .build();
+            }
+        };
+    }
 }
