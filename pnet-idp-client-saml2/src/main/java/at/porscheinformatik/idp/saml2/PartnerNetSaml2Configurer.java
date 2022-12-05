@@ -9,6 +9,7 @@ import static java.util.Objects.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -17,8 +18,10 @@ import javax.servlet.Filter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.saml2.Saml2LoginConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
@@ -130,6 +133,9 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private AuthenticationSuccessHandler successHandler;
 
     private RelyingPartyRegistrationResolver relyingPartyResolver;
+    private Customizer<Saml2LoginConfigurer<HttpSecurity>> customizer = saml2Login -> {
+        // Noop customizer. Users can override this to add custom configurations
+    };;
 
     private PartnerNetSaml2Configurer(String entityId, String metadataUrl)
     {
@@ -271,6 +277,22 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         return this;
     }
 
+    /**
+     * Add a customizer that allows you to further customize the Spring Securities {@link Saml2LoginConfigurer}. This is
+     * equivalent to calling {@link HttpSecurity#saml2Login(Customizer)} with the advantage of having the default
+     * Partner.Net configuration applied. This customizer is called at the very end of the Partner.Net specific
+     * configuration. So you can override configurations applied by the Partner.Net configurer.
+     * 
+     * @param customizer the customizer to use
+     * @return the builder for a fluent api
+     */
+    public PartnerNetSaml2Configurer customizer(Customizer<Saml2LoginConfigurer<HttpSecurity>> customizer)
+    {
+        this.customizer = Objects.requireNonNull(customizer, "Customizer must not be null");
+
+        return this;
+    }
+
     @Override
     public void init(HttpSecurity builder) throws Exception
     {
@@ -297,6 +319,8 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
             {
                 saml2Login.failureUrl(failureUrl);
             }
+
+            this.customizer.customize(saml2Login);
         });
     }
 

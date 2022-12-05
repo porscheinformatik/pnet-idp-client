@@ -3,8 +3,12 @@
  */
 package at.porscheinformatik.idp.openidconnect;
 
+import java.util.Objects;
+
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
@@ -26,6 +30,9 @@ public class PartnerNetOpenIdConnectConfigurer
     private boolean failOnStartup;
     private String clientId;
     private String clientSecret;
+    private Customizer<OAuth2LoginConfigurer<HttpSecurity>> customizer = oauth2Login -> {
+        // Noop customizer. Users can override this to add custom configurations
+    };
 
     private OidcUserService userService = new PartnerNetOpenIdConnectUserService();
 
@@ -75,6 +82,22 @@ public class PartnerNetOpenIdConnectConfigurer
         return this;
     }
 
+    /**
+     * Add a customizer that allows you to further customize the Spring Securities {@link OAuth2LoginConfigurer}. This
+     * is equivalent to calling {@link HttpSecurity#oauth2Login(Customizer)} with the advantage of having the default
+     * Partner.Net configuration applied. This customizer is called at the very end of the Partner.Net specific
+     * configuration. So you can override configurations applied by the Partner.Net configurer.
+     * 
+     * @param customizer the customizer to use
+     * @return the builder for a fluent api
+     */
+    public PartnerNetOpenIdConnectConfigurer customize(Customizer<OAuth2LoginConfigurer<HttpSecurity>> customizer)
+    {
+        this.customizer = Objects.requireNonNull(customizer, "Customizer must not be null");
+
+        return this;
+    }
+
     @Override
     public void init(HttpSecurity builder) throws Exception
     {
@@ -103,6 +126,9 @@ public class PartnerNetOpenIdConnectConfigurer
             oauth2Login.userInfoEndpoint(userInfoEndpoint -> {
                 userInfoEndpoint.oidcUserService(userService);
             });
+
+            // Let users add custom configurations if they want to
+            this.customizer.customize(oauth2Login);
         });
     }
 
