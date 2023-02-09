@@ -64,6 +64,61 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @return the configurer for further customization
      * @throws Exception when an exception occurs while configuring
      */
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider) throws Exception
+    {
+        return apply(http, provider.getEntityId(), provider.getEntityId(), true);
+    }
+
+    /**
+     * @param http the http security to configure
+     * @param entityId the entity id of the identity provider to use
+     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
+     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
+     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
+     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
+     * @return the configurer for further customization
+     */
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId) throws Exception
+    {
+        return apply(http, entityId, entityId, true);
+    }
+
+    /**
+     * @param http the http security to configure
+     * @param entityId the entity id of the identity provider to use
+     * @param metadataUrl the URL pointing to the identity providers metadata
+     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
+     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
+     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
+     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
+     * @return the configurer for further customization
+     * @throws Exception when an exception occurs while configuring
+     */
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl)
+        throws Exception
+    {
+        return apply(http, entityId, metadataUrl, true);
+    }
+
+    /**
+     * @param http the http security to configure
+     * @param provider the authentication provider to use.
+     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
+     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
+     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
+     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
+     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
+     * @return the configurer for further customization
+     * @throws Exception when an exception occurs while configuring
+     * @deprecated will be removed in 1.0.0. Migrate your applications to new request matchers.
+     *             https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html#use-new-requestmatchers
+     */
+    @Deprecated
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider,
         boolean useAuthorizeHttpRequests) throws Exception
     {
@@ -80,8 +135,11 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
      *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
      * @return the configurer for further customization
-     * @throws Exception when an exception occurs while configuring
+     * @throws Exception when an exception occurs while configuring * @deprecated will be removed in 1.0.0. Migrate your
+     *             applications to new request matchers.
+     *             https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html#use-new-requestmatchers
      */
+    @Deprecated
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, boolean useAuthorizeHttpRequests)
         throws Exception
     {
@@ -100,15 +158,18 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
      * @return the configurer for further customization
      * @throws Exception when an exception occurs while configuring
+     * @deprecated will be removed in 1.0.0. Migrate your applications to new request matchers.
+     *             https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html#use-new-requestmatchers
      */
+    @Deprecated
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl,
         boolean useAuthorizeHttpRequests) throws Exception
     {
         if (useAuthorizeHttpRequests)
         {
-            http
+            http //
                 .authorizeHttpRequests()
-                .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
+                .requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
                 .permitAll();
         }
         else

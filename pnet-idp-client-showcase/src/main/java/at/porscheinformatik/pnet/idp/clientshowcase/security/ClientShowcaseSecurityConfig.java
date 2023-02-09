@@ -53,7 +53,7 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
                 .clientSecret(environment.getProperty("oidc.client.secret")));
 
         PartnerNetSaml2Configurer
-            .apply(http, getPartnerNetSaml2Provider(), false)
+            .apply(http, getPartnerNetSaml2Provider())
             .credentials(samlCredentialsConfig)
             .failureUrl("/loginerror");
 
@@ -65,11 +65,12 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
         http.exceptionHandling().authenticationEntryPoint(new DecidingAuthenticationEntryPoint());
 
         http //
-            .authorizeRequests()
-            .antMatchers("/logoutinfo/**", "/logout/**", "/loginerror")
+            .authorizeHttpRequests()
+            .requestMatchers("/logoutinfo/**", "/logout/**", "/loginerror")
             .permitAll()
-            .antMatchers("/**")
+            .requestMatchers("/**")
             .fullyAuthenticated();
+
         http.requiresChannel().anyRequest().requiresSecure();
     }
 
