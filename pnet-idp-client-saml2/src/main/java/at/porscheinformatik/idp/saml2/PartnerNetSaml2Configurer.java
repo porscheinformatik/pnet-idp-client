@@ -306,7 +306,9 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      *
      * @param failureUrl the new failureUrl to use
      * @return the builder for a fluent api
+     * @deprecated use the {@link #customizer(Customizer)} method instead
      */
+    @Deprecated
     public PartnerNetSaml2Configurer failureUrl(String failureUrl)
     {
         this.failureUrl = failureUrl;
@@ -321,7 +323,9 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      *
      * @param failureHandler the new failure handler to use
      * @return the builder for a fluent api
+     * @deprecated use the {@link #customizer(Customizer)} method instead
      */
+    @Deprecated
     public PartnerNetSaml2Configurer failureHandler(AuthenticationFailureHandler failureHandler)
     {
         this.failureHandler = failureHandler;

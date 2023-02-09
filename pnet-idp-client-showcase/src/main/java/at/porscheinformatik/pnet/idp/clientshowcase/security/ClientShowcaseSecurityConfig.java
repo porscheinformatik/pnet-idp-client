@@ -74,7 +74,9 @@ public class ClientShowcaseSecurityConfig
         PartnerNetSaml2Configurer
             .apply(http, getPartnerNetSaml2Provider(environment))
             .credentials(samlCredentialsConfig)
-            .failureUrl("/loginerror");
+            .customizer(saml2 -> {
+                saml2.failureUrl("/loginerror");
+            });
 
         http.logout(logout -> {
             logout.logoutSuccessUrl("/logoutinfo");
