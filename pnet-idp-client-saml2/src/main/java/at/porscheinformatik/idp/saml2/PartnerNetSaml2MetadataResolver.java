@@ -5,8 +5,11 @@ import static at.porscheinformatik.idp.saml2.XmlUtils.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.codec.binary.Base64;
 import org.joda.time.DateTime;
@@ -41,8 +44,10 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
     private static final int METADATA_MAX_VALIDITY_DAYS = 7;
 
     @Override
-    public String resolve(RelyingPartyRegistration relyingPartyRegistration)
+    public String resolve(@Nonnull RelyingPartyRegistration relyingPartyRegistration)
     {
+        Objects.requireNonNull(relyingPartyRegistration, "relyingPartyRegistration must not be null");
+
         EntityDescriptor entityDescriptor = buildMetadata(relyingPartyRegistration);
 
         try
@@ -57,6 +62,7 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
 
     private EntityDescriptor buildMetadata(RelyingPartyRegistration relyingPartyRegistration)
     {
+
         DateTime validUntil = DateTime.now().plusDays(METADATA_MAX_VALIDITY_DAYS);
 
         EntityDescriptor entityDescriptor = entityDescriptor(relyingPartyRegistration.getEntityId(), validUntil);

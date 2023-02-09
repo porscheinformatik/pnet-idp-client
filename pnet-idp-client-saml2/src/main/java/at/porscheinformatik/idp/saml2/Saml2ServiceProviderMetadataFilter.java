@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
@@ -51,6 +52,14 @@ public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter
         try
         {
             RelyingPartyRegistration relyingPartyRegistration = relyingPartyRegistrationResolver.resolve(request, null);
+
+            if (relyingPartyRegistration == null)
+            {
+                response.sendError(HttpStatus.NOT_FOUND.value());
+
+                return;
+            }
+
             String metadata = metadataResolver.resolve(relyingPartyRegistration);
 
             response.setContentType("application/samlmetadata+xml");
