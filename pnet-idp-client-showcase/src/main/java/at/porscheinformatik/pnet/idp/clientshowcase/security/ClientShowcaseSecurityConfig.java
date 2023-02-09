@@ -87,10 +87,13 @@ public class ClientShowcaseSecurityConfig
 
         http //
             .authorizeHttpRequests()
+            .shouldFilterAllDispatcherTypes(true)
             .requestMatchers("/logoutinfo/**", "/logout/**", "/loginerror")
             .permitAll()
-            .requestMatchers("/**")
-            .fullyAuthenticated();
+            .requestMatchers("/data/authorization")
+            .fullyAuthenticated()
+            .anyRequest()
+            .denyAll();
 
         http.requiresChannel().anyRequest().requiresSecure();
 
