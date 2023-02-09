@@ -3,10 +3,15 @@
  */
 package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,6 +37,25 @@ public class ClientShowcaseSecurityConfig
     private static final Profiles QA = Profiles.of("qa");
     private static final Profiles DEV = Profiles.of("dev");
     private static final Profiles LOCAL = Profiles.of("local");
+
+    @Bean
+    public AuthenticationManager authenticationManager(List<AuthenticationProvider> providers)
+    {
+        /*
+         * To get rid of the default AuthenticationManager registered by spring boot, that uses a auto generated password
+         * visible in the logs, we register our own AuthenticationManager.
+         * 
+         * If no providers are registered, we register a dummy provider that does nothing.
+         * If custom authentication mechanisms are registered, they have to register a authentication provider, or handle the authentication
+         * on their own.
+         */
+        if (providers.isEmpty())
+        {
+            providers = List.of(new NoopAuthenticationProvider());
+        }
+
+        return new ProviderManager(providers);
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment,
