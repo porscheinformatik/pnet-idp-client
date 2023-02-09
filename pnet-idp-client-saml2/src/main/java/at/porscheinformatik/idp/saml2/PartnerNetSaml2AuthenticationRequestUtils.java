@@ -1,5 +1,7 @@
 package at.porscheinformatik.idp.saml2;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 public final class PartnerNetSaml2AuthenticationRequestUtils
@@ -30,9 +32,16 @@ public final class PartnerNetSaml2AuthenticationRequestUtils
         return Boolean.TRUE.equals(request.getSession().getAttribute(FORCE_AUTHENTICATION_ATTR));
     }
 
-    public static void storeSessionAge(HttpServletRequest request, Integer maxSessionAge)
+    public static void storeSessionAge(HttpServletRequest request, Optional<Integer> maxSessionAge)
     {
-        request.getSession().setAttribute(SESSION_AGE_ATTR, maxSessionAge);
+        if (maxSessionAge.isPresent())
+        {
+            request.getSession().setAttribute(SESSION_AGE_ATTR, maxSessionAge.get());
+        }
+        else
+        {
+            request.getSession().removeAttribute(SESSION_AGE_ATTR);
+        }
     }
 
     public static Integer sessionAgeRequested(HttpServletRequest request)
@@ -40,11 +49,11 @@ public final class PartnerNetSaml2AuthenticationRequestUtils
         return (Integer) request.getSession().getAttribute(SESSION_AGE_ATTR);
     }
 
-    public static void storeNistLevel(HttpServletRequest request, Integer nistLevel)
+    public static void storeNistLevel(HttpServletRequest request, Optional<Integer> nistLevel)
     {
-        if (nistLevel != null)
+        if (nistLevel.isPresent())
         {
-            request.getSession().setAttribute(NIST_LEVEL_ATTR, nistLevel);
+            request.getSession().setAttribute(NIST_LEVEL_ATTR, nistLevel.get());
         }
         else
         {

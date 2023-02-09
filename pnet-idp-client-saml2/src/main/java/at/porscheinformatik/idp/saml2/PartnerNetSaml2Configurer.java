@@ -10,11 +10,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import javax.servlet.Filter;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,11 +24,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.saml2.Saml2LoginConfigurer;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.saml2.provider.service.authentication.AbstractSaml2AuthenticationRequest;
-import org.springframework.security.saml2.provider.service.authentication.Saml2PostAuthenticationRequest;
-import org.springframework.security.saml2.provider.service.authentication.Saml2RedirectAuthenticationRequest;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
-import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
 import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
@@ -38,8 +34,6 @@ import org.springframework.security.saml2.provider.service.web.authentication.Sa
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
 import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
@@ -49,9 +43,6 @@ import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
  */
 public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNetSaml2Configurer, HttpSecurity>
 {
-    private static final RequestMatcher REQUEST_MATCHER =
-        new AntPathRequestMatcher("/saml2/authenticate/{registrationId}");
-
     /**
      * @param http the http security to configure
      * @param provider the authentication provider to use.
@@ -484,60 +475,16 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private Saml2AuthenticationRequestResolver buildRequestResolver(
         RelyingPartyRegistrationResolver relyingPartyRegistrationResolver)
     {
-        OpenSaml4AuthenticationRequestResolver factory =
+        OpenSaml4AuthenticationRequestResolver resolver =
             new OpenSaml4AuthenticationRequestResolver(relyingPartyRegistrationResolver);
 
-        factory.setAuthnRequestCustomizer(new PartnerNetSaml2AuthnRequestCustomizer());
+        resolver.setAuthnRequestCustomizer(new PartnerNetSaml2AuthnRequestCustomizer());
+        resolver.setRelayStateResolver(request -> {
+            return Saml2Utils //
+                .getRelayState(request)
+                .orElseGet(() -> UUID.randomUUID().toString());
+        });
 
-        // TODO: With Spring Security 6 there will be a customer to set the relay state without this workaround
-        // see https://github.com/spring-projects/spring-security/issues/11065
-        return new Saml2AuthenticationRequestResolver()
-        {
-            @SuppressWarnings("unchecked")
-            @Override
-            public <T extends AbstractSaml2AuthenticationRequest> T resolve(HttpServletRequest request)
-            {
-                RequestMatcher.MatchResult result = REQUEST_MATCHER.matcher(request);
-
-                if (!result.isMatch())
-                {
-                    return null;
-                }
-
-                String registrationId = result.getVariables().get("registrationId");
-
-                RelyingPartyRegistration registration =
-                    relyingPartyRegistrationResolver.resolve(request, registrationId);
-
-                if (registration == null)
-                {
-                    return null;
-                }
-
-                T authenticationRequest = factory.resolve(request);
-                String samlRequest = authenticationRequest.getSamlRequest();
-                String relayState = Saml2Utils.getRelayState(request);
-
-                if (authenticationRequest instanceof Saml2PostAuthenticationRequest)
-                {
-                    return (T) Saml2PostAuthenticationRequest
-                        .withRelyingPartyRegistration(registration)
-                        .samlRequest(samlRequest)
-                        .relayState(relayState)
-                        .build();
-                }
-
-                String sigAlg = ((Saml2RedirectAuthenticationRequest) authenticationRequest).getSigAlg();
-                String signature = ((Saml2RedirectAuthenticationRequest) authenticationRequest).getSignature();
-
-                return (T) Saml2RedirectAuthenticationRequest
-                    .withRelyingPartyRegistration(registration)
-                    .samlRequest(samlRequest)
-                    .relayState(relayState)
-                    .sigAlg(sigAlg)
-                    .signature(signature)
-                    .build();
-            }
-        };
+        return resolver;
     }
 }

@@ -64,11 +64,12 @@ public class CheckSubjectMessageHandler extends AbstractSuccessResponseMessageHa
 
         HttpRequestContext httpContext = getHttpRequestContext(messageContext);
 
-        if (!Objects.equals(httpContext.getAuthnRequestId(), subjectConfirmationData.getInResponseTo()))
+        if (httpContext.getAuthnRequestId().isEmpty()
+            || !Objects.equals(httpContext.getAuthnRequestId().get(), subjectConfirmationData.getInResponseTo()))
         {
             throw new MessageHandlerException(String
                 .format("Wrong inResponseTo on SubjectConfirmationData. Expected %s but got %s",
-                    httpContext.getAuthnRequestId(), subjectConfirmationData.getInResponseTo()));
+                    httpContext.getAuthnRequestId().orElse(null), subjectConfirmationData.getInResponseTo()));
         }
 
         if (subjectConfirmationData.getAddress() != null

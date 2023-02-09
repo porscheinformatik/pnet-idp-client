@@ -2,6 +2,7 @@ package at.porscheinformatik.idp.saml2;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,9 +40,9 @@ public class Saml2Utils
         request.getSession().setAttribute(AUTHN_REQUEST_ID_ATTR, id);
     }
 
-    public static String retrieveAuthnRequestId(HttpServletRequest request)
+    public static Optional<String> retrieveAuthnRequestId(HttpServletRequest request)
     {
-        return (String) request.getSession().getAttribute(AUTHN_REQUEST_ID_ATTR);
+        return Optional.ofNullable((String) request.getSession().getAttribute(AUTHN_REQUEST_ID_ATTR));
     }
 
     public static UriComponentsBuilder forceAuthentication(UriComponentsBuilder uriComponentsBuilder)
@@ -60,16 +61,16 @@ public class Saml2Utils
         return uriComponentsBuilder.queryParam(MAX_SESSION_AGE_PARAM, sessionAgeInSeconds);
     }
 
-    public static Integer retrieveMaxSessionAge(HttpServletRequest request)
+    public static Optional<Integer> retrieveMaxSessionAge(HttpServletRequest request)
     {
         String value = request.getParameter(MAX_SESSION_AGE_PARAM);
 
         if (value != null)
         {
-            return Integer.parseInt(value);
+            return Optional.of(Integer.parseInt(value));
         }
 
-        return null;
+        return Optional.empty();
     }
 
     public static UriComponentsBuilder requestNistAuthenticationLevel(UriComponentsBuilder uriComponentsBuilder,
@@ -89,16 +90,16 @@ public class Saml2Utils
         return uriComponentsBuilder.queryParam(NIST_LEVEL_PARAM, nistLevel);
     }
 
-    public static Integer getRequestedNistAuthenticationLevel(HttpServletRequest request)
+    public static Optional<Integer> getRequestedNistAuthenticationLevel(HttpServletRequest request)
     {
         String value = request.getParameter(NIST_LEVEL_PARAM);
 
         if (value != null)
         {
-            return Integer.parseInt(value);
+            return Optional.of(Integer.parseInt(value));
         }
 
-        return null;
+        return Optional.empty();
     }
 
     public static UriComponentsBuilder setRelayState(UriComponentsBuilder uriComponentsBuilder, String relayState)
@@ -106,9 +107,9 @@ public class Saml2Utils
         return uriComponentsBuilder.queryParam(RELAY_STATE_PARAM, relayState);
     }
 
-    public static String getRelayState(HttpServletRequest request)
+    public static Optional<String> getRelayState(HttpServletRequest request)
     {
-        return request.getParameter(RELAY_STATE_PARAM);
+        return Optional.ofNullable(request.getParameter(RELAY_STATE_PARAM));
     }
 
     /**

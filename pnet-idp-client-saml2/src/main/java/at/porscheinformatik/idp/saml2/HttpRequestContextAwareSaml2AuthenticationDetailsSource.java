@@ -4,6 +4,7 @@ import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationReques
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,7 +53,7 @@ public class HttpRequestContextAwareSaml2AuthenticationDetailsSource
             return request;
         }
 
-        public String getAuthnRequestId()
+        public Optional<String> getAuthnRequestId()
         {
             return retrieveAuthnRequestId(getRequest());
         }

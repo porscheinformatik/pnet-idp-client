@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -27,7 +28,7 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
 {
 
     @Override
-    public Authentication parseResponse(Response samlResponse, String relayState) throws Saml2Exception
+    public Authentication parseResponse(Response samlResponse, Optional<String> relayState) throws Saml2Exception
     {
         Saml2Data data = doParseResponse(samlResponse, relayState);
 
@@ -36,7 +37,7 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
 
     protected abstract Authentication convert(Saml2Data data) throws Saml2Exception;
 
-    private Saml2Data doParseResponse(Response samlResponse, String relayState)
+    private Saml2Data doParseResponse(Response samlResponse, Optional<String> relayState)
     {
         String subjectIdentifier = null;
         Map<String, Serializable> additionalAttributes = new HashMap<>();
@@ -87,11 +88,11 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
         private final String subjectIdentifier;
         private final String nameId;
         private final Map<String, Serializable> samlAttributes;
-        private final String relayState;
+        private final Optional<String> relayState;
         private final AuthnContextClass authnContextClass;
 
-        Saml2Data(String subjectIdentifier, String nameId, Map<String, Serializable> samlAttributes, String relayState,
-            AuthnContextClass authnContextClass)
+        Saml2Data(String subjectIdentifier, String nameId, Map<String, Serializable> samlAttributes,
+            Optional<String> relayState, AuthnContextClass authnContextClass)
         {
             this.subjectIdentifier = subjectIdentifier;
             this.nameId = nameId;
@@ -115,7 +116,7 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
             return samlAttributes;
         }
 
-        public String getRelayState()
+        public Optional<String> getRelayState()
         {
             return relayState;
         }

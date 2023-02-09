@@ -3,6 +3,8 @@
  */
 package at.porscheinformatik.idp.saml2;
 
+import java.util.Optional;
+
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.saml2.Saml2Exception;
@@ -22,5 +24,5 @@ public interface Saml2ResponseParser
      * @return the authentication data build from the response
      * @throws Saml2Exception when something goes wrong parsing the response
      */
-    Authentication parseResponse(Response samlResponse, String relayState) throws Saml2Exception;
+    Authentication parseResponse(Response samlResponse, Optional<String> relayState) throws Saml2Exception;
 }

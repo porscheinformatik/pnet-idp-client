@@ -6,6 +6,7 @@ import static at.porscheinformatik.idp.saml2.XmlUtils.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +30,8 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
         AuthnRequest authnRequest = t.getAuthnRequest();
 
         boolean forceAuthn = Saml2Utils.isForceAuthentication(request);
-        Integer maxSessionAge = Saml2Utils.retrieveMaxSessionAge(request);
-        Integer nistLevel = Saml2Utils.getRequestedNistAuthenticationLevel(request);
+        Optional<Integer> maxSessionAge = Saml2Utils.retrieveMaxSessionAge(request);
+        Optional<Integer> nistLevel = Saml2Utils.getRequestedNistAuthenticationLevel(request);
         String authnRequestId = Saml2Utils.generateId();
         List<AuthnContextClass> authnContextClasses = calculateAuthnContextClasses(nistLevel);
 
@@ -51,21 +52,21 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
             authnRequest.setRequestedAuthnContext(requestedAuthnContext(authnContextClasses));
         }
 
-        if (maxSessionAge != null)
+        if (maxSessionAge.isPresent())
         {
             authnRequest.setExtensions(createSamlObject(Extensions.DEFAULT_ELEMENT_NAME));
 
-            authnRequest.getExtensions().getUnknownXMLObjects().add(maxSessionAgeRequest(maxSessionAge));
+            authnRequest.getExtensions().getUnknownXMLObjects().add(maxSessionAgeRequest(maxSessionAge.get()));
         }
     }
 
-    private List<AuthnContextClass> calculateAuthnContextClasses(Integer nistLevel)
+    private List<AuthnContextClass> calculateAuthnContextClasses(Optional<Integer> nistLevel)
     {
         List<AuthnContextClass> authnContextClasses = Collections.emptyList();
 
-        if (nistLevel != null)
+        if (nistLevel.isPresent())
         {
-            authnContextClasses = AuthnContextClass.getAsLeastAsStrongAs(nistLevel);
+            authnContextClasses = AuthnContextClass.getAsLeastAsStrongAs(nistLevel.get());
         }
 
         return authnContextClasses;

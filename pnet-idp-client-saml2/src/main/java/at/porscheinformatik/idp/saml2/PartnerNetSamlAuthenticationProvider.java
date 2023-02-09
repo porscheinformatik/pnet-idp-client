@@ -1,6 +1,7 @@
 package at.porscheinformatik.idp.saml2;
 
 import java.io.StringReader;
+import java.util.Optional;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.UnmarshallingException;
@@ -44,7 +45,7 @@ public class PartnerNetSamlAuthenticationProvider implements AuthenticationProvi
             processor.process(token, response);
 
             HttpRequestContext details = HttpRequestContext.fromToken(token);
-            String relayState = Saml2Utils.getRelayState(details.getRequest());
+            Optional<String> relayState = Saml2Utils.getRelayState(details.getRequest());
 
             // After we are done with processing the token, we set the details to null.
             // As the details contain the request, and they are not used from this point on, we remove them.

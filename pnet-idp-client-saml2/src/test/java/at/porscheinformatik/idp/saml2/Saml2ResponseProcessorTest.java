@@ -17,6 +17,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.time.Instant;
+import java.util.Optional;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
@@ -473,8 +474,8 @@ public class Saml2ResponseProcessorTest
             storeForceAuthentication(request, true);
         }
 
-        storeNistLevel(request, nistLevel);
-        storeSessionAge(request, sessionAge);
+        storeNistLevel(request, Optional.ofNullable(nistLevel));
+        storeSessionAge(request, Optional.ofNullable(sessionAge));
 
         request.addParameter("SAMLResponse", base64Response);
 
