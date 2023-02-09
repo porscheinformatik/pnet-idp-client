@@ -19,7 +19,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -29,6 +28,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
 {

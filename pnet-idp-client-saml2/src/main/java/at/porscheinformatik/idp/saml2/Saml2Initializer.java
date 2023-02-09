@@ -70,8 +70,8 @@ public final class Saml2Initializer
         BasicSignatureSigningConfiguration signingConfiguration =
             (BasicSignatureSigningConfiguration) SecurityConfigurationSupport.getGlobalSignatureSigningConfiguration();
 
-        validationConfiguration.setWhitelistedAlgorithms(SIGNATURE_ALGORITHMS);
-        signingConfiguration.setWhitelistedAlgorithms(SIGNATURE_ALGORITHMS);
+        validationConfiguration.setIncludedAlgorithms(SIGNATURE_ALGORITHMS);
+        signingConfiguration.setIncludedAlgorithms(SIGNATURE_ALGORITHMS);
     }
 
     private static void setupEncryptionAlgorithmWhitelist()
@@ -81,8 +81,8 @@ public final class Saml2Initializer
         BasicEncryptionConfiguration encryptionConfiguration =
             (BasicEncryptionConfiguration) SecurityConfigurationSupport.getGlobalEncryptionConfiguration();
 
-        decryptionConfiguration.setWhitelistedAlgorithms(ENCRYPTION_ALGORITHMS);
-        encryptionConfiguration.setWhitelistedAlgorithms(ENCRYPTION_ALGORITHMS);
+        decryptionConfiguration.setIncludedAlgorithms(ENCRYPTION_ALGORITHMS);
+        encryptionConfiguration.setIncludedAlgorithms(ENCRYPTION_ALGORITHMS);
 
         // The only two blockciphers we have to support are not registered by default. lets do this here.
         List<String> dataEncryptionAlgorithms = new ArrayList<>(encryptionConfiguration.getDataEncryptionAlgorithms());

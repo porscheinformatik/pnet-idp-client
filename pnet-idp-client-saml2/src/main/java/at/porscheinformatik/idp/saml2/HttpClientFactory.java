@@ -1,5 +1,7 @@
 package at.porscheinformatik.idp.saml2;
 
+import java.time.Duration;
+
 import org.apache.http.client.HttpClient;
 import org.springframework.security.saml2.Saml2Exception;
 
@@ -25,8 +27,8 @@ public interface HttpClientFactory
                 {
                     HttpClientBuilder clientBuilder = new HttpClientBuilder();
 
-                    clientBuilder.setConnectionTimeout(5 * 1000);
-                    clientBuilder.setSocketTimeout(10 * 1000);
+                    clientBuilder.setConnectionTimeout(Duration.ofSeconds(5));
+                    clientBuilder.setSocketTimeout(Duration.ofSeconds(10));
 
                     return clientBuilder.buildClient();
                 }

@@ -5,7 +5,7 @@ package at.porscheinformatik.idp.saml2.response;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -16,12 +16,12 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 /**
  * @author Daniel Furtlehner
  */
-public class CheckIssuerMessageHandler extends AbstractSimpleMessageHandler<Response>
+public class CheckIssuerMessageHandler extends AbstractSimpleMessageHandler
 {
     @Override
-    public void invoke(MessageContext<Response> messageContext) throws MessageHandlerException
+    public void invoke(MessageContext messageContext) throws MessageHandlerException
     {
-        Response response = messageContext.getMessage();
+        Response response = getResponse(messageContext);
 
         Issuer issuer = response.getIssuer();
 

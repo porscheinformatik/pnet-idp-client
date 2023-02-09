@@ -6,6 +6,7 @@ package at.porscheinformatik.idp.saml2;
 import static at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationRequestUtils.*;
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import static at.porscheinformatik.idp.saml2.SamlResponseCustomizer.*;
+import static java.time.temporal.ChronoUnit.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,9 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.time.Instant;
 
 import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.messaging.handler.MessageHandlerException;
@@ -145,7 +146,7 @@ public class Saml2ResponseProcessorTest
     public void failsOnMultipleAuthnStatements() throws Exception
     {
         AuthnStatement additionalAuthnStatement = Saml2ObjectUtils
-            .authnStatement(DateTime.now(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
+            .authnStatement(Instant.now(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(authnStatement(additionalAuthnStatement));
 
         testException(tokenAndResponse, MessageHandlerException.class,
@@ -255,7 +256,7 @@ public class Saml2ResponseProcessorTest
     {
         // Have to account for clock skew so add a bigger value than 5 minutes
         TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(conditionsValidity(DateTime.now().plusMinutes(10), DateTime.now().plusMinutes(15)));
+            buildTokenAndResponse(conditionsValidity(Instant.now().plus(10, MINUTES), Instant.now().plus(15, MINUTES)));
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Contditions is not valid right now based on notBefore value");
@@ -265,8 +266,8 @@ public class Saml2ResponseProcessorTest
     public void failsOnWrongNotOnOrAfter() throws Exception
     {
         // Have to account for clock skew so add a bigger value than 5 minutes
-        TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(conditionsValidity(DateTime.now().minusMinutes(10), DateTime.now().minusMinutes(9)));
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(
+            conditionsValidity(Instant.now().minus(10, MINUTES), Instant.now().minus(9, MINUTES)));
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Contditions is not valid anymore based on notOnOrAfter value");
@@ -277,7 +278,7 @@ public class Saml2ResponseProcessorTest
     {
         // Have to account for clock skew so add a bigger value than 5 minutes
         TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(conditionsValidity(DateTime.now().minusMinutes(1), DateTime.now().minusMinutes(5)));
+            buildTokenAndResponse(conditionsValidity(Instant.now().minus(1, MINUTES), Instant.now().minus(5, MINUTES)));
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Contditions notOnOrAfter is before notBefore date");
@@ -419,7 +420,7 @@ public class Saml2ResponseProcessorTest
             Subject subject = Saml2ObjectUtils.subject(RESPONSE_DESTINATION, 5 * 60, authnRequestId);
             Conditions conditions = Saml2ObjectUtils.conditions(SP_ENTITY_ID);
             AuthnStatement authnStatement = Saml2ObjectUtils
-                .authnStatement(DateTime.now(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
+                .authnStatement(Instant.now(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
             AttributeStatement attributeStatement = Saml2ObjectUtils.attributeStatement();
             response
                 .getAssertions()

@@ -3,13 +3,14 @@
  */
 package at.porscheinformatik.idp.saml2;
 
+import static java.time.temporal.ChronoUnit.*;
 import static java.util.Arrays.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -28,7 +29,7 @@ public interface SamlResponseCustomizer
 {
     static SamlResponseCustomizer outdatedResponse()
     {
-        return response -> response.setIssueInstant(DateTime.now().minusHours(1));
+        return response -> response.setIssueInstant(Instant.now().minus(1, HOURS));
     }
 
     static SamlResponseCustomizer noIssuer()
@@ -123,7 +124,7 @@ public interface SamlResponseCustomizer
         return response -> {
             List<SubjectConfirmation> subjectConfirmations =
                 response.getAssertions().get(0).getSubject().getSubjectConfirmations();
-            subjectConfirmations.get(0).getSubjectConfirmationData().setNotOnOrAfter(DateTime.now().minusHours(1));
+            subjectConfirmations.get(0).getSubjectConfirmationData().setNotOnOrAfter(Instant.now().minus(1, HOURS));
         };
     }
 
@@ -132,7 +133,7 @@ public interface SamlResponseCustomizer
         return response -> {
             List<SubjectConfirmation> subjectConfirmations =
                 response.getAssertions().get(0).getSubject().getSubjectConfirmations();
-            subjectConfirmations.get(0).getSubjectConfirmationData().setNotBefore(DateTime.now().minusSeconds(1));
+            subjectConfirmations.get(0).getSubjectConfirmationData().setNotBefore(Instant.now().minusSeconds(1));
         };
     }
 
@@ -166,7 +167,7 @@ public interface SamlResponseCustomizer
         };
     }
 
-    static SamlResponseCustomizer conditionsValidity(DateTime notBefore, DateTime notOnOrAfter)
+    static SamlResponseCustomizer conditionsValidity(Instant notBefore, Instant notOnOrAfter)
     {
         return response -> {
             Assertion assertion = response.getAssertions().get(0);
@@ -182,7 +183,7 @@ public interface SamlResponseCustomizer
         return response -> {
             Assertion assertion = response.getAssertions().get(0);
 
-            assertion.getConditions().getAudienceRestrictions().get(0).getAudiences().get(0).setAudienceURI("wrong");
+            assertion.getConditions().getAudienceRestrictions().get(0).getAudiences().get(0).setURI("wrong");
         };
     }
 
@@ -203,7 +204,7 @@ public interface SamlResponseCustomizer
             .get(0)
             .getAuthnStatements()
             .get(0)
-            .setAuthnInstant(DateTime.now().minusMinutes(10));
+            .setAuthnInstant(Instant.now().minus(10, MINUTES));
     }
 
     static SamlResponseCustomizer noAttributes()

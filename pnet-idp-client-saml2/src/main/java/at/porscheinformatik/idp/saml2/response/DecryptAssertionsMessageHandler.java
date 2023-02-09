@@ -37,7 +37,7 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 public class DecryptAssertionsMessageHandler extends AbstractSuccessResponseMessageHandler
 {
     @Override
-    protected void doInvoke(Response response, MessageContext<Response> messageContext) throws MessageHandlerException
+    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException
     {
         List<EncryptedAssertion> encryptedAssertions = response.getEncryptedAssertions();
 

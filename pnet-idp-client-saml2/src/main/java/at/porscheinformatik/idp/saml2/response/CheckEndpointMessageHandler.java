@@ -6,7 +6,6 @@ package at.porscheinformatik.idp.saml2.response;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler;
-import org.opensaml.saml.saml2.core.Response;
 
 import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -14,17 +13,16 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * @author Daniel Furtlehner
  */
-public class CheckEndpointMessageHandler extends AbstractSimpleMessageHandler<Response>
+public class CheckEndpointMessageHandler extends AbstractSimpleMessageHandler
 {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void invoke(MessageContext<Response> messageContext) throws MessageHandlerException
+    public void invoke(MessageContext messageContext) throws MessageHandlerException
     {
         HttpRequestContext httpRequestContext = getHttpRequestContext(messageContext);
 
         ReceivedEndpointSecurityHandler handler = new ReceivedEndpointSecurityHandler();
-        handler.setHttpServletRequest(httpRequestContext.getRequest());
+        handler.setHttpServletRequestSupplier(httpRequestContext::getRequest);
 
         try
         {

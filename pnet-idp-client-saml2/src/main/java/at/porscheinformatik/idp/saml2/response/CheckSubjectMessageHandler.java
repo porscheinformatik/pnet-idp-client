@@ -5,9 +5,9 @@ package at.porscheinformatik.idp.saml2.response;
 
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 
+import java.time.Instant;
 import java.util.Objects;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.saml2.core.Response;
@@ -25,7 +25,7 @@ public class CheckSubjectMessageHandler extends AbstractSuccessResponseMessageHa
 {
 
     @Override
-    protected void doInvoke(Response response, MessageContext<Response> messageContext) throws MessageHandlerException
+    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException
     {
         Subject subject = response.getAssertions().get(0).getSubject();
 
@@ -80,15 +80,15 @@ public class CheckSubjectMessageHandler extends AbstractSuccessResponseMessageHa
         }
     }
 
-    private boolean isOutdated(DateTime notOnOrAfter)
+    private boolean isOutdated(Instant notOnOrAfter)
     {
         if (notOnOrAfter == null)
         {
             return true;
         }
 
-        DateTime now = DateTime.now();
-        DateTime expiration = notOnOrAfter.plusMinutes(CLOCK_SKEW_IN_MINUTES);
+        Instant now = Instant.now();
+        Instant expiration = notOnOrAfter.plus(CLOCK_SKEW);
 
         return expiration.isBefore(now);
     }

@@ -20,7 +20,7 @@ public class CheckSubjectIdentifierMessageHandler extends AbstractSuccessRespons
 {
 
     @Override
-    protected void doInvoke(Response response, MessageContext<Response> messageContext) throws MessageHandlerException
+    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException
     {
         List<Attribute> attributes = response.getAssertions().get(0).getAttributeStatements().get(0).getAttributes();
 

@@ -19,9 +19,9 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
-import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationRequestFilter;
+import org.springframework.security.saml2.provider.service.web.Saml2WebSsoAuthenticationRequestFilter;
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2AuthenticationRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.ReflectionUtils;
@@ -43,7 +43,7 @@ public class PartnerNetSaml2ConfigurerTest
     public void requestFilterIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID, false).credentials(Saml2TestUtils::defaultCredentials);
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials);
 
         DefaultSecurityFilterChain filterChain = http.build();
 
@@ -58,7 +58,7 @@ public class PartnerNetSaml2ConfigurerTest
     {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer
-            .apply(http, IDP_ENTITY_ID, false) //
+            .apply(http, IDP_ENTITY_ID) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
         DefaultSecurityFilterChain filterChain = http.build();
@@ -73,7 +73,7 @@ public class PartnerNetSaml2ConfigurerTest
     {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer
-            .apply(http, IDP_ENTITY_ID, false) //
+            .apply(http, IDP_ENTITY_ID) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
         DefaultSecurityFilterChain filterChain = http.build();
@@ -88,7 +88,7 @@ public class PartnerNetSaml2ConfigurerTest
     {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer
-            .apply(http, IDP_ENTITY_ID, false) //
+            .apply(http, IDP_ENTITY_ID) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
         DefaultSecurityFilterChain filterChain = http.build();
@@ -108,7 +108,7 @@ public class PartnerNetSaml2ConfigurerTest
     public void missingCredentialsThrowsException() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID, false);
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID);
 
         NullPointerException e = assertThrows(NullPointerException.class, () -> http.build());
         assertThat(e.getMessage(), equalTo("No credentials configured"));

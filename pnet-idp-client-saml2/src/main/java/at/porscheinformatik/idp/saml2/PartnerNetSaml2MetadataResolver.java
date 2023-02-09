@@ -4,6 +4,8 @@ import static at.porscheinformatik.idp.saml2.XmlUtils.*;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -12,7 +14,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2alg.DigestMethod;
@@ -41,7 +42,7 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
 {
     public static final String SUBJECT_ID_REQUIREMENT_NAME = "urn:oasis:names:tc:SAML:profiles:subject-id:req";
-    private static final int METADATA_MAX_VALIDITY_DAYS = 7;
+    private static final Duration METADATA_MAX_VALIDITY = Duration.ofDays(7);
 
     @Override
     public String resolve(@Nonnull RelyingPartyRegistration relyingPartyRegistration)
@@ -62,8 +63,7 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
 
     private EntityDescriptor buildMetadata(RelyingPartyRegistration relyingPartyRegistration)
     {
-
-        DateTime validUntil = DateTime.now().plusDays(METADATA_MAX_VALIDITY_DAYS);
+        Instant validUntil = Instant.now().plus(METADATA_MAX_VALIDITY);
 
         EntityDescriptor entityDescriptor = entityDescriptor(relyingPartyRegistration.getEntityId(), validUntil);
 
@@ -119,8 +119,8 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
             .getSignatureAlgorithms()
             .stream()
             .filter(algorithm -> AlgorithmSupport
-                .validateAlgorithmURI(algorithm, signingConfig.getWhitelistedAlgorithms(),
-                    signingConfig.getBlacklistedAlgorithms()))
+                .validateAlgorithmURI(algorithm, signingConfig.getIncludedAlgorithms(),
+                    signingConfig.getExcludedAlgorithms()))
             .collect(Collectors.toList());
 
         for (String allowedAlgorithm : allowedSigningAlgorithms)
@@ -138,8 +138,8 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
             .getSignatureReferenceDigestMethods()
             .stream()
             .filter(algorithm -> AlgorithmSupport
-                .validateAlgorithmURI(algorithm, signingConfig.getWhitelistedAlgorithms(),
-                    signingConfig.getBlacklistedAlgorithms()))
+                .validateAlgorithmURI(algorithm, signingConfig.getIncludedAlgorithms(),
+                    signingConfig.getExcludedAlgorithms()))
             .collect(Collectors.toList());
 
         for (String allowedAlgorithm : allowedDigestAlgorithms)
@@ -168,7 +168,7 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
      * @param validUntil how long the metadata should be valid. Around a week or so is good.
      * @return The entity descriptor
      */
-    private EntityDescriptor entityDescriptor(String entityId, DateTime validUntil)
+    private EntityDescriptor entityDescriptor(String entityId, Instant validUntil)
     {
         EntityDescriptor entityDescriptor = createSamlObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
         entityDescriptor.setEntityID(entityId);
@@ -190,7 +190,7 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
     private NameIDFormat nameIdFormat(String nameIdFormat)
     {
         NameIDFormat format = createSamlObject(NameIDFormat.DEFAULT_ELEMENT_NAME);
-        format.setFormat(nameIdFormat);
+        format.setURI(nameIdFormat);
 
         return format;
     }
@@ -244,7 +244,7 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
             .getDataEncryptionAlgorithms()
             .stream()
             .filter(algorithm -> AlgorithmSupport
-                .validateAlgorithmURI(algorithm, config.getWhitelistedAlgorithms(), config.getBlacklistedAlgorithms()))
+                .validateAlgorithmURI(algorithm, config.getIncludedAlgorithms(), config.getExcludedAlgorithms()))
             .collect(Collectors.toSet());
 
         for (String allowedAlgorithm : allowedAlgorithms)

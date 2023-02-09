@@ -1,5 +1,6 @@
 package at.porscheinformatik.idp.saml2;
 
+import java.time.Duration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 public class Saml2Utils
 {
@@ -15,7 +16,7 @@ public class Saml2Utils
     public static final String SUBJECT_ID_NAME = "urn:oasis:names:tc:SAML:attribute:subject-id";
     public static final String PAIRWISE_ID_NAME = "urn:oasis:names:tc:SAML:attribute:pairwise-id";
 
-    public static final int CLOCK_SKEW_IN_MINUTES = 5;
+    public static final Duration CLOCK_SKEW = Duration.ofMinutes(5);
 
     private static final String AUTHN_REQUEST_ID_ATTR = "poi.saml2.authn_request_id";
     private static final String FORCE_AUTHENTICATION_PARAM = "forceAuthn";

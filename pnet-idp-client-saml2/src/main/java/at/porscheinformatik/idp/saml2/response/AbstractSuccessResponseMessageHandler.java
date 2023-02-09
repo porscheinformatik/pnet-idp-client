@@ -13,13 +13,13 @@ import org.opensaml.saml.saml2.core.StatusCode;
 /**
  * @author Daniel Furtlehner
  */
-public abstract class AbstractSuccessResponseMessageHandler extends AbstractSimpleMessageHandler<Response>
+public abstract class AbstractSuccessResponseMessageHandler extends AbstractSimpleMessageHandler
 {
 
     @Override
-    public void invoke(MessageContext<Response> messageContext) throws MessageHandlerException
+    public void invoke(MessageContext messageContext) throws MessageHandlerException
     {
-        Response response = messageContext.getMessage();
+        Response response = getResponse(messageContext);
 
         if (Objects.equals(response.getStatus().getStatusCode().getValue(), StatusCode.SUCCESS))
         {
@@ -27,6 +27,5 @@ public abstract class AbstractSuccessResponseMessageHandler extends AbstractSimp
         }
     }
 
-    protected abstract void doInvoke(Response response, MessageContext<Response> messageContext)
-        throws MessageHandlerException;
+    protected abstract void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException;
 }

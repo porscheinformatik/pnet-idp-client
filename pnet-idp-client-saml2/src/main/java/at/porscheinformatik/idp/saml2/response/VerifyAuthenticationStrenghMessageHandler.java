@@ -14,11 +14,11 @@ import org.opensaml.saml.saml2.core.Response;
 import at.porscheinformatik.idp.saml2.AuthnContextClass;
 import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
 
-public class VerifyAuthenticationStrenghMessageHandler extends AbstractSimpleMessageHandler<Response>
+public class VerifyAuthenticationStrenghMessageHandler extends AbstractSimpleMessageHandler
 {
 
     @Override
-    public void invoke(MessageContext<Response> messageContext) throws MessageHandlerException
+    public void invoke(MessageContext messageContext) throws MessageHandlerException
     {
         HttpRequestContext httpRequestContext = getHttpRequestContext(messageContext);
 
@@ -30,14 +30,14 @@ public class VerifyAuthenticationStrenghMessageHandler extends AbstractSimpleMes
             return;
         }
 
-        Assertion assertion = firstElement(messageContext.getMessage().getAssertions());
+        Response response = getResponse(messageContext);
+        Assertion assertion = firstElement(response.getAssertions());
         AuthnStatement authnStatement = firstElement(assertion.getAuthnStatements());
         AuthnContextClassRef authnContextClassRef = authnStatement.getAuthnContext().getAuthnContextClassRef();
 
-        AuthnContextClass authnContextClass = fromReference(authnContextClassRef.getAuthnContextClassRef())
+        AuthnContextClass authnContextClass = fromReference(authnContextClassRef.getURI())
             .orElseThrow(() -> new MessageHandlerException(String
-                .format("Could not validate authentiation strenght as %s is unkown",
-                    authnContextClassRef.getAuthnContextClassRef())));
+                .format("Could not validate authentiation strenght as %s is unkown", authnContextClassRef.getURI())));
 
         if (authnContextClass.getNistLevel() < requestedNistLevel)
         {

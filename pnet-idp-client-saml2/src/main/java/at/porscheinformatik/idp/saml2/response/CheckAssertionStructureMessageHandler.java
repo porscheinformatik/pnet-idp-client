@@ -20,7 +20,7 @@ import org.opensaml.saml.saml2.core.Response;
 public class CheckAssertionStructureMessageHandler extends AbstractSuccessResponseMessageHandler
 {
     @Override
-    protected void doInvoke(Response response, MessageContext<Response> messageContext) throws MessageHandlerException
+    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException
     {
         Assertion assertion = validateSingleSizeList(response.getAssertions(), "Assertion");
         validateSingleSizeList(assertion.getAuthnStatements(), "AuthnStatement");

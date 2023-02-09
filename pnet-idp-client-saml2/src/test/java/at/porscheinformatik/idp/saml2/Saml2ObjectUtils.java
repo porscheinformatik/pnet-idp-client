@@ -11,12 +11,12 @@ import java.io.StringReader;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -63,7 +63,7 @@ import org.opensaml.xmlsec.signature.support.SignatureSupport;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 /**
@@ -99,7 +99,7 @@ public final class Saml2ObjectUtils
     {
         Response response = createSamlObject(Response.DEFAULT_ELEMENT_NAME);
 
-        response.setIssueInstant(new DateTime());
+        response.setIssueInstant(Instant.now());
         response.setID(generateId());
         response.setIssuer(issuer(issuer));
 
@@ -127,7 +127,7 @@ public final class Saml2ObjectUtils
         if (message != null)
         {
             StatusMessage statusMessage = createSamlObject(StatusMessage.DEFAULT_ELEMENT_NAME);
-            statusMessage.setMessage(message);
+            statusMessage.setValue(message);
             status.setStatusMessage(statusMessage);
         }
 
@@ -160,7 +160,7 @@ public final class Saml2ObjectUtils
 
         SubjectConfirmationData confirmData = createSamlObject(SubjectConfirmationData.DEFAULT_ELEMENT_NAME);
         confirmData.setRecipient(assertionConsumerServiceUrl);
-        confirmData.setNotOnOrAfter(new DateTime().plusSeconds(validityInSeconds));
+        confirmData.setNotOnOrAfter(Instant.now().plusSeconds(validityInSeconds));
 
         if (authnRequestId != null)
         {
@@ -210,7 +210,7 @@ public final class Saml2ObjectUtils
 
         AudienceRestriction restriction = createSamlObject(AudienceRestriction.DEFAULT_ELEMENT_NAME);
         Audience audience = createSamlObject(Audience.DEFAULT_ELEMENT_NAME);
-        audience.setAudienceURI(serviceIdentifier);
+        audience.setURI(serviceIdentifier);
 
         restriction.getAudiences().add(audience);
         conditions.getAudienceRestrictions().add(restriction);
@@ -219,7 +219,7 @@ public final class Saml2ObjectUtils
     }
 
     @Nonnull
-    public static AuthnStatement authnStatement(@Nonnull DateTime authenticationTime,
+    public static AuthnStatement authnStatement(@Nonnull Instant authenticationTime,
         @Nonnull String authnContextClassRef)
     {
         AuthnStatement authn = createSamlObject(AuthnStatement.DEFAULT_ELEMENT_NAME);
@@ -246,7 +246,7 @@ public final class Saml2ObjectUtils
 
         assertion.setIssuer(issuer(issuer));
         assertion.setID(generateId());
-        assertion.setIssueInstant(new DateTime());
+        assertion.setIssueInstant(Instant.now());
         assertion.setSubject(requireNonNull(subject, "subject must not be null"));
 
         if (conditions != null)
@@ -330,7 +330,7 @@ public final class Saml2ObjectUtils
         AuthnContext context = createSamlObject(AuthnContext.DEFAULT_ELEMENT_NAME);
 
         AuthnContextClassRef classRef = createSamlObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        classRef.setAuthnContextClassRef(authnContextClassRef);
+        classRef.setURI(authnContextClassRef);
 
         context.setAuthnContextClassRef(classRef);
 

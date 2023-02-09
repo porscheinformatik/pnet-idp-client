@@ -8,17 +8,18 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 
-public class VerifyStatusMessageHandler extends AbstractSimpleMessageHandler<Response>
+public class VerifyStatusMessageHandler extends AbstractSimpleMessageHandler
 {
 
     @Override
-    public void invoke(MessageContext<Response> messageContext) throws MessageHandlerException
+    public void invoke(MessageContext messageContext) throws MessageHandlerException
     {
-        Status status = messageContext.getMessage().getStatus();
+        Response response = getResponse(messageContext);
+        Status status = response.getStatus();
 
         if (!Objects.equals(status.getStatusCode().getValue(), StatusCode.SUCCESS))
         {
-            String message = status.getStatusMessage() != null ? status.getStatusMessage().getMessage() : "";
+            String message = status.getStatusMessage() != null ? status.getStatusMessage().getValue() : "";
 
             throw new MessageHandlerException(
                 String.format("Unsuccessful Response: %s %s", status.getStatusCode().getValue(), message));

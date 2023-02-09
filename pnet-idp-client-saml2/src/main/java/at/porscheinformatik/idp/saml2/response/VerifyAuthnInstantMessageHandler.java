@@ -5,7 +5,8 @@ package at.porscheinformatik.idp.saml2.response;
 
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 
-import org.joda.time.DateTime;
+import java.time.Instant;
+
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -20,12 +21,12 @@ public class VerifyAuthnInstantMessageHandler extends AbstractSuccessResponseMes
 {
 
     @Override
-    protected void doInvoke(Response response, MessageContext<Response> messageContext) throws MessageHandlerException
+    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException
     {
         HttpRequestContext httpRequestContext = getHttpRequestContext(messageContext);
 
         AuthnStatement authnStatement = response.getAssertions().get(0).getAuthnStatements().get(0);
-        DateTime authnInstant = authnStatement.getAuthnInstant();
+        Instant authnInstant = authnStatement.getAuthnInstant();
 
         // When authentication is not forced, also old authentications are valid.
         if (httpRequestContext.isForceAuthentication() && isOutdated(authnInstant, 5 * 60))
@@ -42,16 +43,17 @@ public class VerifyAuthnInstantMessageHandler extends AbstractSuccessResponseMes
         }
     }
 
-    private boolean isOutdated(DateTime authnInstant, int sessionAgeSeconds)
+    private boolean isOutdated(Instant authnInstant, int sessionAgeSeconds)
     {
         if (authnInstant == null)
         {
             return true;
         }
 
-        DateTime now = DateTime.now();
+        Instant now = Instant.now();
         // Account for clock skew here.
-        DateTime expiration = authnInstant.plusMinutes(CLOCK_SKEW_IN_MINUTES).plusSeconds(sessionAgeSeconds);
+        Instant expiration = authnInstant.plus(CLOCK_SKEW).plusSeconds(sessionAgeSeconds);
+
         return expiration.isBefore(now);
     }
 

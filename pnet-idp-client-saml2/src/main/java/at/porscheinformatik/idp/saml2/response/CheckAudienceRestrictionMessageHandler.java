@@ -5,9 +5,9 @@ package at.porscheinformatik.idp.saml2.response;
 
 import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 
+import java.time.Instant;
 import java.util.Objects;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.saml2.core.Conditions;
@@ -20,7 +20,7 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 public class CheckAudienceRestrictionMessageHandler extends AbstractSuccessResponseMessageHandler
 {
     @Override
-    protected void doInvoke(Response response, MessageContext<Response> messageContext) throws MessageHandlerException
+    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException
     {
         Conditions conditions = response.getAssertions().get(0).getConditions();
 
@@ -37,7 +37,7 @@ public class CheckAudienceRestrictionMessageHandler extends AbstractSuccessRespo
             .getAudienceRestrictions()
             .stream()
             .flatMap(restriction -> restriction.getAudiences().stream())
-            .filter(audience -> Objects.equals(audience.getAudienceURI(), registration.getEntityId()))
+            .filter(audience -> Objects.equals(audience.getURI(), registration.getEntityId()))
             .findAny()
             .orElseThrow(() -> new MessageHandlerException(
                 String.format("No Audience matching %s found", registration.getEntityId())));
@@ -45,19 +45,19 @@ public class CheckAudienceRestrictionMessageHandler extends AbstractSuccessRespo
 
     private void validateConditionsTimeFrame(Conditions conditions) throws MessageHandlerException
     {
-        DateTime notBefore = conditions.getNotBefore();
-        DateTime notOnOrAfter = conditions.getNotOnOrAfter();
+        Instant notBefore = conditions.getNotBefore();
+        Instant notOnOrAfter = conditions.getNotOnOrAfter();
 
         if (notBefore != null && notOnOrAfter != null && notOnOrAfter.isBefore(notBefore))
         {
             throw new MessageHandlerException("Contditions notOnOrAfter is before notBefore date");
         }
 
-        DateTime now = DateTime.now();
+        Instant now = Instant.now();
 
         if (notBefore != null)
         {
-            DateTime skewedNotBefore = notBefore.minusMinutes(CLOCK_SKEW_IN_MINUTES);
+            Instant skewedNotBefore = notBefore.minus(CLOCK_SKEW);
 
             if (skewedNotBefore.isAfter(now))
             {
@@ -67,7 +67,7 @@ public class CheckAudienceRestrictionMessageHandler extends AbstractSuccessRespo
 
         if (notOnOrAfter != null)
         {
-            DateTime skewedNotOnOrAfter = notOnOrAfter.plusMinutes(CLOCK_SKEW_IN_MINUTES);
+            Instant skewedNotOnOrAfter = notOnOrAfter.plus(CLOCK_SKEW);
 
             if (skewedNotOnOrAfter.isBefore(now))
             {

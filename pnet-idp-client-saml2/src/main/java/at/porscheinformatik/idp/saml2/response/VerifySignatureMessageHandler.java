@@ -37,15 +37,15 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 /**
  * @author Daniel Furtlehner
  */
-public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler<Response>
+public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler
 {
     private static final SAMLSignatureProfileValidator SIGNATURE_PROFILE_VALIDATOR =
         new SAMLSignatureProfileValidator();
 
     @Override
-    public void invoke(MessageContext<Response> messageContext) throws MessageHandlerException
+    public void invoke(MessageContext messageContext) throws MessageHandlerException
     {
-        Response response = messageContext.getMessage();
+        Response response = getResponse(messageContext);
 
         // Successful responses MUST be signed. Error responses MAY be signed.
         boolean signatureRequired = Objects.equals(response.getStatus().getStatusCode().getValue(), StatusCode.SUCCESS);
@@ -135,8 +135,8 @@ public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler<
             SecurityConfigurationSupport.getGlobalSignatureValidationConfiguration();
 
         SignatureValidationParameters params = new SignatureValidationParameters();
-        params.setBlacklistedAlgorithms(validationConfiguration.getBlacklistedAlgorithms());
-        params.setWhitelistedAlgorithms(validationConfiguration.getWhitelistedAlgorithms());
+        params.setExcludedAlgorithms(validationConfiguration.getExcludedAlgorithms());
+        params.setIncludedAlgorithms(validationConfiguration.getIncludedAlgorithms());
 
         return params;
     }

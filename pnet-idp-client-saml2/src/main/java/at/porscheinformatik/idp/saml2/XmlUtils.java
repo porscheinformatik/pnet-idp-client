@@ -7,13 +7,13 @@ import static java.util.Objects.*;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
@@ -80,7 +80,7 @@ public final class XmlUtils
      * </tr>
      * <tr>
      * <td>XSDateTime</td>
-     * <td>LocalDateTime</td>
+     * <td>Instant</td>
      * </tr>
      * <tr>
      * <td>XSInteger</td>
@@ -127,7 +127,7 @@ public final class XmlUtils
 
         if (xmlObject instanceof XSDateTime)
         {
-            DateTime dateTime = ((XSDateTime) xmlObject).getValue();
+            Instant dateTime = ((XSDateTime) xmlObject).getValue();
 
             return dateTime;
         }
@@ -144,7 +144,7 @@ public final class XmlUtils
 
         if (xmlObject instanceof XSURI)
         {
-            String uriString = ((XSURI) xmlObject).getValue();
+            String uriString = ((XSURI) xmlObject).getURI();
 
             return URI.create(uriString);
         }
@@ -152,7 +152,6 @@ public final class XmlUtils
         throw new IllegalArgumentException("Unsupported xml object type " + xmlObject.getClass());
 
     }
-
 
     public static MaxSessionAge maxSessionAgeRequest(Integer sessionAgeInSeconds)
     {
@@ -180,7 +179,7 @@ public final class XmlUtils
     private static AuthnContextClassRef authnContextClassRef(String reference)
     {
         AuthnContextClassRef authnContext = createSamlObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        authnContext.setAuthnContextClassRef(reference);
+        authnContext.setURI(reference);
 
         return authnContext;
     }

@@ -30,11 +30,11 @@ import org.springframework.security.saml2.provider.service.authentication.Saml2R
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
-import org.springframework.security.saml2.provider.service.servlet.filter.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
 import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
-import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml3AuthenticationRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml4AuthenticationRequestResolver;
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2AuthenticationRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -484,8 +484,8 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private Saml2AuthenticationRequestResolver buildRequestResolver(
         RelyingPartyRegistrationResolver relyingPartyRegistrationResolver)
     {
-        OpenSaml3AuthenticationRequestResolver factory =
-            new OpenSaml3AuthenticationRequestResolver(relyingPartyRegistrationResolver);
+        OpenSaml4AuthenticationRequestResolver factory =
+            new OpenSaml4AuthenticationRequestResolver(relyingPartyRegistrationResolver);
 
         factory.setAuthnRequestCustomizer(new PartnerNetSaml2AuthnRequestCustomizer());
 

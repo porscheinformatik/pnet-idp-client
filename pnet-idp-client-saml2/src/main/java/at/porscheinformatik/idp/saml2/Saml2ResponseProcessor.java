@@ -41,13 +41,12 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class Saml2ResponseProcessor
 {
-    @SuppressWarnings("unchecked")
     public static Saml2ResponseProcessor withDefaultHandlers()
     {
         MessageLifetimeSecurityHandler lifetimeHandler = new MessageLifetimeSecurityHandler();
-        lifetimeHandler.setClockSkew(CLOCK_SKEW_IN_MINUTES * 60 * 1000L);
+        lifetimeHandler.setClockSkew(CLOCK_SKEW);
 
-        List<MessageHandler<Response>> handlers = new ArrayList<>();
+        List<MessageHandler> handlers = new ArrayList<>();
         handlers.add(lifetimeHandler);
         handlers.add(new ThrowOnMissingIdMessageHandler());
         handlers.add(new CheckIssuerMessageHandler());
@@ -65,29 +64,29 @@ public class Saml2ResponseProcessor
         return new Saml2ResponseProcessor(handlers);
     }
 
-    private final List<MessageHandler<Response>> handlers = new ArrayList<>();
+    private final List<MessageHandler> handlers = new ArrayList<>();
 
-    public Saml2ResponseProcessor(List<MessageHandler<Response>> handlers)
+    public Saml2ResponseProcessor(List<MessageHandler> handlers)
     {
         this.handlers.addAll(handlers);
     }
 
     public void process(Saml2AuthenticationToken token, Response response) throws MessageHandlerException
     {
-        MessageContext<Response> messageContext = buildMessageContext(token, response);
+        MessageContext messageContext = buildMessageContext(token, response);
 
-        for (MessageHandler<Response> handler : handlers)
+        for (MessageHandler handler : handlers)
         {
             handler.invoke(messageContext);
         }
     }
 
-    private MessageContext<Response> buildMessageContext(Saml2AuthenticationToken token, Response response)
+    private MessageContext buildMessageContext(Saml2AuthenticationToken token, Response response)
     {
         HttpRequestContext details = HttpRequestContext.fromToken(token);
         boolean isPost = Objects.equals("POST", details.getRequest().getMethod());
 
-        MessageContext<Response> messageContext = new MessageContext<Response>();
+        MessageContext messageContext = new MessageContext();
         messageContext.setMessage(response);
         messageContext.addSubcontext(new Saml2AuthenticationTokenContext(token));
 
@@ -103,7 +102,7 @@ public class Saml2ResponseProcessor
     @PostConstruct
     public void initialize() throws ComponentInitializationException
     {
-        for (MessageHandler<Response> handler : handlers)
+        for (MessageHandler handler : handlers)
         {
             handler.initialize();
         }

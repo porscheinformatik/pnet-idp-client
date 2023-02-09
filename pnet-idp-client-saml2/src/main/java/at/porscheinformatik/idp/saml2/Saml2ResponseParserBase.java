@@ -70,7 +70,7 @@ public abstract class Saml2ResponseParserBase implements Saml2ResponseParser
         }
 
         AuthnContextClass authnContextClass = AuthnContextClass
-            .fromReference(authnStatement.getAuthnContext().getAuthnContextClassRef().getAuthnContextClassRef())
+            .fromReference(authnStatement.getAuthnContext().getAuthnContextClassRef().getURI())
             .orElse(AuthnContextClass.NONE);
 
         return new Saml2Data(subjectIdentifier, nameId, additionalAttributes, relayState, authnContextClass);
