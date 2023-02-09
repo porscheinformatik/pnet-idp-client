@@ -3,14 +3,13 @@
  */
 package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 
 import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
@@ -27,20 +26,16 @@ import at.porscheinformatik.idp.saml2.Saml2CredentialsProperties;
 @EnableWebSecurity
 @EnablePartnerNetOpenIdConnect
 @EnablePartnerNetSaml2
-public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter implements EnvironmentAware
+public class ClientShowcaseSecurityConfig
 {
     private static final Profiles PROD = Profiles.of("prod");
     private static final Profiles QA = Profiles.of("qa");
     private static final Profiles DEV = Profiles.of("dev");
     private static final Profiles LOCAL = Profiles.of("local");
 
-    private Environment environment;
-
-    @Autowired
-    private Saml2CredentialsProperties samlCredentialsConfig;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment,
+        Saml2CredentialsProperties samlCredentialsConfig) throws Exception
     {
         if (environment.acceptsProfiles(LOCAL))
         {
@@ -48,12 +43,12 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
         }
 
         http
-            .apply(new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider())
+            .apply(new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
                 .clientSecret(environment.getProperty("oidc.client.secret")));
 
         PartnerNetSaml2Configurer
-            .apply(http, getPartnerNetSaml2Provider())
+            .apply(http, getPartnerNetSaml2Provider(environment))
             .credentials(samlCredentialsConfig)
             .failureUrl("/loginerror");
 
@@ -72,9 +67,11 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
             .fullyAuthenticated();
 
         http.requiresChannel().anyRequest().requiresSecure();
+
+        return http.build();
     }
 
-    private PartnerNetOpenIdConnectProvider getPartnerNetOidcProvider()
+    private PartnerNetOpenIdConnectProvider getPartnerNetOidcProvider(Environment environment)
     {
         if (environment.acceptsProfiles(PROD))
         {
@@ -99,7 +96,7 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
         throw new IllegalArgumentException("No supported profile found.");
     }
 
-    private PartnerNetSaml2Provider getPartnerNetSaml2Provider()
+    private PartnerNetSaml2Provider getPartnerNetSaml2Provider(Environment environment)
     {
         if (environment.acceptsProfiles(PROD))
         {
@@ -122,11 +119,5 @@ public class ClientShowcaseSecurityConfig extends WebSecurityConfigurerAdapter i
         }
 
         throw new IllegalArgumentException("No supported profile found.");
-    }
-
-    @Override
-    public void setEnvironment(Environment environment)
-    {
-        this.environment = environment;
     }
 }
