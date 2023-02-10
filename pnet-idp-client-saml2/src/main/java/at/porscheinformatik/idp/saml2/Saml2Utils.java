@@ -4,10 +4,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.web.util.UriComponentsBuilder;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 

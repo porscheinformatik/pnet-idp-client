@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.8</version>
+        <version>3.0.2</version>
     </parent>
 
     <groupId>at.porscheinformatik.pnet</groupId>
@@ -21,9 +21,6 @@
 
     <properties>
         <java.version>17</java.version>
-
-        <bouncycastle.version>1.70</bouncycastle.version>
-        <spring-security.version>5.8.1</spring-security.version>
 
         <docker-maven-plugin.version>0.35.0</docker-maven-plugin.version>
         <docker.tag>latest</docker.tag>
@@ -47,13 +44,6 @@
                 <groupId>at.porscheinformatik.pnet</groupId>
                 <artifactId>pnet-idp-client-saml2</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-
-            <!-- Override Bouncycastle to a newer version without known vulnerabilities -->
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
-                <version>${bouncycastle.version}</version>
             </dependency>
 
             <!-- Override opensaml to remove the unsupported 3.x release -->

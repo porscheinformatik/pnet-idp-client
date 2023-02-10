@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Customized implementation of Spring Securities default request resolver, that allows for a bit more flexibility.

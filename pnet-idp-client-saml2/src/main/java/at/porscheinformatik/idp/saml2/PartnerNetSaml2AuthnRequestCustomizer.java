@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Extensions;
 import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml4AuthenticationRequestResolver.AuthnRequestContext;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Customize the authentication request with Partner.Net related features.

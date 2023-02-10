@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
-
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
@@ -34,6 +32,7 @@ import at.porscheinformatik.idp.saml2.response.VerifyAuthenticationStrenghMessag
 import at.porscheinformatik.idp.saml2.response.VerifyAuthnInstantMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifySignatureMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifyStatusMessageHandler;
+import jakarta.annotation.PostConstruct;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**

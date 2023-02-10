@@ -6,12 +6,11 @@ import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationToken;
 
 import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class HttpRequestContextAwareSaml2AuthenticationDetailsSource
     implements AuthenticationDetailsSource<HttpServletRequest, HttpRequestContext>

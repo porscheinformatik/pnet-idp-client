@@ -2,7 +2,7 @@ package at.porscheinformatik.idp.saml2;
 
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public final class PartnerNetSaml2AuthenticationRequestUtils
 {

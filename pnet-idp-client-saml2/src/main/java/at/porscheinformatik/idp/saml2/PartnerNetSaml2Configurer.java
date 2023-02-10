@@ -14,8 +14,6 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import javax.servlet.Filter;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -37,6 +35,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
 import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
+import jakarta.servlet.Filter;
 
 /**
  * @author Daniel Furtlehner

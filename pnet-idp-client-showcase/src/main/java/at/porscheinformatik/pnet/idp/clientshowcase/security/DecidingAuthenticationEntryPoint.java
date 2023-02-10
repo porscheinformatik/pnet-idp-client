@@ -5,16 +5,15 @@ package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import at.porscheinformatik.idp.openidconnect.PartnerNetOAuth2AuthorizationRequestResolver;
 import at.porscheinformatik.idp.saml2.Saml2Utils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This authentication entry point decides what authentication should be used based on the "authenticationType" query

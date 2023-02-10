@@ -7,18 +7,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
-
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class SessionWrapperFilter extends OncePerRequestFilter
@@ -156,33 +155,9 @@ public class SessionWrapperFilter extends OncePerRequestFilter
         }
 
         @Override
-        public HttpSessionContext getSessionContext()
-        {
-            return delegate.getSessionContext();
-        }
-
-        @Override
-        public Object getValue(String name)
-        {
-            return getAttribute(name);
-        }
-
-        @Override
         public Enumeration<String> getAttributeNames()
         {
             return delegate.getAttributeNames();
-        }
-
-        @Override
-        public String[] getValueNames()
-        {
-            return delegate.getValueNames();
-        }
-
-        @Override
-        public void putValue(String name, Object value)
-        {
-            setAttribute(name, value);
         }
 
         @Override
@@ -192,12 +167,6 @@ public class SessionWrapperFilter extends OncePerRequestFilter
             {
                 delegate.removeAttribute(name);
             }
-        }
-
-        @Override
-        public void removeValue(String name)
-        {
-            removeAttribute(name);
         }
 
         @Override
