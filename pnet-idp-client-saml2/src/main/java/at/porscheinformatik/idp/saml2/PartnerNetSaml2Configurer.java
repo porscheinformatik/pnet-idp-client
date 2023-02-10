@@ -57,7 +57,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      */
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider) throws Exception
     {
-        return apply(http, provider.getEntityId(), provider.getEntityId(), true);
+        return apply(http, provider.getEntityId(), provider.getEntityId());
     }
 
     /**
@@ -73,7 +73,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      */
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId) throws Exception
     {
-        return apply(http, entityId, entityId, true);
+        return apply(http, entityId, entityId);
     }
 
     /**
@@ -92,84 +92,10 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl)
         throws Exception
     {
-        return apply(http, entityId, metadataUrl, true);
-    }
-
-    /**
-     * @param http the http security to configure
-     * @param provider the authentication provider to use.
-     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
-     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
-     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
-     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
-     * @return the configurer for further customization
-     * @throws Exception when an exception occurs while configuring
-     * @deprecated will be removed in 1.0.0. Migrate your applications to new request matchers.
-     *             https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html#use-new-requestmatchers
-     */
-    @Deprecated
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider,
-        boolean useAuthorizeHttpRequests) throws Exception
-    {
-        return apply(http, provider.getEntityId(), useAuthorizeHttpRequests);
-    }
-
-    /**
-     * @param http the http security to configure
-     * @param entityId the entity id of the identity provider to use
-     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
-     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
-     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
-     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
-     * @return the configurer for further customization
-     * @throws Exception when an exception occurs while configuring * @deprecated will be removed in 1.0.0. Migrate your
-     *             applications to new request matchers.
-     *             https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html#use-new-requestmatchers
-     */
-    @Deprecated
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, boolean useAuthorizeHttpRequests)
-        throws Exception
-    {
-        return apply(http, entityId, entityId, useAuthorizeHttpRequests);
-    }
-
-    /**
-     * @param http the http security to configure
-     * @param entityId the entity id of the identity provider to use
-     * @param metadataUrl the URL pointing to the identity providers metadata
-     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
-     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
-     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
-     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
-     * @return the configurer for further customization
-     * @throws Exception when an exception occurs while configuring
-     * @deprecated will be removed in 1.0.0. Migrate your applications to new request matchers.
-     *             https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html#use-new-requestmatchers
-     */
-    @Deprecated
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl,
-        boolean useAuthorizeHttpRequests) throws Exception
-    {
-        if (useAuthorizeHttpRequests)
-        {
-            http //
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
-                .permitAll();
-        }
-        else
-        {
-            http
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH.replace("{registrationId}", "*"))
-                .permitAll();
-        }
+        http //
+            .authorizeHttpRequests()
+            .requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
+            .permitAll();
 
         return http.apply(new PartnerNetSaml2Configurer(entityId, metadataUrl));
     }
@@ -287,40 +213,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper)
     {
         this.authoritiesMapper = authoritiesMapper;
-
-        return this;
-    }
-
-    /**
-     * Set the URL to redirect to on authentication failure. This will override the registered
-     * {@link #failureHandler(AuthenticationFailureHandler) if any.
-     *
-     * @param failureUrl the new failureUrl to use
-     * @return the builder for a fluent api
-     * @deprecated use the {@link #customizer(Customizer)} method instead
-     */
-    @Deprecated
-    public PartnerNetSaml2Configurer failureUrl(String failureUrl)
-    {
-        this.failureUrl = failureUrl;
-        failureHandler = null;
-
-        return this;
-    }
-
-    /**
-     * Set the {@link AuthenticationFailureHandler} to use on authentication failure. This will override the registered
-     * {@link #failureUrl(String)} if any.
-     *
-     * @param failureHandler the new failure handler to use
-     * @return the builder for a fluent api
-     * @deprecated use the {@link #customizer(Customizer)} method instead
-     */
-    @Deprecated
-    public PartnerNetSaml2Configurer failureHandler(AuthenticationFailureHandler failureHandler)
-    {
-        this.failureHandler = failureHandler;
-        failureUrl = null;
 
         return this;
     }
