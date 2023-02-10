@@ -88,10 +88,10 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
             .withRegistrationId("pnet")
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .clientId(CLIENT_ID)
-            .redirectUriTemplate("https://localhost:8443/redirect/uri")
+            .redirectUri("https://localhost:8443/redirect/uri")
             .authorizationUri("https://idp.com/oauth2/authorize")
             .tokenUri("https://idp.com/oauth2/token")
-            .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .build();
 
         return new InMemoryClientRegistrationRepository(registration);
