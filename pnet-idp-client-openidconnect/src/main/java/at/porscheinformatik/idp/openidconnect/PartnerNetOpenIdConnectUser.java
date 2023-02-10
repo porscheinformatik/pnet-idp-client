@@ -126,7 +126,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
         return userInfoClaims(USER_INFO_COUNTRY);
     }
 
-    public List<String> getAdditionalLocales()
+    public List<Locale> getAdditionalLocales()
     {
         return userInfoClaims(USER_INFO_ADDITIONAL_LOCALES);
     }

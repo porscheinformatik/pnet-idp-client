@@ -45,6 +45,8 @@ public class PartnerNetClaimTypeConverterFactory
 
         Map<String, Converter<Object, ?>> converters = OidcUserService.createDefaultClaimTypeConverters();
 
+        converters.put(USER_INFO_ADDITIONAL_LOCALES, new AdditionalLocalesConverter());
+
         converters.put(ID_TOKEN_SUPPORT_AVAILABLE, booleanConverter);
         converters.put(USER_INFO_FUNCTIONAL_NUMBERS, functionalNumberConverter);
         converters.put(USER_INFO_COMPANIES, companyConverter);

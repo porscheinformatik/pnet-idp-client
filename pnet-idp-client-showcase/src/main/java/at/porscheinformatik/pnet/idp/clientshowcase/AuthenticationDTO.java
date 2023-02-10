@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import at.porscheinformatik.idp.Gender;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
@@ -27,28 +26,16 @@ public class AuthenticationDTO
 
     public static AuthenticationDTO of(PartnerNetOpenIdConnectUser principal)
     {
-        List<Locale> locales = null;
-
-        if (principal //
-            .getAdditionalLocales() != null)
-        {
-            locales = principal //
-                .getAdditionalLocales()
-                .stream()
-                .map(Locale::forLanguageTag)
-                .collect(Collectors.toList());
-        }
-
         return new AuthenticationDTO("OpenId Connect", principal.getExternalId(),
             principal.getNistAuthenticationLevel() > 2, principal.getTransientSessionId(),
             principal.isSupportDataAvailable(), principal.getNistAuthenticationLevel(), principal.getName(),
             principal.getEmail(), principal.getPhoneNumber(), principal.getPnetGender(), principal.getPnetLocale(),
             principal.getUpdatedAt(), principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(),
             principal.getGuid(), principal.getCostcentre(), principal.getCountry(), principal.getLegacyId(),
-            principal.getFavoriteCompanyId(), principal.getFavoriteBrand(), locales, principal.getFunctionalNumbers(),
-            principal.getCompanies(), principal.getContactCompanyIds(), principal.getCompaniesAddress(),
-            principal.getRoles(), principal.getContracts(), principal.getCompanyTypes(),
-            principal.getSupportCompanies(), principal.getSupportContactCompanyIds(),
+            principal.getFavoriteCompanyId(), principal.getFavoriteBrand(), principal.getAdditionalLocales(),
+            principal.getFunctionalNumbers(), principal.getCompanies(), principal.getContactCompanyIds(),
+            principal.getCompaniesAddress(), principal.getRoles(), principal.getContracts(),
+            principal.getCompanyTypes(), principal.getSupportCompanies(), principal.getSupportContactCompanyIds(),
             principal.getSupportCompaniesAddress(), principal.getSupportRoles(), principal.getSupportContract(),
             principal.getSupportCompanyTypes());
     }
