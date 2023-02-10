@@ -5,14 +5,17 @@ package at.porscheinformatik.idp.openidconnect;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
+import at.porscheinformatik.idp.Gender;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
+import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
 import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
@@ -27,6 +30,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     public static final String ID_TOKEN_TRANSIENT_SESSION = "transient_session_id";
     public static final String ID_TOKEN_SUPPORT_AVAILABLE = "pnet_support_available";
 
+    private static final String USER_INFO_INTERNAL_ID = "pnet_internal_id";
     public static final String USER_INFO_ACADEMIC_TITLE = "pnet_academic_title";
     public static final String USER_INFO_ACADEMIC_TITLE_POST_NOMINAL = "pnet_academic_title_post_nominal";
     public static final String USER_INFO_GUID = "pnet_guid";
@@ -38,11 +42,17 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     public static final String USER_INFO_COMPANIES_ADDRESS = "pnet_companies_address";
     public static final String USER_INFO_ROLES = "pnet_roles";
     public static final String USER_INFO_CONTRACTS = "pnet_contracts";
+    public static final String USER_INFO_FAVORITE_COMPANY_ID = "pnet_favorite_company";
+    public static final String USER_INFO_FAVORITE_BRAND = "pnet_favorite_brand";
+    public static final String USER_INFO_CONTACT_COMPANIES = "pnet_contact_companies";
+    public static final String USER_INFO_COMPANY_TYPES = "pnet_company_types";
 
     public static final String USER_INFO_SUPPORT_COMPANIES = "pnet_support_companies";
     public static final String USER_INFO_SUPPORT_COMPANIES_ADDRESS = "pnet_support_companies_address";
     public static final String USER_INFO_SUPPORT_ROLES = "pnet_support_roles";
     public static final String USER_INFO_SUPPORT_CONTRACTS = "pnet_support_contracts";
+    public static final String USER_INFO_SUPPORT_CONTACT_COMPANIES = "pnet_support_contact_companies";
+    public static final String USER_INFO_SUPPORT_COMPANY_TYPES = "pnet_support_company_types";
 
     public PartnerNetOpenIdConnectUser(Collection<? extends GrantedAuthority> authorities, OidcIdToken idToken,
         OidcUserInfo userInfo)
@@ -166,6 +176,63 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
         return userInfoClaims(USER_INFO_SUPPORT_CONTRACTS);
     }
 
+    /**
+     * @return the internal Partner.Net Id of the user
+     * @deprecated will be removed in a future release. Migrate to {@link #getExternalId()}
+     */
+    @Deprecated
+    public Integer getLegacyId()
+    {
+        return userInfoClaims(USER_INFO_INTERNAL_ID);
+    }
+
+    public Gender getPnetGender()
+    {
+        return Gender.fromOidcValue(getGender());
+    }
+
+    public Locale getPnetLocale()
+    {
+        String localeAsString = getLocale();
+
+        if (localeAsString == null)
+        {
+            return null;
+        }
+
+        return Locale.forLanguageTag(localeAsString);
+    }
+
+    public Integer getFavoriteCompanyId()
+    {
+        return userInfoClaims(USER_INFO_FAVORITE_COMPANY_ID);
+    }
+
+    public String getFavoriteBrand()
+    {
+        return userInfoClaims(USER_INFO_FAVORITE_BRAND);
+    }
+
+    public Collection<Integer> getContactCompanyIds()
+    {
+        return userInfoClaims(USER_INFO_CONTACT_COMPANIES);
+    }
+
+    public Collection<Integer> getSupportContactCompanyIds()
+    {
+        return userInfoClaims(USER_INFO_SUPPORT_CONTACT_COMPANIES);
+    }
+
+    public Collection<PartnerNetCompanyTypeDTO> getCompanyTypes()
+    {
+        return userInfoClaims(USER_INFO_COMPANY_TYPES);
+    }
+
+    public Collection<PartnerNetCompanyTypeDTO> getSupportCompanyTypes()
+    {
+        return userInfoClaims(USER_INFO_SUPPORT_COMPANY_TYPES);
+    }
+
     private <T> T idTokenClaim(String claimName)
     {
         return getIdToken().getClaim(claimName);
@@ -175,4 +242,5 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     {
         return getUserInfo().getClaim(claimName);
     }
+
 }

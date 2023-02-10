@@ -1,11 +1,15 @@
 package at.porscheinformatik.idp.saml2;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import at.porscheinformatik.idp.Gender;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
+import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
 import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
@@ -18,6 +22,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     private final String relayState;
     private final String transientSessionId;
     private final AuthnContextClass authnContextClass;
+    private final Instant lastUpdate;
 
     private final String guid;
     private final String personnelNumber;
@@ -36,6 +41,8 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
 
     private final String tenant;
     private final String costCenter;
+    private final Integer favoriteCompanyId;
+    private final String favoriteBrand;
 
     private final List<PartnerNetFunctionalNumberDTO> functionalNumbers;
 
@@ -43,22 +50,29 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     private final List<PartnerNetCompanyAddressDTO> employmentsAddress;
     private final List<PartnerNetRoleDTO> roles;
     private final List<PartnerNetContractDTO> contracts;
+    private final Collection<Integer> contactCompanyIds;
+    private final Collection<PartnerNetCompanyTypeDTO> companyTypes;
 
     private final boolean supportData;
     private final List<PartnerNetCompanyDTO> supportEmployments;
     private final List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress;
     private final List<PartnerNetRoleDTO> supportRoles;
     private final List<PartnerNetContractDTO> supportContracts;
+    private final Collection<Integer> supportContactCompanyIds;
+    private final Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes;
 
     public PartnerNetSaml2AuthenticationPrincipal(String subjectIdentifier, String relayState,
-        String transientSessionId, AuthnContextClass authnContextClass, String guid, String personnelNumber,
-        Integer legacyId, String academicTitle, String academicTitlePostNominal, String firstname, String lastname,
-        Gender gender, Locale language, List<Locale> additionalLanguages, String mailAddress, String phoneNumber,
-        String tenant, String costCenter, List<PartnerNetFunctionalNumberDTO> functionalNumbers,
+        String transientSessionId, AuthnContextClass authnContextClass, Instant lastUpdate, String guid,
+        String personnelNumber, Integer legacyId, String academicTitle, String academicTitlePostNominal,
+        String firstname, String lastname, Gender gender, Locale language, List<Locale> additionalLanguages,
+        String mailAddress, String phoneNumber, String tenant, String costCenter, Integer favoriteCompanyId,
+        String favoriteBrand, List<PartnerNetFunctionalNumberDTO> functionalNumbers,
         List<PartnerNetCompanyDTO> employments, List<PartnerNetCompanyAddressDTO> employmentsAddress,
-        List<PartnerNetRoleDTO> roles, List<PartnerNetContractDTO> contracts, boolean supportData,
+        List<PartnerNetRoleDTO> roles, List<PartnerNetContractDTO> contracts, Collection<Integer> contactCompanyIds,
+        Collection<PartnerNetCompanyTypeDTO> companyTypes, boolean supportData,
         List<PartnerNetCompanyDTO> supportEmployments, List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
-        List<PartnerNetRoleDTO> supportRoles, List<PartnerNetContractDTO> supportContracts)
+        List<PartnerNetRoleDTO> supportRoles, List<PartnerNetContractDTO> supportContracts,
+        Collection<Integer> supportContactCompanyIds, Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes)
     {
         super();
 
@@ -66,6 +80,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         this.relayState = relayState;
         this.transientSessionId = transientSessionId;
         this.authnContextClass = authnContextClass;
+        this.lastUpdate = lastUpdate;
         this.guid = guid;
         this.personnelNumber = personnelNumber;
         this.legacyId = legacyId;
@@ -80,16 +95,22 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         this.phoneNumber = phoneNumber;
         this.tenant = tenant;
         this.costCenter = costCenter;
+        this.favoriteCompanyId = favoriteCompanyId;
+        this.favoriteBrand = favoriteBrand;
         this.functionalNumbers = functionalNumbers;
         this.employments = employments;
         this.employmentsAddress = employmentsAddress;
         this.roles = roles;
         this.contracts = contracts;
+        this.contactCompanyIds = contactCompanyIds;
+        this.companyTypes = companyTypes;
         this.supportData = supportData;
         this.supportEmployments = supportEmployments;
         this.supportEmploymentsAddress = supportEmploymentsAddress;
         this.supportRoles = supportRoles;
         this.supportContracts = supportContracts;
+        this.supportContactCompanyIds = supportContactCompanyIds;
+        this.supportCompanyTypes = supportCompanyTypes;
     }
 
     public String getSubjectIdentifier()
@@ -112,6 +133,11 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         return personnelNumber;
     }
 
+    /**
+     * @return the internal Partner.Net Id of the user
+     * @deprecated will be removed in a future release. Migrate to {@link #getSubjectIdentifier()}
+     */
+    @Deprecated
     public Integer getLegacyId()
     {
         return legacyId;
@@ -172,6 +198,16 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         return costCenter;
     }
 
+    public Integer getFavoriteCompanyId()
+    {
+        return favoriteCompanyId;
+    }
+
+    public String getFavoriteBrand()
+    {
+        return favoriteBrand;
+    }
+
     public List<PartnerNetFunctionalNumberDTO> getFunctionalNumbers()
     {
         return functionalNumbers;
@@ -197,6 +233,16 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         return contracts;
     }
 
+    public Collection<Integer> getContactCompanyIds()
+    {
+        return contactCompanyIds;
+    }
+
+    public Collection<PartnerNetCompanyTypeDTO> getCompanyTypes()
+    {
+        return companyTypes;
+    }
+
     public boolean isSupportDataAvailable()
     {
         return supportData;
@@ -220,6 +266,16 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     public List<PartnerNetContractDTO> getSupportContracts()
     {
         return supportContracts;
+    }
+
+    public Collection<Integer> getSupportContactCompanyIds()
+    {
+        return supportContactCompanyIds;
+    }
+
+    public Collection<PartnerNetCompanyTypeDTO> getSupportCompanyTypes()
+    {
+        return supportCompanyTypes;
     }
 
     public String getName()
@@ -248,6 +304,11 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     public boolean isStronglyAuthenticated()
     {
         return authnContextClass.isStrongerThan(AuthnContextClass.USERPASS);
+    }
+
+    public Instant getLastUpdate()
+    {
+        return lastUpdate;
     }
 
 }

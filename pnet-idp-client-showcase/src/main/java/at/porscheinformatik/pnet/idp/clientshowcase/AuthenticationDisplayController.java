@@ -3,6 +3,8 @@
  */
 package at.porscheinformatik.pnet.idp.clientshowcase;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,9 +39,20 @@ public class AuthenticationDisplayController
     @GetMapping
     public String getAuthentication(Model model) throws JsonProcessingException
     {
-        AuthenticationDTO dto = buildAuthentication();
+        Optional<AuthenticationDTO> dto = buildAuthentication();
 
-        model.addAttribute("authData", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dto));
+        if (dto.isPresent())
+        {
+            model.addAttribute("authData", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dto));
+        }
+        else
+        {
+            model
+                .addAttribute("authData",
+                    String
+                        .format("Unsupported authentication principal %s",
+                            SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
+        }
 
         return "index";
     }
@@ -50,21 +63,21 @@ public class AuthenticationDisplayController
         return "logout";
     }
 
-    private AuthenticationDTO buildAuthentication()
+    private Optional<AuthenticationDTO> buildAuthentication()
     {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
         if (principal instanceof PartnerNetOpenIdConnectUser)
         {
-            return AuthenticationDTO.of((PartnerNetOpenIdConnectUser) principal);
+            return Optional.of(AuthenticationDTO.of((PartnerNetOpenIdConnectUser) principal));
         }
 
         if (principal instanceof PartnerNetSaml2AuthenticationPrincipal)
         {
-            return AuthenticationDTO.of((PartnerNetSaml2AuthenticationPrincipal) principal);
+            return Optional.of(AuthenticationDTO.of((PartnerNetSaml2AuthenticationPrincipal) principal));
         }
 
-        return AuthenticationDTO.info(String.format("Unsupported authentication principal %s", principal.getClass()));
+        return Optional.empty();
     }
 }

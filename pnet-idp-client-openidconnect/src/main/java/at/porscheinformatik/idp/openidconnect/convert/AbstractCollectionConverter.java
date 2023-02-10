@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 
 /**
@@ -15,6 +16,11 @@ import org.springframework.core.convert.converter.Converter;
  */
 public abstract class AbstractCollectionConverter<T> implements Converter<Object, Collection<T>>
 {
+    public static final ParameterizedTypeReference<Map<String, Object>> MAP =
+        new ParameterizedTypeReference<Map<String, Object>>()
+        {
+            // Nothing to do here.
+        };
 
     @Override
     public Collection<T> convert(Object source)
@@ -24,7 +30,7 @@ public abstract class AbstractCollectionConverter<T> implements Converter<Object
             return null;
         }
 
-        Collection<Map<String, Object>> sourceCollection = cast(source);
+        Collection<Map<String, Object>> sourceCollection = ConverterUtils.cast(source, MAP);
 
         return sourceCollection //
             .stream()
@@ -34,25 +40,4 @@ public abstract class AbstractCollectionConverter<T> implements Converter<Object
 
     protected abstract T doConvertEntry(Map<String, Object> entry);
 
-    @SuppressWarnings("unchecked")
-    private Collection<Map<String, Object>> cast(Object source)
-    {
-        if (!Collection.class.isAssignableFrom(source.getClass()))
-        {
-            throw new IllegalArgumentException(String.format("Expected a list of maps to convert, but got %s", source));
-        }
-
-        Collection<Object> sourceCollection = (Collection<Object>) source;
-
-        for (Object object : sourceCollection)
-        {
-            if (!Map.class.isAssignableFrom(object.getClass()))
-            {
-                throw new IllegalArgumentException(
-                    String.format("Expected a list of maps to convert, but got %s", source));
-            }
-        }
-
-        return (Collection<Map<String, Object>>) source;
-    }
 }

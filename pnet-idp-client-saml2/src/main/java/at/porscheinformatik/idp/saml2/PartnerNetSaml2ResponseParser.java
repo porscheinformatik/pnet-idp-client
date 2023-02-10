@@ -3,6 +3,7 @@
  */
 package at.porscheinformatik.idp.saml2;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +18,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.util.Assert;
 
+import at.porscheinformatik.idp.Gender;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
+import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
 import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
@@ -80,13 +83,23 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         List<PartnerNetRoleDTO> supportRoles = roleList(data, attributeName("support_roles"));
         List<PartnerNetContractDTO> supportContracts =
             contractsList(data, attributeName("support_employment_contracts"));
+        Instant lastUpdate = singleInstant(data, attributeName("lastupdate"));
+        Integer favoriteCompanyId = singleInteger(data, attributeName("preferred_company"));
+        String favoriteBrand = singleString(data, attributeName("preferred_brand"));
+        Collection<Integer> contactCompanyIds = intList(data, attributeName("contact_company"));
+        Collection<Integer> supportContactCompanyIds = intList(data, attributeName("support_contact_company"));
+        Collection<PartnerNetCompanyTypeDTO> companyTypes =
+            companyTypeList(data, attributeName("employment_companytypes"));
+        Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes =
+            companyTypeList(data, attributeName("support_employment_companytypes"));
 
         return new PartnerNetSaml2AuthenticationPrincipal(data.getSubjectIdentifier(),
-            data.getRelayState().orElse(null), data.getNameId(), data.getAuthnContextClass(), guid, personnelNumber,
-            legacyId, academicTitle, academicTitlePostNominal, firstname, lastname, gender, language,
-            additionalLanguages, mailAddress, phoneNumber, tenant, costCenter, functionalNumbers, employments,
-            employmentsAddress, roles, contracts, supportData, supportEmployments, supportEmploymentsAddress,
-            supportRoles, supportContracts);
+            data.getRelayState().orElse(null), data.getNameId(), data.getAuthnContextClass(), lastUpdate, guid,
+            personnelNumber, legacyId, academicTitle, academicTitlePostNominal, firstname, lastname, gender, language,
+            additionalLanguages, mailAddress, phoneNumber, tenant, costCenter, favoriteCompanyId, favoriteBrand,
+            functionalNumbers, employments, employmentsAddress, roles, contracts, contactCompanyIds, companyTypes,
+            supportData, supportEmployments, supportEmploymentsAddress, supportRoles, supportContracts,
+            supportContactCompanyIds, supportCompanyTypes);
     }
 
     private List<Locale> localeList(Saml2Data data, String attributeName)
@@ -160,6 +173,22 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         }).collect(Collectors.toList());
     }
 
+    private List<PartnerNetCompanyTypeDTO> companyTypeList(Saml2Data data, String attributeName)
+    {
+        return entryStream(data, attributeName, ";").map(entry -> {
+
+            Integer companyId = Integer.parseInt(entry[0]);
+            String matchcode = entry[1];
+
+            return new PartnerNetCompanyTypeDTO(companyId, matchcode);
+        }).collect(Collectors.toList());
+    }
+
+    private Collection<Integer> intList(Saml2Data data, String attributeName)
+    {
+        return intStream(data, attributeName).collect(Collectors.toList());
+    }
+
     private Locale singleLocale(Saml2Data data, String attributeName)
     {
         String languageTag = singleString(data, attributeName);
@@ -222,6 +251,33 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
             .stream();
     }
 
+    private Stream<Integer> intStream(Saml2Data data, String attributeName)
+    {
+        Object value = data.getAttribute(attributeName);
+
+        if (value == null)
+        {
+            return Stream.empty();
+        }
+
+        List<Integer> entries = new ArrayList<>();
+
+        if (value instanceof Integer)
+        {
+            entries.add((Integer) value);
+        }
+        else
+        {
+            @SuppressWarnings("unchecked")
+            List<Integer> valueList = (List<Integer>) value;
+
+            entries.addAll(valueList);
+        }
+
+        return entries //
+            .stream();
+    }
+
     private String singleString(Saml2Data data, String attributeName)
     {
         return data.getAttribute(attributeName);
@@ -237,6 +293,11 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         Boolean booleanValue = data.getAttribute(attributeName);
 
         return booleanValue != null ? booleanValue : false;
+    }
+
+    private Instant singleInstant(Saml2Data data, String attributeName)
+    {
+        return data.getAttribute(attributeName);
     }
 
     private String attributeName(String name)

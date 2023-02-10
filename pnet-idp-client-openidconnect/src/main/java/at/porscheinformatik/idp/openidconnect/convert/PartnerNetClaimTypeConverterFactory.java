@@ -39,6 +39,9 @@ public class PartnerNetClaimTypeConverterFactory
             new PartnerNetCompanyAddressConverter(intConverter, stringConverter);
         PartnerNetRoleConverter roleConverter = new PartnerNetRoleConverter(intConverter, stringConverter);
         PartnerNetContractConverter contractConverter = new PartnerNetContractConverter(intConverter, stringConverter);
+        PartnerNetContactCompaniesConverter contactCompaniesConverter = new PartnerNetContactCompaniesConverter();
+        PartnerNetCompanyTypesConverter companyTypesConverter =
+            new PartnerNetCompanyTypesConverter(intConverter, stringConverter);
 
         Map<String, Converter<Object, ?>> converters = OidcUserService.createDefaultClaimTypeConverters();
 
@@ -46,6 +49,8 @@ public class PartnerNetClaimTypeConverterFactory
         converters.put(USER_INFO_FUNCTIONAL_NUMBERS, functionalNumberConverter);
         converters.put(USER_INFO_COMPANIES, companyConverter);
         converters.put(USER_INFO_COMPANIES_ADDRESS, companyAddressConverter);
+        converters.put(USER_INFO_CONTACT_COMPANIES, contactCompaniesConverter);
+        converters.put(USER_INFO_COMPANY_TYPES, companyTypesConverter);
         converters.put(USER_INFO_ROLES, roleConverter);
         converters.put(USER_INFO_CONTRACTS, contractConverter);
 
@@ -53,6 +58,7 @@ public class PartnerNetClaimTypeConverterFactory
         converters.put(USER_INFO_SUPPORT_COMPANIES_ADDRESS, companyAddressConverter);
         converters.put(USER_INFO_SUPPORT_ROLES, roleConverter);
         converters.put(USER_INFO_SUPPORT_CONTRACTS, contractConverter);
+        converters.put(USER_INFO_SUPPORT_COMPANY_TYPES, companyTypesConverter);
 
         return converters;
     }
