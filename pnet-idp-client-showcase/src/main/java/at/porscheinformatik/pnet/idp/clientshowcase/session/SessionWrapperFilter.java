@@ -37,6 +37,12 @@ public class SessionWrapperFilter extends OncePerRequestFilter
         doFilterInternal(request, response, filterChain);
     }
 
+    @Override
+    protected boolean shouldNotFilterErrorDispatch()
+    {
+        return false;
+    }
+
     private static final class SerializingSessionHttpServletRequestWrapper extends HttpServletRequestWrapper
     {
         private SerializingSessionWrapper wrapper;
