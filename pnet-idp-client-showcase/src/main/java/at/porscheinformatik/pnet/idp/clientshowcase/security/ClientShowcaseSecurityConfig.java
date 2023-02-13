@@ -69,7 +69,10 @@ public class ClientShowcaseSecurityConfig
         http
             .apply(new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
-                .clientSecret(environment.getProperty("oidc.client.secret")));
+                .clientSecret(environment.getProperty("oidc.client.secret")))
+            .customize(oauth -> {
+                oauth.failureUrl("/loginerror");
+            });
 
         PartnerNetSaml2Configurer
             .apply(http, getPartnerNetSaml2Provider(environment))
