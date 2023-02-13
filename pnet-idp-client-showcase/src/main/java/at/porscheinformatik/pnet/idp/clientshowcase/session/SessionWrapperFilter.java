@@ -30,6 +30,13 @@ public class SessionWrapperFilter extends OncePerRequestFilter
         filterChain.doFilter(new SerializingSessionHttpServletRequestWrapper(request), response);
     }
 
+    @Override
+    protected void doFilterNestedErrorDispatch(HttpServletRequest request, HttpServletResponse response,
+        FilterChain filterChain) throws ServletException, IOException
+    {
+        doFilterInternal(request, response, filterChain);
+    }
+
     private static final class SerializingSessionHttpServletRequestWrapper extends HttpServletRequestWrapper
     {
         private SerializingSessionWrapper wrapper;
