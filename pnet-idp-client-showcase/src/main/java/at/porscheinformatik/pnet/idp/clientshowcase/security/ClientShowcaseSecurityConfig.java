@@ -88,7 +88,7 @@ public class ClientShowcaseSecurityConfig
         http //
             .authorizeHttpRequests()
             .shouldFilterAllDispatcherTypes(true)
-            .requestMatchers("/logoutinfo/**", "/logout/**", "/loginerror")
+            .requestMatchers("/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
             .permitAll()
             .requestMatchers("/data/authorization")
             .fullyAuthenticated()
