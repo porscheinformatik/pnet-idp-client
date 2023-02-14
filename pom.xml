@@ -4,6 +4,8 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.0.2</version>
+        <!-- HINT: When upgrading to a newer version, check if the following bug is fixed: https://github.com/spring-projects/spring-security/issues/12665 -->
+        <!-- If fixed, Remove the workaround in ClientShowcaseSecurityConfig. -->
     </parent>
 
     <groupId>at.porscheinformatik.pnet</groupId>

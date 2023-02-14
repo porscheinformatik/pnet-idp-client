@@ -15,6 +15,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
@@ -84,6 +85,13 @@ public class ClientShowcaseSecurityConfig
         http.logout(logout -> {
             logout.logoutSuccessUrl("/logoutinfo");
             logout.deleteCookies("JSESSIONID");
+        });
+
+        // Disable the matchingRequestParameter optimization until the following bug is fixed: https://github.com/spring-projects/spring-security/issues/12665
+        http.requestCache(cache -> {
+            HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+            requestCache.setMatchingRequestParameterName(null);
+            cache.requestCache(requestCache);
         });
 
         http
