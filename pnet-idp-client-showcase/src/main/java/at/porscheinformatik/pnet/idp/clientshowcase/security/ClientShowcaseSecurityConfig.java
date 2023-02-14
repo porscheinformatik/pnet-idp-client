@@ -86,12 +86,15 @@ public class ClientShowcaseSecurityConfig
             logout.deleteCookies("JSESSIONID");
         });
 
-        http.exceptionHandling().authenticationEntryPoint(new DecidingAuthenticationEntryPoint());
+        http
+            .exceptionHandling()
+            .accessDeniedPage("/accessdenied")
+            .authenticationEntryPoint(new DecidingAuthenticationEntryPoint());
 
         http //
             .authorizeHttpRequests()
             .shouldFilterAllDispatcherTypes(true)
-            .requestMatchers("/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
+            .requestMatchers("/accessdenied", "/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
             .permitAll()
             .requestMatchers("/data/authorization")
             .fullyAuthenticated()

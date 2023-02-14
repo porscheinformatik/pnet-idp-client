@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.error.ErrorAttributeOptions.Include;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +18,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class ErrorController
+public class ShowcaseErrorController implements ErrorController
 {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private final ErrorAttributes errorAttributes;
 
-    public ErrorController(ErrorAttributes errorAttributes)
+    public ShowcaseErrorController(ErrorAttributes errorAttributes)
     {
         super();
 
@@ -68,15 +69,31 @@ public class ErrorController
             logger.error("Error on authentication", e);
         }
 
-        return buildExceptionMessage(e);
+        return buildExceptionMessage(e, "Got authentication exception: ");
     }
 
-    private String buildExceptionMessage(Exception e)
+    @GetMapping("/accessdenied")
+    @ResponseBody
+    public String getAccessDeniedErrorMessage(HttpServletRequest request)
     {
-        StringBuilder builder = new StringBuilder("Got authentication exception: ")
-            .append(e.getClass().getSimpleName())
-            .append(": ")
-            .append(e.getMessage());
+        Exception e = (Exception) request.getAttribute(WebAttributes.ACCESS_DENIED_403);
+
+        if (e == null)
+        {
+            return "Came here without exception";
+        }
+        else
+        {
+            logger.error("Error on authentication", e);
+        }
+
+        return buildExceptionMessage(e, "Got access denied exception: ");
+    }
+
+    private String buildExceptionMessage(Exception e, String message)
+    {
+        StringBuilder builder =
+            new StringBuilder(message).append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
 
         return builder.toString();
     }
