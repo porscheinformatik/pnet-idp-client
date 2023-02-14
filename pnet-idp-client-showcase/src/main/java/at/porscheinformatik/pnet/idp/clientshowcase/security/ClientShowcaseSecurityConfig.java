@@ -104,7 +104,7 @@ public class ClientShowcaseSecurityConfig
             .shouldFilterAllDispatcherTypes(true)
             .requestMatchers("/accessdenied", "/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
             .permitAll()
-            .requestMatchers("/data/authorization")
+            .requestMatchers("/", "/data/authorization")
             .fullyAuthenticated()
             .anyRequest()
             .denyAll();
