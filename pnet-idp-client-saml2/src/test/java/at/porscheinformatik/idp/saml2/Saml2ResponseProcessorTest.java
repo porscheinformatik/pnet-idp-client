@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,9 @@ import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;
+import org.springframework.security.saml2.provider.service.authentication.AbstractSaml2AuthenticationRequest;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationToken;
+import org.springframework.security.saml2.provider.service.authentication.Saml2PostAuthenticationRequest;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.Saml2MessageBinding;
 import org.springframework.web.util.UriComponents;
@@ -375,13 +378,42 @@ public class Saml2ResponseProcessorTest
     }
 
     @Test
-    public void succesOnStrongEnoughAuthentication() throws Exception
+    public void successOnStrongEnoughAuthentication() throws Exception
     {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null);
 
         Saml2ResponseProcessor processor = Saml2ResponseProcessor.withDefaultHandlers();
 
         processor.process(tokenAndResponse.getToken(), tokenAndResponse.getResponse());
+    }
+
+    @Test
+    public void failsOnMissingResponseRelayState() throws Exception
+    {
+        TokenAndResponse tokenAndResponse =
+            buildTokenAndResponse(true, false, false, false, 2, null, UUID.randomUUID().toString(), null);
+
+        testException(tokenAndResponse, MessageHandlerException.class, "Relay state is missing in response.");
+    }
+
+    @Test
+    public void failsOnMissingRequestRelayState() throws Exception
+    {
+        TokenAndResponse tokenAndResponse =
+            buildTokenAndResponse(true, false, false, false, 2, null, null, UUID.randomUUID().toString());
+
+        testException(tokenAndResponse, MessageHandlerException.class, "Requested relay state is missing.");
+    }
+
+    @Test
+    public void failsOnNotMatchingRelayState() throws Exception
+    {
+        TokenAndResponse tokenAndResponse =
+            buildTokenAndResponse(true, false, false, false, 2, null, UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
+
+        testException(tokenAndResponse, MessageHandlerException.class,
+            "Requested relay state doesn't match relay state in response");
     }
 
     private void testException(TokenAndResponse tokenAndResponse, Class<MessageHandlerException> expectedException,
@@ -404,6 +436,16 @@ public class Saml2ResponseProcessorTest
 
     protected TokenAndResponse buildTokenAndResponse(boolean signed, boolean invalidateSignature, boolean errorResponse,
         boolean forceAuthn, Integer nistLevel, Integer sessionAge, SamlResponseCustomizer... customizers)
+        throws MarshallingException, EncryptionException, CertificateException, SecurityException, KeyStoreException,
+        NoSuchAlgorithmException, SignatureException, IOException
+    {
+        String relayState = UUID.randomUUID().toString();
+        return buildTokenAndResponse(signed, invalidateSignature, errorResponse, forceAuthn, nistLevel, sessionAge, relayState, relayState, customizers);
+    }
+
+    protected TokenAndResponse buildTokenAndResponse(boolean signed, boolean invalidateSignature, boolean errorResponse,
+        boolean forceAuthn, Integer nistLevel, Integer sessionAge, String requestedRelayState,
+        String responseRelayState, SamlResponseCustomizer... customizers)
         throws MarshallingException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
         SecurityException, SignatureException, IOException, EncryptionException
     {
@@ -478,8 +520,15 @@ public class Saml2ResponseProcessorTest
         storeSessionAge(request, Optional.ofNullable(sessionAge));
 
         request.addParameter("SAMLResponse", base64Response);
+        request.addParameter(RELAY_STATE_PARAM, responseRelayState);
 
-        Saml2AuthenticationToken token = new Saml2AuthenticationToken(buildRelyingPartyRegistration(), stringResponse);
+        RelyingPartyRegistration relyingPartyRegistration = buildRelyingPartyRegistration();
+        AbstractSaml2AuthenticationRequest authenticationRequest = Saml2PostAuthenticationRequest
+            .withRelyingPartyRegistration(relyingPartyRegistration)
+            .samlRequest("dummy request")
+            .relayState(requestedRelayState)
+            .build();
+        Saml2AuthenticationToken token = new Saml2AuthenticationToken(relyingPartyRegistration, stringResponse, authenticationRequest);
         token.setDetails(new HttpRequestContext(request));
 
         return new TokenAndResponse(token, response);
