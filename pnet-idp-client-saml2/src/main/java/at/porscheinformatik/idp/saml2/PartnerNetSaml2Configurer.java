@@ -3,6 +3,7 @@
  */
 package at.porscheinformatik.idp.saml2;
 
+import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import static java.lang.String.*;
 import static java.util.Objects.*;
 
@@ -370,11 +371,11 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
             new OpenSaml4AuthenticationRequestResolver(relyingPartyRegistrationResolver);
 
         resolver.setAuthnRequestCustomizer(new PartnerNetSaml2AuthnRequestCustomizer());
-        resolver.setRelayStateResolver(request -> {
-            return Saml2Utils //
+        resolver
+            .setRelayStateResolver(request -> Saml2Utils //
                 .getRelayState(request)
-                .orElseGet(() -> UUID.randomUUID().toString());
-        });
+                .map(relayState -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), relayState)) // pre-append a random string
+                .orElseGet(() -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), ""))); // default to the auto generated UUID;
 
         return resolver;
     }

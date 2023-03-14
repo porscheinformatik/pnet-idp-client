@@ -8,6 +8,7 @@ import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -24,6 +25,7 @@ import at.porscheinformatik.idp.saml2.response.CheckAssertionStructureMessageHan
 import at.porscheinformatik.idp.saml2.response.CheckAudienceRestrictionMessageHandler;
 import at.porscheinformatik.idp.saml2.response.CheckEndpointMessageHandler;
 import at.porscheinformatik.idp.saml2.response.CheckIssuerMessageHandler;
+import at.porscheinformatik.idp.saml2.response.CheckRelayStateMessageHandler;
 import at.porscheinformatik.idp.saml2.response.CheckSubjectIdentifierMessageHandler;
 import at.porscheinformatik.idp.saml2.response.CheckSubjectMessageHandler;
 import at.porscheinformatik.idp.saml2.response.DecryptAssertionsMessageHandler;
@@ -59,7 +61,7 @@ public class Saml2ResponseProcessor
         handlers.add(new VerifyAuthnInstantMessageHandler());
         handlers.add(new CheckSubjectIdentifierMessageHandler());
         handlers.add(new VerifyAuthenticationStrenghMessageHandler());
-
+        handlers.add(new CheckRelayStateMessageHandler());
         return new Saml2ResponseProcessor(handlers);
     }
 
@@ -123,5 +125,16 @@ public class Saml2ResponseProcessor
             return token;
         }
 
+        public Optional<String> getRequestedRelayState()
+        {
+            String relayState = token.getAuthenticationRequest().getRelayState();
+            return Optional.ofNullable(relayState);
+        }
+
+        public Optional<String> getResponseRelayState()
+        {
+            HttpRequestContext details = HttpRequestContext.fromToken(token);
+            return Optional.ofNullable(details.getRequest().getParameter(RELAY_STATE_PARAM));
+        }
     }
 }
