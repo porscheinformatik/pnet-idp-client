@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -30,6 +32,11 @@
         <dependency>
             <groupId>at.porscheinformatik.pnet</groupId>
             <artifactId>pnet-idp-client-saml2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>at.porscheinformatik.pnet</groupId>
+            <artifactId>pnet-idp-client-core</artifactId>
         </dependency>
 
         <dependency>
@@ -78,14 +85,16 @@
                                 <workdir>/opt/app-root</workdir>
 
                                 <entryPoint>
-                                    <shell>java $JAVA_OPTS -jar pnet-idp-client-showcase-${project.version}.jar</shell>
+                                    <shell>java $JAVA_OPTS -jar
+                                        pnet-idp-client-showcase-${project.version}.jar</shell>
                                 </entryPoint>
 
                                 <assembly>
                                     <inline>
                                         <files>
                                             <file>
-                                                <source>${project.build.directory}/${project.build.finalName}.jar
+                                                <source>
+                                                    ${project.build.directory}/${project.build.finalName}.jar
                                                 </source>
                                                 <outputDirectory>.</outputDirectory>
                                             </file>
