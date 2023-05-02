@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.9.2
+
+ - Implement the max_age Parameter for the OIDC Client.
+ - Add the at.porscheinformatik.pnet.idp.clientshowcase.security.ForceAuthenticationFilter to the client showcase to show how to force a new authentication
+
 ## 0.9.0
 
  - Upgraded to Spring Security 5.8.x that supports new Spring Security 6.0 features and is still fully Spring Boot 2.7 compatible.

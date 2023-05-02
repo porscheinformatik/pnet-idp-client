@@ -3,6 +3,8 @@
  */
 package at.porscheinformatik.idp.openidconnect;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -28,6 +30,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
  */
 public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthorizationCodeAuthenticationProvider
 {
+    public static final Duration CLOCK_SKEW = Duration.ofMinutes(5);
 
     public PartnerNetOpenIdConnectAuthenticationProvider(
         OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient,
@@ -40,13 +43,66 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
     public Authentication authenticate(Authentication authentication) throws AuthenticationException
     {
         Collection<String> requestedAcrValues = getRequestedAcrValues(authentication);
+        Integer requestedMaxAge = getRequestedMaxAge(authentication);
 
         OAuth2LoginAuthenticationToken openIdAuthentication =
             (OAuth2LoginAuthenticationToken) super.authenticate(authentication);
 
         validateAcrValues(requestedAcrValues, openIdAuthentication);
+        validateMaxAge(requestedMaxAge, openIdAuthentication);
 
         return openIdAuthentication;
+    }
+
+    private void validateMaxAge(Integer requestedMaxAge, OAuth2LoginAuthenticationToken openIdAuthentication)
+    {
+        if (requestedMaxAge == null)
+        {
+            return;
+        }
+
+        OidcUser user = (OidcUser) openIdAuthentication.getPrincipal();
+
+        if (user.getAuthenticatedAt() == null)
+        {
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error("invalid_id_token", "auth_time claim is required when max_age was specified", null));
+        }
+
+        Instant expiration = user.getAuthenticatedAt().plus(CLOCK_SKEW).plusSeconds(requestedMaxAge);
+
+        if (expiration.isBefore(Instant.now()))
+        {
+            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_id_token", "max_age exceeded", null));
+        }
+    }
+
+    private Integer getRequestedMaxAge(Authentication authentication)
+    {
+        OAuth2LoginAuthenticationToken authorizationCodeAuthentication =
+            (OAuth2LoginAuthenticationToken) authentication;
+
+        OAuth2AuthorizationRequest authorizationRequest =
+            authorizationCodeAuthentication.getAuthorizationExchange().getAuthorizationRequest();
+
+        Object maxAge = authorizationRequest.getAttribute(PartnerNetOAuth2AuthorizationRequestResolver.MAX_AGE_PARAM);
+
+        if (maxAge == null)
+        {
+            return null;
+        }
+
+        if (maxAge instanceof Integer)
+        {
+            return (Integer) maxAge;
+        }
+
+        if (maxAge instanceof String)
+        {
+            return Integer.valueOf((String) maxAge);
+        }
+
+        throw new IllegalArgumentException("maxAge must be an Integer or a String");
     }
 
     private void validateAcrValues(Collection<String> requestedAcrValues,

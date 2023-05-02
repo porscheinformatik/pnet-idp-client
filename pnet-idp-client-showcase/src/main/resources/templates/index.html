@@ -12,6 +12,10 @@
     	<form th:action="@{/logout}" method="POST">
     		<button type="submit">Logout</button>
     	</form>
+
+        <form th:action="@{/forceauthentication}" method="POST">
+    		<button type="submit">Force Authentication</button>
+    	</form>
     	
         <pre th:text="${authData}"></pre>
     </body>
