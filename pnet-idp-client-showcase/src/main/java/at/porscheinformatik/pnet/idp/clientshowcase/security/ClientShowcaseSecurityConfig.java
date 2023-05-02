@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
@@ -60,7 +61,8 @@ public class ClientShowcaseSecurityConfig
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment,
-        Saml2CredentialsProperties samlCredentialsConfig) throws Exception
+        Saml2CredentialsProperties samlCredentialsConfig, ForceAuthenticationFilter forceAuthenticationFilter)
+        throws Exception
     {
         if (environment.acceptsProfiles(LOCAL))
         {
@@ -108,6 +110,8 @@ public class ClientShowcaseSecurityConfig
             .fullyAuthenticated()
             .anyRequest()
             .denyAll();
+
+        http.addFilterBefore(forceAuthenticationFilter, LogoutFilter.class);
 
         http.requiresChannel().anyRequest().requiresSecure();
 

@@ -10,6 +10,11 @@ This release makes the pnet-idp-client Spring Boot 3 compatible. It will drop su
 - Set the java baseline to Java 17
 - Remove deprecated `at.porscheinformatik.idp.saml2.PartnerNetSaml2Configurer.apply(...)` methods. Use the methods without the boolean flag.
 - `at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser.getAdditionalLocales()` returns a list of locales instead of a list of strings. If you need the old behaviour, call Locale::toLanguageTag on each entry in the list.
+
+## 0.9.1
+ - Implement the max_age Parameter for the OIDC Client.
+ - Add the at.porscheinformatik.pnet.idp.clientshowcase.security.ForceAuthenticationFilter to the client showcase to show how to force a new authentication
+
 ## 0.9.0
 
 - Upgraded to Spring Security 5.8.x that supports new Spring Security 6.0 features and is still fully Spring Boot 2.7 compatible.

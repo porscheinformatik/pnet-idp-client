@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver
 {
     public static final String ACR_PARAM = "acr";
+    public static final String MAX_AGE_PARAM = "max_age";
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
 
     public static UriComponentsBuilder requestNistAuthenticationLevels(UriComponentsBuilder uri,
@@ -37,6 +38,16 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         }
 
         return uri;
+    }
+
+    public static UriComponentsBuilder forceAuthentication(UriComponentsBuilder uri)
+    {
+        return requestMaxAge(uri, 0);
+    }
+
+    public static UriComponentsBuilder requestMaxAge(UriComponentsBuilder uri, int maxAge)
+    {
+        return uri.queryParam(MAX_AGE_PARAM, maxAge);
     }
 
     public PartnerNetOAuth2AuthorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository,
@@ -76,6 +87,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         Map<String, Object> attributes = new LinkedHashMap<>(authorizationRequest.getAttributes());
 
         addRequestedAcrParameter(request, additionalParameters, attributes);
+        addRequestedMaxAge(request, additionalParameters, attributes);
 
         return OAuth2AuthorizationRequest
             .from(authorizationRequest) //
@@ -83,6 +95,20 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
             .additionalParameters(additionalParameters)
             .attributes(attributes)
             .build();
+    }
+
+    private void addRequestedMaxAge(HttpServletRequest request, Map<String, Object> additionalParameters,
+        Map<String, Object> attributes)
+    {
+        String maxAge = request.getParameter(MAX_AGE_PARAM);
+
+        if (maxAge == null)
+        {
+            return;
+        }
+
+        attributes.put(MAX_AGE_PARAM, maxAge);
+        additionalParameters.put(MAX_AGE_PARAM, maxAge);
     }
 
     private void addRequestedAcrParameter(HttpServletRequest request, Map<String, Object> additionalParameters,

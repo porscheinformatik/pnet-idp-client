@@ -46,28 +46,39 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         switch (authentiationType)
         {
             case "oidc":
-                return UriComponentsBuilder.fromPath("/oauth2/authorization/pnet");
+                return oidcPath();
+
+            case "oidc_force":
+                return PartnerNetOAuth2AuthorizationRequestResolver.forceAuthentication(oidcPath());
 
             // OpenID Connect with multifactor authentication
             case "oidc_mfa":
-                return PartnerNetOAuth2AuthorizationRequestResolver
-                    .requestNistAuthenticationLevels(UriComponentsBuilder.fromPath("/oauth2/authorization/pnet"), 3);
+                return PartnerNetOAuth2AuthorizationRequestResolver.requestNistAuthenticationLevels(oidcPath(), 3);
 
             case "saml2":
-                return UriComponentsBuilder.fromPath("/saml2/authenticate/pnet");
+                return saml2Path();
 
             // SAML 2 with forced authentication
             case "saml2_force":
-                return Saml2Utils.forceAuthentication(UriComponentsBuilder.fromPath("/saml2/authenticate/pnet"));
+                return Saml2Utils.forceAuthentication(saml2Path());
 
             // SAML 2 with multifactor authentication
             case "saml2_mfa":
-                return Saml2Utils
-                    .requestNistAuthenticationLevel(UriComponentsBuilder.fromPath("/saml2/authenticate/pnet"), 3);
+                return Saml2Utils.requestNistAuthenticationLevel(saml2Path(), 3);
 
             default:
                 throw new IllegalArgumentException("Unsupported authenticationType " + authentiationType);
         }
+    }
+
+    private UriComponentsBuilder saml2Path()
+    {
+        return UriComponentsBuilder.fromPath("/saml2/authenticate/pnet");
+    }
+
+    private UriComponentsBuilder oidcPath()
+    {
+        return UriComponentsBuilder.fromPath("/oauth2/authorization/pnet");
     }
 
 }

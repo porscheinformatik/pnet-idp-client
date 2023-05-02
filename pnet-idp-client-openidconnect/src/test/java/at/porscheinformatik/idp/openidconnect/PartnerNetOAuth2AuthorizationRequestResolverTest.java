@@ -60,6 +60,44 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
                     Charset.forName("UTF-8"))));
     }
 
+    // Test that the max_age parameter is appended to the authorization request
+    @Test
+    public void testMaxAgeParameter()
+    {
+        PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
+        builder = requestMaxAge(builder, 3600);
+        MockHttpServletRequest request = buildRequest(builder);
+
+        OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
+
+        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+
+        MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
+
+        assertThat(queryParams.getFirst("max_age"), equalTo("3600"));
+    }
+
+    // Test that forceAuthentication appends a max_age parameter with value 0 to the authorization request
+    @Test
+    public void testForceAuthentication()
+    {
+        PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
+        builder = forceAuthentication(builder);
+        MockHttpServletRequest request = buildRequest(builder);
+
+        OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
+
+        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+
+        MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
+
+        assertThat(queryParams.getFirst("max_age"), equalTo("0"));
+    }
+
     protected MockHttpServletRequest buildRequest(UriComponentsBuilder builder)
     {
         UriComponents uri = builder.build();
