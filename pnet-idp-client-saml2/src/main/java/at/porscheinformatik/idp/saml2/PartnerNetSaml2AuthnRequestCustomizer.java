@@ -17,21 +17,21 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Customize the authentication request with Partner.Net related features.
- * 
+ *
  * @author Daniel Furtlehner
  */
 public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequestContext>
 {
-
     @Override
     public void accept(AuthnRequestContext t)
     {
         HttpServletRequest request = t.getRequest();
         AuthnRequest authnRequest = t.getAuthnRequest();
 
-        boolean forceAuthn = Saml2Utils.isForceAuthentication(request);
-        Optional<Integer> maxSessionAge = Saml2Utils.retrieveMaxSessionAge(request);
-        Optional<Integer> nistLevel = Saml2Utils.getRequestedNistAuthenticationLevel(request);
+        boolean forceAuthn = isForceAuthn(request);
+        Optional<Integer> maxSessionAge = getMaxSessionAge(request);
+        Optional<String> tenant = getTenant(request);
+        Optional<Integer> nistLevel = getNistLevel(request);
         String authnRequestId = Saml2Utils.generateId();
         List<AuthnContextClass> authnContextClasses = calculateAuthnContextClasses(nistLevel);
 
@@ -39,6 +39,7 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
         storeAuthnRequestId(request, authnRequestId);
         storeNistLevel(request, nistLevel);
         storeSessionAge(request, maxSessionAge);
+        storeTenant(request, tenant);
 
         authnRequest.setID(authnRequestId);
 
@@ -58,6 +59,33 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
 
             authnRequest.getExtensions().getUnknownXMLObjects().add(maxSessionAgeRequest(maxSessionAge.get()));
         }
+
+        if (tenant.isPresent())
+        {
+            authnRequest.setExtensions(createSamlObject(Extensions.DEFAULT_ELEMENT_NAME));
+
+            authnRequest.getExtensions().getUnknownXMLObjects().add(tenantRequest(tenant.get()));
+        }
+    }
+
+    protected boolean isForceAuthn(HttpServletRequest request)
+    {
+        return Saml2Utils.isForceAuthentication(request);
+    }
+
+    protected Optional<Integer> getMaxSessionAge(HttpServletRequest request)
+    {
+        return Saml2Utils.retrieveMaxSessionAge(request);
+    }
+
+    protected Optional<String> getTenant(HttpServletRequest request)
+    {
+        return Saml2Utils.retrieveTenant(request);
+    }
+
+    protected Optional<Integer> getNistLevel(HttpServletRequest request)
+    {
+        return Saml2Utils.getRequestedNistAuthenticationLevel(request);
     }
 
     private List<AuthnContextClass> calculateAuthnContextClasses(Optional<Integer> nistLevel)
@@ -71,5 +99,4 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
 
         return authnContextClasses;
     }
-
 }

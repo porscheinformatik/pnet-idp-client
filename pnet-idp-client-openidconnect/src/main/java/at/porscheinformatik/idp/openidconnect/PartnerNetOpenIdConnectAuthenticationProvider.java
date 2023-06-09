@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.openidconnect;
 
@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
  * There is no easy way to add custom ID Token validation based on the authorizationrequest.
  * https://github.com/spring-projects/spring-security/issues/8342 So we add our own custom authentication provider, that
  * does the validation afterwards.
- * 
+ *
  * @author Daniel Furtlehner
  */
 public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthorizationCodeAuthenticationProvider
@@ -44,12 +44,14 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
     {
         Collection<String> requestedAcrValues = getRequestedAcrValues(authentication);
         Integer requestedMaxAge = getRequestedMaxAge(authentication);
+        String requestedTenant = getRequestedTenant(authentication);
 
         OAuth2LoginAuthenticationToken openIdAuthentication =
             (OAuth2LoginAuthenticationToken) super.authenticate(authentication);
 
         validateAcrValues(requestedAcrValues, openIdAuthentication);
         validateMaxAge(requestedMaxAge, openIdAuthentication);
+        validateTenant(requestedTenant, openIdAuthentication);
 
         return openIdAuthentication;
     }
@@ -74,6 +76,28 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
         if (expiration.isBefore(Instant.now()))
         {
             throw new OAuth2AuthenticationException(new OAuth2Error("invalid_id_token", "max_age exceeded", null));
+        }
+    }
+
+    private void validateTenant(String requestedTenant, OAuth2LoginAuthenticationToken openIdAuthentication)
+    {
+        if (requestedTenant == null)
+        {
+            return;
+        }
+
+        PartnerNetOpenIdConnectUser user = (PartnerNetOpenIdConnectUser) openIdAuthentication.getPrincipal();
+        String tenant = user.getCountry();
+
+        if (tenant == null)
+        {
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error("invalid_id_token", "tenant claim is required when tenant was specified", null));
+        }
+
+        if (!requestedTenant.equals(tenant))
+        {
+            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_id_token", "invalid tenant", null));
         }
     }
 
@@ -103,6 +127,29 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
         }
 
         throw new IllegalArgumentException("maxAge must be an Integer or a String");
+    }
+
+    private String getRequestedTenant(Authentication authentication)
+    {
+        OAuth2LoginAuthenticationToken authorizationCodeAuthentication =
+            (OAuth2LoginAuthenticationToken) authentication;
+
+        OAuth2AuthorizationRequest authorizationRequest =
+            authorizationCodeAuthentication.getAuthorizationExchange().getAuthorizationRequest();
+
+        Object tenant = authorizationRequest.getAttribute(PartnerNetOAuth2AuthorizationRequestResolver.TENANT_PARAM);
+
+        if (tenant == null)
+        {
+            return null;
+        }
+
+        if (tenant instanceof String)
+        {
+            return (String) tenant;
+        }
+
+        throw new IllegalArgumentException("tenant must be a String");
     }
 
     private void validateAcrValues(Collection<String> requestedAcrValues,

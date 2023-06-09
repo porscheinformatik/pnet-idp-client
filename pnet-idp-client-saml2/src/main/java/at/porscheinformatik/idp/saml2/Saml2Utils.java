@@ -28,6 +28,7 @@ public class Saml2Utils
     private static final String FORCE_AUTHENTICATION_PARAM = "forceAuthn";
     private static final String NIST_LEVEL_PARAM = "nistLevel";
     private static final String MAX_SESSION_AGE_PARAM = "maxSessionAge";
+    private static final String TENANT_PARAM = "tenant";
 
     //Specification says between 128 and 160 bit are perfect
     private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy(20);
@@ -52,7 +53,7 @@ public class Saml2Utils
 
     public static UriComponentsBuilder forceAuthentication(UriComponentsBuilder uriComponentsBuilder)
     {
-        return uriComponentsBuilder.queryParam(FORCE_AUTHENTICATION_PARAM, true);
+        return uriComponentsBuilder.replaceQueryParam(FORCE_AUTHENTICATION_PARAM, true);
     }
 
     public static boolean isForceAuthentication(HttpServletRequest request)
@@ -63,7 +64,7 @@ public class Saml2Utils
     public static UriComponentsBuilder maxSessionAge(UriComponentsBuilder uriComponentsBuilder,
         Integer sessionAgeInSeconds)
     {
-        return uriComponentsBuilder.queryParam(MAX_SESSION_AGE_PARAM, sessionAgeInSeconds);
+        return uriComponentsBuilder.replaceQueryParam(MAX_SESSION_AGE_PARAM, sessionAgeInSeconds);
     }
 
     public static Optional<Integer> retrieveMaxSessionAge(HttpServletRequest request)
@@ -73,6 +74,23 @@ public class Saml2Utils
         if (value != null)
         {
             return Optional.of(Integer.parseInt(value));
+        }
+
+        return Optional.empty();
+    }
+
+    public static UriComponentsBuilder requestTenant(UriComponentsBuilder uriComponentsBuilder, String tenant)
+    {
+        return uriComponentsBuilder.replaceQueryParam(TENANT_PARAM, tenant);
+    }
+
+    public static Optional<String> retrieveTenant(HttpServletRequest request)
+    {
+        String value = request.getParameter(TENANT_PARAM);
+
+        if (value != null && !value.isEmpty())
+        {
+            return Optional.of(value);
         }
 
         return Optional.empty();
@@ -92,7 +110,7 @@ public class Saml2Utils
                 String.format("Nist level %s not supported. Please use a lower or equals to %s", nistLevel, maxValue));
         }
 
-        return uriComponentsBuilder.queryParam(NIST_LEVEL_PARAM, nistLevel);
+        return uriComponentsBuilder.replaceQueryParam(NIST_LEVEL_PARAM, nistLevel);
     }
 
     public static Optional<Integer> getRequestedNistAuthenticationLevel(HttpServletRequest request)
@@ -109,22 +127,22 @@ public class Saml2Utils
 
     public static UriComponentsBuilder setRelayState(UriComponentsBuilder uriComponentsBuilder, String relayState)
     {
-        return uriComponentsBuilder.queryParam(RELAY_STATE_PARAM, relayState);
+        return uriComponentsBuilder.replaceQueryParam(RELAY_STATE_PARAM, relayState);
     }
 
     public static Optional<String> getRelayState(HttpServletRequest request)
     {
-        return Optional.ofNullable(request.getParameter(RELAY_STATE_PARAM))
-            .map(rs -> {
-                Matcher matcher = AUTO_GENERATED_RELAY_STATE_PATTERN.matcher(rs);
-                return matcher.matches() ? matcher.group(1) : rs;
-            }).filter(rs -> !rs.isEmpty());
+        return Optional.ofNullable(request.getParameter(RELAY_STATE_PARAM)).map(rs -> {
+            Matcher matcher = AUTO_GENERATED_RELAY_STATE_PATTERN.matcher(rs);
+            return matcher.matches() ? matcher.group(1) : rs;
+        }).filter(rs -> !rs.isEmpty());
     }
 
     /**
      * Removes all SAML Processing related parameters from the query part of the given url, if any.
-     * 
+     *
      * @param url the url to sanitize
+     * @return the sanitized url
      */
     public static String sanitizeUrl(String url)
     {
@@ -137,6 +155,7 @@ public class Saml2Utils
             .fromUriString(url)
             .replaceQueryParam(FORCE_AUTHENTICATION_PARAM)
             .replaceQueryParam(MAX_SESSION_AGE_PARAM)
+            .replaceQueryParam(TENANT_PARAM)
             .replaceQueryParam(NIST_LEVEL_PARAM)
             .replaceQueryParam(RELAY_STATE_PARAM)
             .toUriString();

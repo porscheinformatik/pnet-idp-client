@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.openidconnect;
 
@@ -20,13 +20,15 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Customized implementation of Spring Securities default request resolver, that allows for a bit more flexibility.
- * 
+ *
  * @author Daniel Furtlehner
  */
 public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver
 {
     public static final String ACR_PARAM = "acr";
     public static final String MAX_AGE_PARAM = "max_age";
+    public static final String TENANT_PARAM = "tenant";
+
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
 
     public static UriComponentsBuilder requestNistAuthenticationLevels(UriComponentsBuilder uri,
@@ -50,19 +52,24 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         return uri.queryParam(MAX_AGE_PARAM, maxAge);
     }
 
+    public static UriComponentsBuilder requestTenant(UriComponentsBuilder uri, String tenant)
+    {
+        return uri.queryParam(TENANT_PARAM, tenant);
+    }
+
     public PartnerNetOAuth2AuthorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository,
         String authorizationRequestBaseUri)
     {
         super();
 
-        this.defaultAuthorizationRequestResolver =
+        defaultAuthorizationRequestResolver =
             new DefaultOAuth2AuthorizationRequestResolver(clientRegistrationRepository, authorizationRequestBaseUri);
     }
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request)
     {
-        OAuth2AuthorizationRequest authorizationRequest = this.defaultAuthorizationRequestResolver.resolve(request);
+        OAuth2AuthorizationRequest authorizationRequest = defaultAuthorizationRequestResolver.resolve(request);
 
         return resolve(request, authorizationRequest);
     }
@@ -70,7 +77,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String registrationId)
     {
-        OAuth2AuthorizationRequest authorizationRequest = this.defaultAuthorizationRequestResolver.resolve(request);
+        OAuth2AuthorizationRequest authorizationRequest = defaultAuthorizationRequestResolver.resolve(request);
 
         return resolve(request, authorizationRequest);
     }
@@ -88,6 +95,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
         addRequestedAcrParameter(request, additionalParameters, attributes);
         addRequestedMaxAge(request, additionalParameters, attributes);
+        addRequestedTenant(request, additionalParameters, attributes);
 
         return OAuth2AuthorizationRequest
             .from(authorizationRequest) //
@@ -95,6 +103,20 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
             .additionalParameters(additionalParameters)
             .attributes(attributes)
             .build();
+    }
+
+    private void addRequestedTenant(HttpServletRequest request, Map<String, Object> additionalParameters,
+        Map<String, Object> attributes)
+    {
+        String tenant = request.getParameter(TENANT_PARAM);
+
+        if (tenant == null)
+        {
+            return;
+        }
+
+        attributes.put(TENANT_PARAM, tenant);
+        additionalParameters.put("tenant", tenant); // not necessarily the same as TENANT_PARAM!
     }
 
     private void addRequestedMaxAge(HttpServletRequest request, Map<String, Object> additionalParameters,
@@ -108,7 +130,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         }
 
         attributes.put(MAX_AGE_PARAM, maxAge);
-        additionalParameters.put(MAX_AGE_PARAM, maxAge);
+        additionalParameters.put("max_age", maxAge); // not necessarily the same as MAX_AGE_PARAM!
     }
 
     private void addRequestedAcrParameter(HttpServletRequest request, Map<String, Object> additionalParameters,
