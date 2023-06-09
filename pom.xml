@@ -14,8 +14,9 @@
     <description>Parent Library for Identity Provider Client implementations</description>
 
     <scm>
-        <connection>scm:git:https://github.com/porscheinformatik/pnet-idp-client.git</connection>
-        <developerConnection>scm:git:https://github.com/porscheinformatik/pnet-idp-client.git</developerConnection>
+        <connection>scm:git:git@github.com:porscheinformatik/pnet-idp-client.git</connection>
+        <developerConnection>scm:git:git@github.com:porscheinformatik/pnet-idp-client.git</developerConnection>
+        <url>https://github.com/porscheinformatik/pnet-idp-client</url>
         <tag>HEAD</tag>
     </scm>
 
