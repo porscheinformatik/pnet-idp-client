@@ -18,7 +18,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  * Simple base class for message handlers that need no initialization
  *
  * @author Daniel Furtlehner
- * @param <MessageT> type of message to handle
  */
 public abstract class AbstractSimpleMessageHandler implements MessageHandler
 {

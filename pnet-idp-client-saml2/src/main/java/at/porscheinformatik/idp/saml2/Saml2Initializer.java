@@ -25,6 +25,9 @@ import org.springframework.security.saml2.core.OpenSamlInitializationService;
 import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeBuilder;
 import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeMarshaller;
 import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeUnmarshaller;
+import at.porscheinformatik.idp.saml2.xml.TenantBuilder;
+import at.porscheinformatik.idp.saml2.xml.TenantMarshaller;
+import at.porscheinformatik.idp.saml2.xml.TenantUnmarshaller;
 
 /**
  * @author Daniel Furtlehner
@@ -60,6 +63,10 @@ public final class Saml2Initializer
         registry
             .registerObjectProvider(XmlUtils.MAX_SESSION_AGE_ELEMENT_NAME, new MaxSessionAgeBuilder(),
                 new MaxSessionAgeMarshaller(), new MaxSessionAgeUnmarshaller());
+
+        registry
+            .registerObjectProvider(XmlUtils.TENANT_ELEMENT_NAME, new TenantBuilder(), new TenantMarshaller(),
+                new TenantUnmarshaller());
     }
 
     private static void setupSignatureAlgorithmWhitelists()

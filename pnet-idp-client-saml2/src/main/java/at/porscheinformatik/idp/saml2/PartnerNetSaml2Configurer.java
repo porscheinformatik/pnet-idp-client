@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.servlet.Filter;
@@ -30,6 +31,7 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
 import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
 import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml4AuthenticationRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml4AuthenticationRequestResolver.AuthnRequestContext;
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2AuthenticationRequestResolver;
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -71,6 +73,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
      *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
      * @return the configurer for further customization
+     * @throws Exception on occasion
      */
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId) throws Exception
     {
@@ -188,6 +191,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private Saml2ResponseProcessor responseProcessor;
     private Saml2ResponseParser responseParser;
     private BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper;
+    private Consumer<AuthnRequestContext> authnRequestCustomizer;
     private AuthenticationFailureHandler failureHandler;
     private String failureUrl;
     private AuthenticationSuccessHandler successHandler;
@@ -195,7 +199,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private RelyingPartyRegistrationResolver relyingPartyResolver;
     private Customizer<Saml2LoginConfigurer<HttpSecurity>> customizer = saml2Login -> {
         // Noop customizer. Users can override this to add custom configurations
-    };;
+    };
 
     private PartnerNetSaml2Configurer(String entityId, String metadataUrl)
     {
@@ -294,7 +298,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     /**
      * Set the URL to redirect to on authentication failure. This will override the registered
-     * {@link #failureHandler(AuthenticationFailureHandler) if any.
+     * {@link #failureHandler(AuthenticationFailureHandler)} if any.
      *
      * @param failureUrl the new failureUrl to use
      * @return the builder for a fluent api
@@ -346,13 +350,27 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * equivalent to calling {@link HttpSecurity#saml2Login(Customizer)} with the advantage of having the default
      * Partner.Net configuration applied. This customizer is called at the very end of the Partner.Net specific
      * configuration. So you can override configurations applied by the Partner.Net configurer.
-     * 
+     *
      * @param customizer the customizer to use
      * @return the builder for a fluent api
      */
     public PartnerNetSaml2Configurer customizer(Customizer<Saml2LoginConfigurer<HttpSecurity>> customizer)
     {
         this.customizer = Objects.requireNonNull(customizer, "Customizer must not be null");
+
+        return this;
+    }
+
+    /**
+     * Adds a customizer that allows you to further customize the {@link AuthnRequestContext}. This is necessary, if
+     * values like maxSessionAge, the tenant or the nistLevel aren't provided by request parameters.
+     *
+     * @param authnRequestCustomizer
+     * @return the builder for a fluent api
+     */
+    public PartnerNetSaml2Configurer authnRequestCustomizer(Consumer<AuthnRequestContext> authnRequestCustomizer)
+    {
+        this.authnRequestCustomizer = authnRequestCustomizer;
 
         return this;
     }
@@ -384,7 +402,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
                 saml2Login.failureUrl(failureUrl);
             }
 
-            this.customizer.customize(saml2Login);
+            customizer.customize(saml2Login);
         });
     }
 
@@ -442,6 +460,16 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         return authoritiesMapper;
     }
 
+    public Consumer<AuthnRequestContext> getAuthnRequestCustomizer()
+    {
+        if (authnRequestCustomizer == null)
+        {
+            return new PartnerNetSaml2AuthnRequestCustomizer();
+        }
+
+        return authnRequestCustomizer;
+    }
+
     private Saml2ResponseProcessor getResponseProcessor()
     {
         if (responseProcessor == null)
@@ -479,7 +507,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         OpenSaml4AuthenticationRequestResolver resolver =
             new OpenSaml4AuthenticationRequestResolver(relyingPartyRegistrationResolver);
 
-        resolver.setAuthnRequestCustomizer(new PartnerNetSaml2AuthnRequestCustomizer());
+        resolver.setAuthnRequestCustomizer(getAuthnRequestCustomizer());
         resolver
             .setRelayStateResolver(request -> Saml2Utils //
                 .getRelayState(request)

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
@@ -19,12 +19,14 @@ import at.porscheinformatik.idp.saml2.Saml2Utils;
 /**
  * This authentication entry point decides what authentication should be used based on the "authenticationType" query
  * parameter. This is application dependent. The showcase wants to show off different authentication techniques,
- * therefor this entry point.
- * 
+ * therefore this entry point. If the parameter "tenant" has been specified, it passes the value as "tenant" to the
+ * authentication mechanism.
+ *
  * @author Daniel Furtlehner
  */
 public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoint
 {
+    public static final String TENANT_PARAMETER_NAME = "tenant";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
@@ -37,39 +39,72 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
 
     private UriComponentsBuilder buildUri(HttpServletRequest request)
     {
-        String authentiationType = request.getParameter("authenticationType");
+        String authenticationType = request.getParameter("authenticationType");
 
-        if (authentiationType == null)
+        if (authenticationType == null)
         {
             throw new IllegalArgumentException("The authenticationType query parameter is mandatory.");
         }
 
-        switch (authentiationType)
+        UriComponentsBuilder path;
+
+        switch (authenticationType)
         {
             case "oidc":
-                return oidcPath();
+                path = oidcPath();
+                break;
 
             case "oidc_force":
-                return PartnerNetOAuth2AuthorizationRequestResolver.forceAuthentication(oidcPath());
+                path = PartnerNetOAuth2AuthorizationRequestResolver.forceAuthentication(oidcPath());
+                break;
 
             // OpenID Connect with multifactor authentication
             case "oidc_mfa":
-                return PartnerNetOAuth2AuthorizationRequestResolver.requestNistAuthenticationLevels(oidcPath(), 3);
+                path = PartnerNetOAuth2AuthorizationRequestResolver.requestNistAuthenticationLevels(oidcPath(), 3);
+                break;
 
             case "saml2":
-                return saml2Path();
+                path = saml2Path();
+                break;
 
             // SAML 2 with forced authentication
             case "saml2_force":
-                return Saml2Utils.forceAuthentication(saml2Path());
+                path = Saml2Utils.forceAuthentication(saml2Path());
+                break;
 
             // SAML 2 with multifactor authentication
             case "saml2_mfa":
-                return Saml2Utils.requestNistAuthenticationLevel(saml2Path(), 3);
+                path = Saml2Utils.requestNistAuthenticationLevel(saml2Path(), 3);
+                break;
 
             default:
-                throw new IllegalArgumentException("Unsupported authenticationType " + authentiationType);
+                throw new IllegalArgumentException("Unsupported authenticationType " + authenticationType);
         }
+
+        String tenant = request.getParameter(TENANT_PARAMETER_NAME);
+
+        if (tenant != null)
+        {
+            switch (authenticationType)
+            {
+                case "oidc":
+                case "oidc_force":
+                case "oidc_mfa":
+                    path = PartnerNetOAuth2AuthorizationRequestResolver.requestTenant(path, tenant);
+                    break;
+
+                case "saml2":
+                case "saml2_force":
+                case "saml2_mfa":
+                    path = Saml2Utils.requestTenant(path, tenant);
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unsupported authenticationType " + authenticationType);
+            }
+        }
+
+        return path;
     }
 
     private UriComponentsBuilder saml2Path()
@@ -81,5 +116,4 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
     {
         return UriComponentsBuilder.fromPath("/oauth2/authorization/pnet");
     }
-
 }

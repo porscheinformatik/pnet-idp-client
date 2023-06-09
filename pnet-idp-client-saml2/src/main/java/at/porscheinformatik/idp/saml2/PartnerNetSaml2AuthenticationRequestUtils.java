@@ -8,6 +8,7 @@ public final class PartnerNetSaml2AuthenticationRequestUtils
 {
     private static final String FORCE_AUTHENTICATION_ATTR = "poi.saml2.force_authn";
     private static final String SESSION_AGE_ATTR = "poi.saml2.session_age";
+    private static final String TENANT_ATTR = "poi.saml2.tenant";
     private static final String NIST_LEVEL_ATTR = "poi.saml2.nist_level";
 
     private PartnerNetSaml2AuthenticationRequestUtils()
@@ -47,6 +48,23 @@ public final class PartnerNetSaml2AuthenticationRequestUtils
     public static Integer sessionAgeRequested(HttpServletRequest request)
     {
         return (Integer) request.getSession().getAttribute(SESSION_AGE_ATTR);
+    }
+
+    public static void storeTenant(HttpServletRequest request, Optional<String> tenant)
+    {
+        if (tenant.isPresent())
+        {
+            request.getSession().setAttribute(TENANT_ATTR, tenant.get());
+        }
+        else
+        {
+            request.getSession().removeAttribute(TENANT_ATTR);
+        }
+    }
+
+    public static String tenantRequested(HttpServletRequest request)
+    {
+        return (String) request.getSession().getAttribute(TENANT_ATTR);
     }
 
     public static void storeNistLevel(HttpServletRequest request, Optional<Integer> nistLevel)

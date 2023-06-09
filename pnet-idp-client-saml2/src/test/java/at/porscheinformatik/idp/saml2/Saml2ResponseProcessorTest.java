@@ -70,7 +70,7 @@ public class Saml2ResponseProcessorTest
     {
         super();
 
-        this.credentialsManager = Saml2TestUtils.defaultCredentialsManager();
+        credentialsManager = Saml2TestUtils.defaultCredentialsManager();
     }
 
     @Test
@@ -300,7 +300,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnUnsignedRequest() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(false, false, false, false, null, null);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(false, false, false, false, null, null, null);
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Response must be signed but no signature present");
@@ -309,7 +309,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnWrongSignature() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, true, false, false, null, null);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, true, false, false, null, null, null);
 
         testException(tokenAndResponse, MessageHandlerException.class, "Error validating signature");
     }
@@ -327,7 +327,7 @@ public class Saml2ResponseProcessorTest
     public void failsOnToOldAuthnInstantWhenForcedAuthentication() throws Exception
     {
         TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(true, false, false, true, null, null, oldAuthnInstant());
+            buildTokenAndResponse(true, false, false, true, null, null, null, oldAuthnInstant());
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Outdated AuthnInstant found for forced authentication.");
@@ -337,7 +337,7 @@ public class Saml2ResponseProcessorTest
     public void failsOnToOldAuthnInstantWhenRequestedSessionAge() throws Exception
     {
         TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(true, false, false, false, null, 5, oldAuthnInstant());
+            buildTokenAndResponse(true, false, false, false, null, 5, null, oldAuthnInstant());
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Outdated AuthnInstant found for requested session age 5 seconds.");
@@ -354,7 +354,8 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnMissingSubjectIdentifier() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null, noAttributes());
+        TokenAndResponse tokenAndResponse =
+            buildTokenAndResponse(true, false, false, false, 2, null, null, noAttributes());
 
         testException(tokenAndResponse, MessageHandlerException.class, "No subject-identifier found in Response");
     }
@@ -362,7 +363,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnErrorResponse() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, true, false, null, null);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, true, false, null, null, null);
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Unsuccessful Response: urn:oasis:names:tc:SAML:2.0:status:Requester ");
@@ -371,7 +372,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnWeakAuthentication() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 3, null);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 3, null, null);
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Authentication strength USERPASS is weaker than requested strength 3");
@@ -380,7 +381,7 @@ public class Saml2ResponseProcessorTest
     @Test
     public void successOnStrongEnoughAuthentication() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null);
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null, null);
 
         Saml2ResponseProcessor processor = Saml2ResponseProcessor.withDefaultHandlers();
 
@@ -391,7 +392,7 @@ public class Saml2ResponseProcessorTest
     public void failsOnMissingResponseRelayState() throws Exception
     {
         TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(true, false, false, false, 2, null, UUID.randomUUID().toString(), null);
+            buildTokenAndResponse(true, false, false, false, 2, null, null, UUID.randomUUID().toString(), null);
 
         testException(tokenAndResponse, MessageHandlerException.class, "Relay state is missing in response.");
     }
@@ -400,7 +401,7 @@ public class Saml2ResponseProcessorTest
     public void failsOnMissingRequestRelayState() throws Exception
     {
         TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(true, false, false, false, 2, null, null, UUID.randomUUID().toString());
+            buildTokenAndResponse(true, false, false, false, 2, null, null, null, UUID.randomUUID().toString());
 
         testException(tokenAndResponse, MessageHandlerException.class, "Requested relay state is missing.");
     }
@@ -408,9 +409,8 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnNotMatchingRelayState() throws Exception
     {
-        TokenAndResponse tokenAndResponse =
-            buildTokenAndResponse(true, false, false, false, 2, null, UUID.randomUUID().toString(),
-                UUID.randomUUID().toString());
+        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null, null,
+            UUID.randomUUID().toString(), UUID.randomUUID().toString());
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Requested relay state doesn't match relay state in response");
@@ -431,20 +431,21 @@ public class Saml2ResponseProcessorTest
         throws MarshallingException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
         SecurityException, SignatureException, IOException, EncryptionException
     {
-        return buildTokenAndResponse(true, false, false, false, null, null, customizers);
+        return buildTokenAndResponse(true, false, false, false, null, null, null, customizers);
     }
 
     protected TokenAndResponse buildTokenAndResponse(boolean signed, boolean invalidateSignature, boolean errorResponse,
-        boolean forceAuthn, Integer nistLevel, Integer sessionAge, SamlResponseCustomizer... customizers)
+        boolean forceAuthn, Integer nistLevel, Integer sessionAge, String tenant, SamlResponseCustomizer... customizers)
         throws MarshallingException, EncryptionException, CertificateException, SecurityException, KeyStoreException,
         NoSuchAlgorithmException, SignatureException, IOException
     {
         String relayState = UUID.randomUUID().toString();
-        return buildTokenAndResponse(signed, invalidateSignature, errorResponse, forceAuthn, nistLevel, sessionAge, relayState, relayState, customizers);
+        return buildTokenAndResponse(signed, invalidateSignature, errorResponse, forceAuthn, nistLevel, sessionAge,
+            tenant, relayState, relayState, customizers);
     }
 
     protected TokenAndResponse buildTokenAndResponse(boolean signed, boolean invalidateSignature, boolean errorResponse,
-        boolean forceAuthn, Integer nistLevel, Integer sessionAge, String requestedRelayState,
+        boolean forceAuthn, Integer nistLevel, Integer sessionAge, String tenant, String requestedRelayState,
         String responseRelayState, SamlResponseCustomizer... customizers)
         throws MarshallingException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
         SecurityException, SignatureException, IOException, EncryptionException
@@ -518,6 +519,7 @@ public class Saml2ResponseProcessorTest
 
         storeNistLevel(request, Optional.ofNullable(nistLevel));
         storeSessionAge(request, Optional.ofNullable(sessionAge));
+        storeTenant(request, Optional.ofNullable(tenant));
 
         request.addParameter("SAMLResponse", base64Response);
         request.addParameter(RELAY_STATE_PARAM, responseRelayState);
@@ -528,7 +530,8 @@ public class Saml2ResponseProcessorTest
             .samlRequest("dummy request")
             .relayState(requestedRelayState)
             .build();
-        Saml2AuthenticationToken token = new Saml2AuthenticationToken(relyingPartyRegistration, stringResponse, authenticationRequest);
+        Saml2AuthenticationToken token =
+            new Saml2AuthenticationToken(relyingPartyRegistration, stringResponse, authenticationRequest);
         token.setDetails(new HttpRequestContext(request));
 
         return new TokenAndResponse(token, response);

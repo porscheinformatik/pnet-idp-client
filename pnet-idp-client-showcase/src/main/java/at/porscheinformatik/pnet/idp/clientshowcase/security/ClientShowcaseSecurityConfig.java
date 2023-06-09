@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
@@ -45,7 +45,7 @@ public class ClientShowcaseSecurityConfig
         /*
          * To get rid of the default AuthenticationManager registered by spring boot, that uses a auto generated password
          * visible in the logs, we register our own AuthenticationManager.
-         * 
+         *
          * If no providers are registered, we register a dummy provider that does nothing.
          * If custom authentication mechanisms are registered, they have to register a authentication provider, or handle the authentication
          * on their own.
@@ -60,12 +60,17 @@ public class ClientShowcaseSecurityConfig
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment,
-        Saml2CredentialsProperties samlCredentialsConfig, ForceAuthenticationFilter forceAuthenticationFilter)
-        throws Exception
+        Saml2CredentialsProperties samlCredentialsConfig, ForceAuthenticationFilter forceAuthenticationFilter,
+        ForceTenantFilter forceTenantFilter) throws Exception
     {
         if (environment.acceptsProfiles(LOCAL))
         {
             http.headers().httpStrictTransportSecurity().disable();
+
+            // We explicitly allow framing for this application for testing purposes only, because the Partner.Net
+            // Portal allows some applications to be displayed in a frame. By default, you should keep framing
+            // restricted.
+            http.headers().frameOptions().disable();
         }
 
         http
@@ -98,6 +103,7 @@ public class ClientShowcaseSecurityConfig
             .denyAll();
 
         http.addFilterBefore(forceAuthenticationFilter, LogoutFilter.class);
+        http.addFilterBefore(forceTenantFilter, LogoutFilter.class);
 
         http.requiresChannel().anyRequest().requiresSecure();
 
