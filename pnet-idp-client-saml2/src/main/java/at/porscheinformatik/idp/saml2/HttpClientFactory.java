@@ -13,29 +13,24 @@ public interface HttpClientFactory
 
     /**
      * The default client factory builds a client with 5 seconds connection timeout and 10 seconds socket timeout.
-     * 
+     *
      * @return the default http client
      */
     static HttpClientFactory defaultClient()
     {
-        return new HttpClientFactory()
-        {
-            @Override
-            public HttpClient newClient() throws Saml2Exception
+        return () -> {
+            try
             {
-                try
-                {
-                    HttpClientBuilder clientBuilder = new HttpClientBuilder();
+                HttpClientBuilder clientBuilder = new HttpClientBuilder();
 
-                    clientBuilder.setConnectionTimeout(Duration.ofSeconds(5));
-                    clientBuilder.setSocketTimeout(Duration.ofSeconds(10));
+                clientBuilder.setConnectionTimeout(Duration.ofSeconds(5));
+                clientBuilder.setSocketTimeout(Duration.ofSeconds(10));
 
-                    return clientBuilder.buildClient();
-                }
-                catch (Exception e)
-                {
-                    throw new Saml2Exception("Error building HttpClient", e);
-                }
+                return clientBuilder.buildClient();
+            }
+            catch (Exception e)
+            {
+                throw new Saml2Exception("Error building HttpClient", e);
             }
         };
     }

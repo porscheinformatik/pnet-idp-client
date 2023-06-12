@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/loginerror")
 public class LoginErrorController
 {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @GetMapping
     @ResponseBody
@@ -27,10 +27,7 @@ public class LoginErrorController
         {
             return "Came here without exception";
         }
-        else
-        {
-            logger.error("Error on authentication", e);
-        }
+        logger.error("Error on authentication", e);
 
         return buildExceptionMessage(e);
     }

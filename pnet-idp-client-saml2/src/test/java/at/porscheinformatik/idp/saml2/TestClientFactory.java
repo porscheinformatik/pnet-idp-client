@@ -34,7 +34,7 @@ public class TestClientFactory implements HttpClientFactory
     {
         super();
 
-        this.metadata = loadMetadata(metadataFile);
+        metadata = loadMetadata(metadataFile);
         this.metadataUrl = metadataUrl;
     }
 

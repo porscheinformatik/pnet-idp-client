@@ -17,7 +17,7 @@ public class PartnerNetSaml2Authentication extends AbstractAuthenticationToken
         super(authorities);
 
         this.principal = principal;
-        this.setAuthenticated(true);
+        setAuthenticated(true);
     }
 
     @Override

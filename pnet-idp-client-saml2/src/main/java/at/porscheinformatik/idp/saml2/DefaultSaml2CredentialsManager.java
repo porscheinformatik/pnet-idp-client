@@ -39,7 +39,7 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
     private static final Logger LOG = LoggerFactory.getLogger(Saml2CredentialsManager.class);
 
     private final Supplier<List<Saml2CredentialsConfig>> configSupplier;
-    private final List<UpdateListener> listeners = new ArrayList<UpdateListener>();
+    private final List<UpdateListener> listeners = new ArrayList<>();
 
     private long lastupdate = -1;
     private long lastNotificationSent = -1;
@@ -68,7 +68,7 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
     @Override
     public void onUpdate(UpdateListener action)
     {
-        this.listeners.add(action);
+        listeners.add(action);
     }
 
     /**
@@ -81,7 +81,7 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
     {
         try
         {
-            this.update();
+            update();
         }
         catch (Exception ex)
         {

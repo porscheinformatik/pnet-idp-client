@@ -31,7 +31,7 @@ public class PartnerNetSamlAuthenticationProvider implements AuthenticationProvi
 
         this.processor = processor;
         this.parser = parser;
-        this.parserPool = XMLObjectProviderRegistrySupport.getParserPool();
+        parserPool = XMLObjectProviderRegistrySupport.getParserPool();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class PartnerNetSamlAuthenticationProvider implements AuthenticationProvi
             // Otherwise spring security might copy them over to our final authentication object.
             token.setDetails(null);
 
-            return this.parser.parseResponse(response, relayState);
+            return parser.parseResponse(response, relayState);
         }
         catch (Saml2AuthenticationException ex)
         {
@@ -75,5 +75,4 @@ public class PartnerNetSamlAuthenticationProvider implements AuthenticationProvi
     {
         return authentication != null && Saml2AuthenticationToken.class.isAssignableFrom(authentication);
     }
-
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.saml2;
 
@@ -44,7 +44,7 @@ public enum PartnerNetSaml2Provider
 
     /**
      * Get the entity id of the Identity Provider
-     * 
+     *
      * @return the entity id
      */
     public abstract String getEntityId();

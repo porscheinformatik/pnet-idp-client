@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.openidconnect.convert;
 
@@ -28,7 +28,7 @@ public class PartnerNetContactCompaniesConverter implements Converter<Object, Co
 
         Collection<Number> collection = ConverterUtils.cast(source, Number.class);
 
-        // We map the collection to a set here to ensure, it always has the same type, regardless of the type parsed by the claims parser. 
+        // We map the collection to a set here to ensure, it always has the same type, regardless of the type parsed by the claims parser.
         return collection //
             .stream()
             .map(Number::intValue)

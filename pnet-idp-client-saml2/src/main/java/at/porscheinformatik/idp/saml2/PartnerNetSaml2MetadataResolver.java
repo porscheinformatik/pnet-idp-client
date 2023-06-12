@@ -89,13 +89,13 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
         relyingPartyRegistration
             .getSigningX509Credentials()
             .stream()
-            .map(certificate -> this.keyDescritor(certificate.getCertificate(), UsageType.SIGNING))
+            .map(certificate -> keyDescritor(certificate.getCertificate(), UsageType.SIGNING))
             .forEach(ssoDescriptor.getKeyDescriptors()::add);
 
         relyingPartyRegistration
             .getDecryptionX509Credentials()
             .stream()
-            .map(certificate -> this.keyDescritor(certificate.getCertificate(), UsageType.ENCRYPTION))
+            .map(certificate -> keyDescritor(certificate.getCertificate(), UsageType.ENCRYPTION))
             .forEach(ssoDescriptor.getKeyDescriptors()::add);
     }
 

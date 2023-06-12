@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.pnet.idp.clientshowcase;
 

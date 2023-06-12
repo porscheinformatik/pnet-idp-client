@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.openidconnect;
 
@@ -56,7 +56,7 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
     {
         try
         {
-            this.registration = ClientRegistrations
+            registration = ClientRegistrations
                 .fromOidcIssuerLocation(issuerUrl)
                 .clientId(clientId)
                 .clientSecret(clientSecret)

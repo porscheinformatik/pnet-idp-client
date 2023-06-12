@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.openidconnect;
 
@@ -51,7 +51,7 @@ public class PartnerNetOpenIdConnectConfigurer
     /**
      * When called, that application will fail to start, when the metadata of the provider could not be loaded.
      * Otherwise it will gracefully start, and try to load the metadata until the metadata could be fetched.
-     * 
+     *
      * @return the builder for a fluent api
      */
     public PartnerNetOpenIdConnectConfigurer failOnStartup()
@@ -87,7 +87,7 @@ public class PartnerNetOpenIdConnectConfigurer
      * is equivalent to calling {@link HttpSecurity#oauth2Login(Customizer)} with the advantage of having the default
      * Partner.Net configuration applied. This customizer is called at the very end of the Partner.Net specific
      * configuration. So you can override configurations applied by the Partner.Net configurer.
-     * 
+     *
      * @param customizer the customizer to use
      * @return the builder for a fluent api
      */
@@ -128,7 +128,7 @@ public class PartnerNetOpenIdConnectConfigurer
             });
 
             // Let users add custom configurations if they want to
-            this.customizer.customize(oauth2Login);
+            customizer.customize(oauth2Login);
         });
     }
 

@@ -28,10 +28,10 @@ import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
 /**
  * When a POST Request is made to /forceauthentication, the user is logged out and redirected to the same page, but with
  * the force authentication parameter appended.
- * 
+ *
  * We have no session anymore, and Spring Security will call the authentication entry point again, which will then see
  * the force authentication parameter and force the authentication at the IDP.
- * 
+ *
  */
 @Service
 public class ForceAuthenticationFilter extends GenericFilter
@@ -45,7 +45,7 @@ public class ForceAuthenticationFilter extends GenericFilter
     {
         super();
 
-        this.requestMatcher = AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/forceauthentication");
+        requestMatcher = AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/forceauthentication");
         this.securityContextRepository = securityContextRepository.orElseGet(HttpSessionSecurityContextRepository::new);
     }
 
@@ -103,7 +103,7 @@ public class ForceAuthenticationFilter extends GenericFilter
     /**
      * Verifies that the redirect URI belongs to our server. The referer can not be trusted. We do not want to have an
      * arbitrary redirect to an attacker controlled server.
-     * 
+     *
      * @param request
      * @param redirectUri
      */

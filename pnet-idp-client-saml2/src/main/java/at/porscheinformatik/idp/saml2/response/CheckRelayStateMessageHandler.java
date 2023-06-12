@@ -1,11 +1,11 @@
 package at.porscheinformatik.idp.saml2.response;
 
-import static at.porscheinformatik.idp.saml2.Saml2ResponseProcessor.*;
-
 import java.util.Objects;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
+
+import at.porscheinformatik.idp.saml2.Saml2ResponseProcessor.Saml2AuthenticationTokenContext;
 
 public class CheckRelayStateMessageHandler extends AbstractSimpleMessageHandler
 {
@@ -20,8 +20,7 @@ public class CheckRelayStateMessageHandler extends AbstractSimpleMessageHandler
             .orElseThrow(() -> new MessageHandlerException("Relay state is missing in response."));
         String requestedRelayState = authenticationContext
             .getRequestedRelayState()
-            .orElseThrow(
-                () -> new MessageHandlerException("Requested relay state is missing."));
+            .orElseThrow(() -> new MessageHandlerException("Requested relay state is missing."));
 
         if (!Objects.equals(responseRelayState, requestedRelayState))
         {

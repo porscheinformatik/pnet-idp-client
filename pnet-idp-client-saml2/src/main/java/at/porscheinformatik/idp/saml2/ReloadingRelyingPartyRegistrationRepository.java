@@ -52,7 +52,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         this.clientFactory = clientFactory;
         this.loginProcessingUrl = loginProcessingUrl;
         this.entityIdPath = entityIdPath;
-        this.resolver = buildResolver(idpEntityId, idpMetadataUrl);
+        resolver = buildResolver(idpEntityId, idpMetadataUrl);
     }
 
     @Override
@@ -118,12 +118,12 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
             this.credentialsManager = credentialsManager;
 
             this.credentialsManager.onUpdate(() -> {
-                if (!this.isInitialized())
+                if (!isInitialized())
                 {
-                    this.initialize();
+                    initialize();
                 }
-                
-                this.prepareRegistration();
+
+                prepareRegistration();
             });
 
             setRequireValidMetadata(true);
@@ -156,7 +156,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         {
             EntityDescriptor descriptor = resolveSingle(new CriteriaSet(new EntityIdCriterion(idpEntityId)));
 
-            this.registration = parseDescriptor(descriptor);
+            registration = parseDescriptor(descriptor);
         }
 
         private RelyingPartyRegistration parseDescriptor(EntityDescriptor descriptor)
@@ -173,7 +173,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
                         .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
                         .singleSignOnServiceLocation(getSingleSignOnLocation(descriptor))
                         .wantAuthnRequestsSigned(wantsAuthnRequestSigned(descriptor))
-                        .verificationX509Credentials((certificates) -> certificates.addAll(getSigningKeys(descriptor)));
+                        .verificationX509Credentials(certificates -> certificates.addAll(getSigningKeys(descriptor)));
                 })
                 .build();
         }
