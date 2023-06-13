@@ -12,10 +12,12 @@ import at.porscheinformatik.idp.PartnerNetRoleDTO;
 import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
 
 /**
- * @deprecated use {@link DefaultPartnerNetSaml2AuthoritiesMapper} instead
+ * A {@link PartnerNetSaml2AuthoritiesMapper} that converts the roles of the principal to
+ * {@link SimpleGrantedAuthority}s.
+ *
+ * @author ham
  */
-@Deprecated
-public class DefaultPartnerNetAuthoritiesMapper implements PartnerNetSaml2AuthoritiesMapper
+public class DefaultPartnerNetSaml2AuthoritiesMapper implements PartnerNetSaml2AuthoritiesMapper
 {
     @Override
     public Collection<? extends GrantedAuthority> apply(PartnerNetSaml2AuthenticationPrincipal principal,

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,10 +31,9 @@ import at.porscheinformatik.idp.PartnerNetRoleDTO;
 public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
 {
     private final String attributePrefix;
-    private final BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper;
+    private final PartnerNetSaml2AuthoritiesMapper authoritiesMapper;
 
-    public PartnerNetSaml2ResponseParser(
-        BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper)
+    public PartnerNetSaml2ResponseParser(PartnerNetSaml2AuthoritiesMapper authoritiesMapper)
     {
         super();
 
@@ -56,6 +54,11 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
 
     private PartnerNetSaml2AuthenticationPrincipal buildPrincipal(Saml2Data data)
     {
+        String subjectIdentifier = data.getSubjectIdentifier();
+        String relayState = data.getRelayState().orElse(null);
+        String nameId = data.getNameId();
+        AuthnContextClass contextClass = data.getAuthnContextClass();
+
         String guid = singleString(data, attributeName("guid"));
         String personnelNumber = singleString(data, attributeName("personnel_number"));
         Integer legacyId = singleInteger(data, attributeName("person_id"));
@@ -93,12 +96,11 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes =
             companyTypeList(data, attributeName("support_employment_companytypes"));
 
-        return new PartnerNetSaml2AuthenticationPrincipal(data.getSubjectIdentifier(),
-            data.getRelayState().orElse(null), data.getNameId(), data.getAuthnContextClass(), lastUpdate, guid,
-            personnelNumber, legacyId, academicTitle, academicTitlePostNominal, firstname, lastname, gender, language,
-            additionalLanguages, mailAddress, phoneNumber, tenant, costCenter, favoriteCompanyId, favoriteBrand,
-            functionalNumbers, employments, employmentsAddress, roles, contracts, contactCompanyIds, companyTypes,
-            supportData, supportEmployments, supportEmploymentsAddress, supportRoles, supportContracts,
+        return new PartnerNetSaml2AuthenticationPrincipal(subjectIdentifier, relayState, nameId, contextClass,
+            lastUpdate, guid, personnelNumber, legacyId, academicTitle, academicTitlePostNominal, firstname, lastname,
+            gender, language, additionalLanguages, mailAddress, phoneNumber, tenant, costCenter, favoriteCompanyId,
+            favoriteBrand, functionalNumbers, employments, employmentsAddress, roles, contracts, contactCompanyIds,
+            companyTypes, supportData, supportEmployments, supportEmploymentsAddress, supportRoles, supportContracts,
             supportContactCompanyIds, supportCompanyTypes);
     }
 
