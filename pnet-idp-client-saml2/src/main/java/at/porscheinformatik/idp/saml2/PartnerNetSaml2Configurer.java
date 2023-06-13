@@ -8,11 +8,9 @@ import static java.lang.String.*;
 import static java.util.Objects.*;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -23,7 +21,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.saml2.Saml2LoginConfigurer;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
@@ -37,7 +34,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
-import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
 import jakarta.servlet.Filter;
 
 /**
@@ -115,7 +111,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private Saml2CredentialsManager credentialsManager;
     private Saml2ResponseProcessor responseProcessor;
     private Saml2ResponseParser responseParser;
-    private BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper;
+    private PartnerNetSaml2AuthoritiesMapper authoritiesMapper;
     private Consumer<AuthnRequestContext> authnRequestCustomizer;
     private AuthenticationFailureHandler failureHandler;
     private String failureUrl;
@@ -195,7 +191,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     }
 
     /**
-     * Override the default response parser
+     * Override the default response parser.
      *
      * @param responseParser the response parser to use
      * @return the builder for a fluent api
@@ -208,13 +204,13 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     }
 
     /**
-     * Override the default authorities mapper
+     * Override the default authorities mapper. It will only be used if the default {@link #responseParser} is used,
+     * otherwise this value will be ignored.
      *
-     * @param authoritiesMapper the new authoritiesmapper to use
+     * @param authoritiesMapper the new authorities mapper to use
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer authoritiesMapper(
-        BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> authoritiesMapper)
+    public PartnerNetSaml2Configurer authoritiesMapper(PartnerNetSaml2AuthoritiesMapper authoritiesMapper)
     {
         this.authoritiesMapper = authoritiesMapper;
 
@@ -341,11 +337,11 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         return responseParser;
     }
 
-    private BiFunction<PartnerNetSaml2AuthenticationPrincipal, Saml2Data, Collection<? extends GrantedAuthority>> getAuthoritiesMapper()
+    private PartnerNetSaml2AuthoritiesMapper getAuthoritiesMapper()
     {
         if (authoritiesMapper == null)
         {
-            return new DefaultPartnerNetAuthoritiesMapper();
+            return PartnerNetSaml2AuthoritiesMapper.defaultInstance();
         }
 
         return authoritiesMapper;
