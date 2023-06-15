@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.openidconnect;
 
@@ -48,7 +48,7 @@ public enum PartnerNetOpenIdConnectProvider
     /**
      * Create a new {@link org.springframework.security.oauth2.client.registration.ClientRegistration.Builder
      * ClientRegistration.Builder} pre-configured with provider defaults.
-     * 
+     *
      * @return a builder instance
      */
     public ClientRegistration.Builder getBuilder()
@@ -58,7 +58,7 @@ public enum PartnerNetOpenIdConnectProvider
 
     /**
      * Get the issuer url of the provider
-     * 
+     *
      * @return the issuer
      */
     public abstract String getIssuer();

@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class ShowcaseErrorController implements ErrorController
 {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final ErrorAttributes errorAttributes;
 
@@ -37,7 +37,7 @@ public class ShowcaseErrorController implements ErrorController
     {
         ServletWebRequest requestAttributes = new ServletWebRequest(request);
 
-        Map<String, Object> attributes = this.errorAttributes
+        Map<String, Object> attributes = errorAttributes
             .getErrorAttributes(requestAttributes, ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION));
 
         Throwable e = (Throwable) attributes.get("exception");
@@ -46,10 +46,7 @@ public class ShowcaseErrorController implements ErrorController
         {
             return "Came here without exception";
         }
-        else
-        {
-            logger.error("Error in app", e);
-        }
+        logger.error("Error in app", e);
 
         return (String) attributes.get("message");
     }
@@ -64,10 +61,7 @@ public class ShowcaseErrorController implements ErrorController
         {
             return "Came here without exception";
         }
-        else
-        {
-            logger.error("Error on authentication", e);
-        }
+        logger.error("Error on authentication", e);
 
         return buildExceptionMessage(e, "Got authentication exception: ");
     }
@@ -82,10 +76,7 @@ public class ShowcaseErrorController implements ErrorController
         {
             return "Came here without exception";
         }
-        else
-        {
-            logger.error("Error on authentication", e);
-        }
+        logger.error("Error on authentication", e);
 
         return buildExceptionMessage(e, "Got access denied exception: ");
     }

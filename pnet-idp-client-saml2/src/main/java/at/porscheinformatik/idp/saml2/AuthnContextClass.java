@@ -25,7 +25,7 @@ public enum AuthnContextClass
     private int nistLevel;
     private String samlReference;
 
-    private AuthnContextClass(int nistLevel, String samlReference)
+    AuthnContextClass(int nistLevel, String samlReference)
     {
         this.nistLevel = nistLevel;
         this.samlReference = samlReference;

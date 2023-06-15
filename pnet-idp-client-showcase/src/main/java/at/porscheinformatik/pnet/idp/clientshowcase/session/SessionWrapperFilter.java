@@ -187,7 +187,7 @@ public class SessionWrapperFilter extends OncePerRequestFilter
         {
             delegate.invalidate();
 
-            this.invalid = true;
+            invalid = true;
         }
 
         @Override

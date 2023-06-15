@@ -18,7 +18,7 @@ public interface Saml2CredentialsManager
 
     /**
      * Registers a listener that is called when the underlying list of certificates changes.
-     * 
+     *
      * @param action the action to perform on update
      */
     void onUpdate(UpdateListener action);

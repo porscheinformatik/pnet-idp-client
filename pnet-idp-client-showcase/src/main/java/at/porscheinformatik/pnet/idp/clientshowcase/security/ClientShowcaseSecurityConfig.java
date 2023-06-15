@@ -15,8 +15,8 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;

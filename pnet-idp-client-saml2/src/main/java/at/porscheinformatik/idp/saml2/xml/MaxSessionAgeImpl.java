@@ -31,7 +31,7 @@ public class MaxSessionAgeImpl extends AbstractXMLObject implements MaxSessionAg
     @Override
     public void setSessionAgeInSeconds(int sessionAgeInSeconds)
     {
-        this.value = prepareForAssignment(value, sessionAgeInSeconds);
+        value = prepareForAssignment(value, sessionAgeInSeconds);
     }
 
 }

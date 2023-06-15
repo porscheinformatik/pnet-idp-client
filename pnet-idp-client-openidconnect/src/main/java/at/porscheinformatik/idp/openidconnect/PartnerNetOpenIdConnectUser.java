@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package at.porscheinformatik.idp.openidconnect;
 
@@ -62,7 +62,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
 
     /**
      * alias for {@link #getSubject()}
-     * 
+     *
      * @return the external id
      */
     public String getExternalId()
