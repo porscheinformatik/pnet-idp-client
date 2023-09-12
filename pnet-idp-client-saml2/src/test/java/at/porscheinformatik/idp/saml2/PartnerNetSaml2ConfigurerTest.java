@@ -13,8 +13,10 @@ import javax.servlet.Filter;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,12 +26,17 @@ import org.springframework.security.saml2.provider.service.web.authentication.Sa
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
  * @author Daniel Furtlehner
  */
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {PartnerNetSaml2ConfigurerTest.class})
 public class PartnerNetSaml2ConfigurerTest
 {
     private static final String IDP_ENTITY_ID = "https://identity.com/identity/saml2";
@@ -38,6 +45,9 @@ public class PartnerNetSaml2ConfigurerTest
     {
         Saml2Initializer.initialize();
     }
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Test
     public void requestFilterIsConfigured() throws Exception
@@ -138,14 +148,25 @@ public class PartnerNetSaml2ConfigurerTest
             .orElse(null);
     }
 
+    @Bean
+    public ObjectPostProcessor<Object> objectPostProcessor()
+    {
+        return new NoopPostProcessor();
+    }
+
+    @Bean
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector()
+    {
+        return new HandlerMappingIntrospector();
+    }
+
     private HttpSecurity buildHttpSecurity()
     {
-        ObjectPostProcessor<Object> objectPostProcessor = new NoopPostProcessor();
-        StaticApplicationContext applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
+        @SuppressWarnings("unchecked")
+        ObjectPostProcessor<Object> objectPostProcessor = applicationContext.getBean(ObjectPostProcessor.class);
         AuthenticationManagerBuilder authenticationBuilder = new AuthenticationManagerBuilder(objectPostProcessor);
         HashMap<Class<?>, Object> sharedObjects = new HashMap<>();
+
         sharedObjects.put(ApplicationContext.class, applicationContext);
 
         return new HttpSecurity(objectPostProcessor, authenticationBuilder, sharedObjects);

@@ -160,7 +160,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         {
             http //
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
+                .mvcMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
                 .permitAll();
         }
         else
