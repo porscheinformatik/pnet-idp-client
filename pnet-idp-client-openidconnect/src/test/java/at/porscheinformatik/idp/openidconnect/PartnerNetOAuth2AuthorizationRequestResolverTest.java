@@ -98,6 +98,26 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
         assertThat(queryParams.getFirst("max_age"), equalTo("0"));
     }
 
+    @Test
+    public void testCustomState()
+    {
+        PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
+        builder = requestCustomState(builder, "cst");
+        MockHttpServletRequest request = buildRequest(builder);
+
+        OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
+
+        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+
+        MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
+
+        String state = queryParams.getFirst("state");
+        String customState = PartnerNetOpenIdConnectStateUtils.getCustomState(state);
+        assertThat(customState, is("cst"));
+    }
+
     protected MockHttpServletRequest buildRequest(UriComponentsBuilder builder)
     {
         UriComponents uri = builder.build();

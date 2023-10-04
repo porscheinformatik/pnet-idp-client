@@ -28,6 +28,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
     public static final String ACR_PARAM = "acr";
     public static final String MAX_AGE_PARAM = "max_age";
     public static final String TENANT_PARAM = "tenant";
+    public static final String CUSTOM_STATE = "custom_state";
 
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
 
@@ -55,6 +56,11 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
     public static UriComponentsBuilder requestTenant(UriComponentsBuilder uri, String tenant)
     {
         return uri.queryParam(TENANT_PARAM, tenant);
+    }
+
+    public static UriComponentsBuilder requestCustomState(UriComponentsBuilder uri, String customState)
+    {
+        return uri.queryParam(CUSTOM_STATE, customState);
     }
 
     public PartnerNetOAuth2AuthorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository,
@@ -97,9 +103,13 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         addRequestedMaxAge(request, additionalParameters, attributes);
         addRequestedTenant(request, additionalParameters, attributes);
 
+        String state = PartnerNetOpenIdConnectStateUtils //
+            .buildState(authorizationRequest.getState(), request.getParameter(CUSTOM_STATE));
+
         return OAuth2AuthorizationRequest
             .from(authorizationRequest) //
             .scope(OidcScopes.OPENID)
+            .state(state)
             .additionalParameters(additionalParameters)
             .attributes(attributes)
             .build();
