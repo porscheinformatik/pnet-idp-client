@@ -4,9 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public class PartnerNetOpenIdConnectStateUtils
+public final class PartnerNetOpenIdConnectStateUtils
 {
     public static final String CUSTOM_STATE_DELIMITER = ":";
+
+    private PartnerNetOpenIdConnectStateUtils()
+    {
+        super();
+    }
 
     public static String buildState(String randomPart, String customPart)
     {
