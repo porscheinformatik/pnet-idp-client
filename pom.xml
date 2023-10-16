@@ -55,23 +55,6 @@
                 <artifactId>pnet-idp-client-saml2</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Override opensaml to remove the unsupported 3.x release -->
-            <dependency>
-                <groupId>org.opensaml</groupId>
-                <artifactId>opensaml-core</artifactId>
-                <version>4.3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opensaml</groupId>
-                <artifactId>opensaml-saml-api</artifactId>
-                <version>4.3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opensaml</groupId>
-                <artifactId>opensaml-saml-impl</artifactId>
-                <version>4.3.0</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
