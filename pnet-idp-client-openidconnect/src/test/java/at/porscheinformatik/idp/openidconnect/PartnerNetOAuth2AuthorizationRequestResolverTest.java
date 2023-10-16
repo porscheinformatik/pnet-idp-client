@@ -118,6 +118,26 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
         assertThat(customState, is("cst"));
     }
 
+    @Test
+    public void testPreselectTenant()
+    {
+        PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
+        final String expectedTenant = "at";
+        builder = requestPreselectTenant(builder, expectedTenant);
+        MockHttpServletRequest request = buildRequest(builder);
+
+        OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
+
+        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+
+        MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
+
+        String tenant = queryParams.getFirst("preselect_tenant");
+        assertThat(tenant, is(expectedTenant));
+    }
+
     protected MockHttpServletRequest buildRequest(UriComponentsBuilder builder)
     {
         UriComponents uri = builder.build();
