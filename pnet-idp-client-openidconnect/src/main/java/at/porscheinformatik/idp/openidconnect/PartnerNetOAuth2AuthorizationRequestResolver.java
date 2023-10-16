@@ -28,6 +28,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
     public static final String ACR_PARAM = "acr";
     public static final String MAX_AGE_PARAM = "max_age";
     public static final String TENANT_PARAM = "tenant";
+    public static final String PRESELECT_TENANT_PARAM = "preselect_tenant";
     public static final String CUSTOM_STATE = "custom_state";
 
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
@@ -56,6 +57,11 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
     public static UriComponentsBuilder requestTenant(UriComponentsBuilder uri, String tenant)
     {
         return uri.queryParam(TENANT_PARAM, tenant);
+    }
+
+    public static UriComponentsBuilder requestPreselectTenant(UriComponentsBuilder uri, String tenant)
+    {
+        return uri.queryParam(PRESELECT_TENANT_PARAM, tenant);
     }
 
     public static UriComponentsBuilder requestCustomState(UriComponentsBuilder uri, String customState)
@@ -102,6 +108,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         addRequestedAcrParameter(request, additionalParameters, attributes);
         addRequestedMaxAge(request, additionalParameters, attributes);
         addRequestedTenant(request, additionalParameters, attributes);
+        addRequestedPreselectTenant(request, additionalParameters, attributes);
 
         String state = PartnerNetOpenIdConnectStateUtils //
             .buildState(authorizationRequest.getState(), request.getParameter(CUSTOM_STATE));
@@ -127,6 +134,20 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
         attributes.put(TENANT_PARAM, tenant);
         additionalParameters.put("tenant", tenant); // not necessarily the same as TENANT_PARAM!
+    }
+
+    private void addRequestedPreselectTenant(HttpServletRequest request, Map<String, Object> additionalParameters,
+        Map<String, Object> attributes)
+    {
+        String tenant = request.getParameter(PRESELECT_TENANT_PARAM);
+
+        if (tenant == null)
+        {
+            return;
+        }
+
+        attributes.put(PRESELECT_TENANT_PARAM, tenant);
+        additionalParameters.put("preselect_tenant", tenant); // not necessarily the same as PRESELECT_TENANT_PARAM!
     }
 
     private void addRequestedMaxAge(HttpServletRequest request, Map<String, Object> additionalParameters,
