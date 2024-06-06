@@ -41,5 +41,4 @@ oc project $PROJECT &>/dev/null
 
 oc process -f oc_template.yml ENVIRONMENT=qa IMAGE_NAME="$IMAGE_NAME" ROUTE_URL="$ROUTE_URL" JAVA_OPTS="$J_OPTS" | oc apply -f -
 oc import-image $PROJECT/pnet-idp-client-showcase-qa:latest
-oc rollout status dc/pnet-idp-client-showcase-qa
-
+oc rollout status deployment/pnet-idp-client-showcase-qa

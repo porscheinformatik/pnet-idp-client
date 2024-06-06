@@ -18,6 +18,7 @@ parameters:
   required: true
 - name: ROUTE_URL
   required: true
+
 objects:
 - kind: ImageStream
   apiVersion: v1
@@ -34,8 +35,9 @@ objects:
         name: ${IMAGE_NAME}:latest
       referencePolicy:
         type: Source
-- kind: DeploymentConfig
-  apiVersion: v1
+
+- kind: Deployment
+  apiVersion: apps/v1
   metadata:
     name: ${APPLICATION_NAME}-${ENVIRONMENT}
     labels:
@@ -43,21 +45,20 @@ objects:
       module: pnet-idp-client-showcase-${ENVIRONMENT}
   spec:
     replicas: 1
-    strategy:
-      rollingParams:
-        timeoutSeconds: 600
+    selector:
+      matchLabels:
+        app: pnet-${ENVIRONMENT}
+        module: pnet-idp-client-showcase-${ENVIRONMENT}
     template:
       metadata:
         labels:
           app: pnet-${ENVIRONMENT}
           module: pnet-idp-client-showcase-${ENVIRONMENT}
-          deploymentconfig: ${APPLICATION_NAME}-${ENVIRONMENT}
       spec:
         restartPolicy: Always
         containers:
         - name: ${APPLICATION_NAME}-${ENVIRONMENT}
-          # When there is a ImageChangeTrigger then Image name must be empty, otherwise unwanted deployments could be started
-          image:
+          image: ${IMAGE_NAME}:latest
           imagePullPolicy: Always
           ports:
           - name: http
@@ -92,19 +93,7 @@ objects:
         - name: certificate-volume
           secret:
            secretName: ${APPLICATION_NAME}-${ENVIRONMENT}-certificates
-    triggers:
-    - type: "ConfigChange"
-    - type: "ImageChange"
-      imageChangeParams:
-        automatic: true
-        from:
-          kind: ImageStreamTag
-          name: ${APPLICATION_NAME}-${ENVIRONMENT}:latest
-        containerNames:
-        - ${APPLICATION_NAME}-${ENVIRONMENT}
-    selector:
-      app: pnet-${ENVIRONMENT}
-      deploymentconfig: ${APPLICATION_NAME}-${ENVIRONMENT}
+
 - kind: Service
   apiVersion: v1
   metadata:
@@ -119,8 +108,10 @@ objects:
       protocol: TCP
       targetPort: ${{HTTP_PORT}}
     selector:
-      deploymentconfig: ${APPLICATION_NAME}-${ENVIRONMENT}
+      app: pnet-${ENVIRONMENT}
+      module: pnet-idp-client-showcase-${ENVIRONMENT}
     type: ClusterIP
+
 - kind: Route
   apiVersion: v1
   metadata:
