@@ -18,6 +18,9 @@ parameters:
   required: true
 - name: ROUTE_URL
   required: true
+- name: GIT_COMMIT
+  description: SHA-1 hash of the commit
+  value: "none"
 
 objects:
 - kind: ImageStream
@@ -43,6 +46,7 @@ objects:
     labels:
       app: pnet-${ENVIRONMENT}
       module: pnet-idp-client-showcase-${ENVIRONMENT}
+      git-commit: ${GIT_COMMIT}
   spec:
     replicas: 1
     selector:
@@ -54,6 +58,7 @@ objects:
         labels:
           app: pnet-${ENVIRONMENT}
           module: pnet-idp-client-showcase-${ENVIRONMENT}
+          git-commit: ${GIT_COMMIT}
       spec:
         restartPolicy: Always
         containers:
