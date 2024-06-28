@@ -15,6 +15,7 @@ import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
 import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
+import at.porscheinformatik.idp.PartnerNetUserType;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
 import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
 
@@ -28,7 +29,7 @@ public class AuthenticationDTO
     {
         return new AuthenticationDTO("OpenId Connect", principal.getExternalId(),
             principal.getNistAuthenticationLevel() > 2, principal.getTransientSessionId(),
-            principal.isSupportDataAvailable(), principal.getNistAuthenticationLevel(), principal.getName(),
+            principal.isSupportDataAvailable(), principal.getNistAuthenticationLevel(), principal.getUserType(), principal.getName(),
             principal.getEmail(), principal.getPhoneNumber(), principal.getPnetGender(), principal.getPnetLocale(),
             principal.getUpdatedAt(), principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(),
             principal.getGuid(), principal.getCostcentre(), principal.getCountry(), principal.getLegacyId(),
@@ -44,7 +45,7 @@ public class AuthenticationDTO
     {
         return new AuthenticationDTO("Saml2.0", principal.getSubjectIdentifier(), principal.isStronglyAuthenticated(),
             principal.getTransientSessionId(), principal.isSupportDataAvailable(),
-            principal.getAuthnContextClass().getNistLevel(), principal.getName(), principal.getMailAddress(),
+            principal.getAuthnContextClass().getNistLevel(), principal.getUserType(), principal.getName(), principal.getMailAddress(),
             principal.getPhoneNumber(), principal.getGender(), principal.getLanguage(), principal.getLastUpdate(),
             principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(), principal.getGuid(),
             principal.getCostCenter(), principal.getTenant(), principal.getLegacyId(), principal.getFavoriteCompanyId(),
@@ -63,6 +64,7 @@ public class AuthenticationDTO
     private final String transientSessionId;
     private final boolean supportDataAvailable;
     private final int nistAuthenticationLevel;
+    private final PartnerNetUserType userType;
     private final String name;
     private final String email;
     private final String phoneNumber;
@@ -93,7 +95,7 @@ public class AuthenticationDTO
     private final Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes;
 
     public AuthenticationDTO(String info, String externalId, boolean secondFactorUsed, String transientSessionId,
-        boolean supportDataAvailable, int nistAuthenticationLevel, String name, String email, String phoneNumber,
+        boolean supportDataAvailable, int nistAuthenticationLevel, PartnerNetUserType userType, String name, String email, String phoneNumber,
         Gender gender, Locale locale, Instant updatedAt, String academicTitle, String academicTitlePostNominal,
         String guid, String costcentre, String country, Integer internalId, Integer favoriteCompanyId,
         String favoriteBrand, List<Locale> additionalLocales,
@@ -113,6 +115,7 @@ public class AuthenticationDTO
         this.transientSessionId = transientSessionId;
         this.supportDataAvailable = supportDataAvailable;
         this.nistAuthenticationLevel = nistAuthenticationLevel;
+        this.userType = userType;
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -171,6 +174,11 @@ public class AuthenticationDTO
     public int getNistAuthenticationLevel()
     {
         return nistAuthenticationLevel;
+    }
+
+    public PartnerNetUserType getUserType()
+    {
+        return userType;
     }
 
     public String getName()
@@ -312,5 +320,4 @@ public class AuthenticationDTO
     {
         return supportCompanyTypes;
     }
-
 }

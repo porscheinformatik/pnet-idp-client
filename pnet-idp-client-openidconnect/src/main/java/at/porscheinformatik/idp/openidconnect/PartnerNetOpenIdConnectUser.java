@@ -3,6 +3,7 @@
  */
 package at.porscheinformatik.idp.openidconnect;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -19,18 +20,21 @@ import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
 import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
+import at.porscheinformatik.idp.PartnerNetUserType;
 
 /**
  * @author Daniel Furtlehner
  */
 public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
 {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public static final String ID_TOKEN_TRANSIENT_SESSION = "transient_session_id";
     public static final String ID_TOKEN_SUPPORT_AVAILABLE = "pnet_support_available";
 
     private static final String USER_INFO_INTERNAL_ID = "pnet_internal_id";
+    public static final String USER_INFO_USER_TYPE = "pnet_user_type";
     public static final String USER_INFO_ACADEMIC_TITLE = "pnet_academic_title";
     public static final String USER_INFO_ACADEMIC_TITLE_POST_NOMINAL = "pnet_academic_title_post_nominal";
     public static final String USER_INFO_GUID = "pnet_guid";
@@ -79,12 +83,16 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     {
         Boolean value = idTokenClaim(ID_TOKEN_SUPPORT_AVAILABLE);
 
-        return value == null ? false : value.booleanValue();
+        return value != null && value;
     }
 
     public int getNistAuthenticationLevel()
     {
         return Integer.parseInt(getAuthenticationContextClass());
+    }
+
+    public PartnerNetUserType getUserType() {
+        return PartnerNetUserType.fromOidcValue(userInfoClaims(USER_INFO_USER_TYPE));
     }
 
     @Override
@@ -242,5 +250,4 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     {
         return getUserInfo().getClaim(claimName);
     }
-
 }

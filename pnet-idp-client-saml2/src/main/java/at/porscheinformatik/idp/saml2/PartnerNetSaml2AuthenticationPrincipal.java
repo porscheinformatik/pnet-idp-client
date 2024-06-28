@@ -1,5 +1,6 @@
 package at.porscheinformatik.idp.saml2;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
@@ -13,9 +14,11 @@ import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
 import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
+import at.porscheinformatik.idp.PartnerNetUserType;
 
 public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 8462523068524794768L;
 
     private final String subjectIdentifier;
@@ -28,6 +31,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     private final String personnelNumber;
     private final Integer legacyId;
 
+    private final PartnerNetUserType userType;
     private final String academicTitle;
     private final String academicTitlePostNominal;
     private final String firstname;
@@ -63,7 +67,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
 
     public PartnerNetSaml2AuthenticationPrincipal(String subjectIdentifier, String relayState,
         String transientSessionId, AuthnContextClass authnContextClass, Instant lastUpdate, String guid,
-        String personnelNumber, Integer legacyId, String academicTitle, String academicTitlePostNominal,
+        String personnelNumber, Integer legacyId, PartnerNetUserType userType, String academicTitle, String academicTitlePostNominal,
         String firstname, String lastname, Gender gender, Locale language, List<Locale> additionalLanguages,
         String mailAddress, String phoneNumber, String tenant, String costCenter, Integer favoriteCompanyId,
         String favoriteBrand, List<PartnerNetFunctionalNumberDTO> functionalNumbers,
@@ -84,6 +88,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         this.guid = guid;
         this.personnelNumber = personnelNumber;
         this.legacyId = legacyId;
+        this.userType = userType;
         this.academicTitle = academicTitle;
         this.academicTitlePostNominal = academicTitlePostNominal;
         this.firstname = firstname;
@@ -141,6 +146,11 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     public Integer getLegacyId()
     {
         return legacyId;
+    }
+
+    public PartnerNetUserType getUserType()
+    {
+        return userType;
     }
 
     public String getAcademicTitle()
@@ -310,5 +320,4 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     {
         return lastUpdate;
     }
-
 }

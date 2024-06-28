@@ -24,6 +24,7 @@ import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
 import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
+import at.porscheinformatik.idp.PartnerNetUserType;
 
 /**
  * @author Daniel Furtlehner
@@ -62,6 +63,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         String guid = singleString(data, attributeName("guid"));
         String personnelNumber = singleString(data, attributeName("personnel_number"));
         Integer legacyId = singleInteger(data, attributeName("person_id"));
+        PartnerNetUserType userType = singleUserType(data, attributeName("user_type"));
         String academicTitle = singleString(data, attributeName("academic_title"));
         String academicTitlePostNominal = singleString(data, attributeName("academic_title_post_nominal"));
         String firstname = singleString(data, attributeName("firstname"));
@@ -97,7 +99,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
             companyTypeList(data, attributeName("support_employment_companytypes"));
 
         return new PartnerNetSaml2AuthenticationPrincipal(subjectIdentifier, relayState, nameId, contextClass,
-            lastUpdate, guid, personnelNumber, legacyId, academicTitle, academicTitlePostNominal, firstname, lastname,
+            lastUpdate, guid, personnelNumber, legacyId, userType, academicTitle, academicTitlePostNominal, firstname, lastname,
             gender, language, additionalLanguages, mailAddress, phoneNumber, tenant, costCenter, favoriteCompanyId,
             favoriteBrand, functionalNumbers, employments, employmentsAddress, roles, contracts, contactCompanyIds,
             companyTypes, supportData, supportEmployments, supportEmploymentsAddress, supportRoles, supportContracts,
@@ -213,6 +215,18 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         }
 
         return Gender.fromCode(value);
+    }
+
+    private PartnerNetUserType singleUserType(Saml2Data data, String attributeName)
+    {
+        Integer value = singleInteger(data, attributeName);
+
+        if (value == null)
+        {
+            return null;
+        }
+
+        return PartnerNetUserType.fromCode(value);
     }
 
     private Stream<String[]> entryStream(Saml2Data data, String attributeName)

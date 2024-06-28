@@ -1,5 +1,6 @@
 package at.porscheinformatik.idp.saml2;
 
+import java.io.Serial;
 import java.util.Collection;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -7,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 public class PartnerNetSaml2Authentication extends AbstractAuthenticationToken
 {
+    @Serial
     private static final long serialVersionUID = 4047926380137821978L;
 
     private final PartnerNetSaml2AuthenticationPrincipal principal;

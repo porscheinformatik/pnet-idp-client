@@ -10,10 +10,10 @@
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">subject-id</saml2:AttributeValue>
             </saml2:Attribute>
             <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
-                Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/person_id"
-                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                             Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/person_id"
+                             NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                 <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End User's internal identitfier.
+                                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End User's internal identitfier.
                     This claim is only available for legacy applications, so they can migrate to the new sub claim on
                     the fly.</saml2:AttributeValue>
             </saml2:Attribute>
@@ -44,6 +44,13 @@
                     - companyId: The companies unique identifier. This identifier will not change over time.
                     - matchcode: The unique identifier of the number type.
                     - number: The actual number.
+                </saml2:AttributeValue>
+            </saml2:Attribute>
+            <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                             Name="https://qa-identity.auto-partner.net/identity/saml2/attributes/user_type"
+                             NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml2:AttributeValue xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">The End-User's type: person, bot, test_user.
                 </saml2:AttributeValue>
             </saml2:Attribute>
             <saml2:Attribute xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
