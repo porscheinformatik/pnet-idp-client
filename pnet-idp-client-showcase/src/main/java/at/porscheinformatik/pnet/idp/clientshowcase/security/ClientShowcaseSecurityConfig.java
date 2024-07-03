@@ -78,16 +78,12 @@ public class ClientShowcaseSecurityConfig
             .apply(new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
                 .clientSecret(environment.getProperty("oidc.client.secret")))
-            .customize(oauth -> {
-                oauth.failureUrl("/loginerror");
-            });
+            .customize(oauth -> oauth.failureUrl("/loginerror"));
 
         PartnerNetSaml2Configurer
             .apply(http, getPartnerNetSaml2Provider(environment))
             .credentials(samlCredentialsConfig)
-            .customizer(saml2 -> {
-                saml2.failureUrl("/loginerror");
-            });
+            .customizer(saml2 -> saml2.failureUrl("/loginerror"));
 
         http.logout(logout -> {
             logout.logoutSuccessUrl("/logoutinfo");

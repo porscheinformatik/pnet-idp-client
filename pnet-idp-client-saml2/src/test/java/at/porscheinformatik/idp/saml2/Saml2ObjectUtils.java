@@ -176,6 +176,7 @@ public final class Saml2ObjectUtils
 
     //
     //
+
     /**
      * Creates a SAML attribute.
      *
@@ -196,8 +197,8 @@ public final class Saml2ObjectUtils
     {
         XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
-        @SuppressWarnings("unchecked")
-        SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) factory.getBuilder(defaultName);
+        @SuppressWarnings("unchecked") SAMLObjectBuilder<T> builder =
+            (SAMLObjectBuilder<T>) factory.getBuilder(defaultName);
 
         return builder.buildObject();
     }
@@ -248,21 +249,9 @@ public final class Saml2ObjectUtils
         assertion.setID(generateId());
         assertion.setIssueInstant(Instant.now());
         assertion.setSubject(requireNonNull(subject, "subject must not be null"));
-
-        if (conditions != null)
-        {
-            assertion.setConditions(conditions);
-        }
-
-        if (authnStatement != null)
-        {
-            assertion.getAuthnStatements().add(authnStatement);
-        }
-
-        if (attributeStatement != null)
-        {
-            assertion.getAttributeStatements().add(attributeStatement);
-        }
+        assertion.setConditions(conditions);
+        assertion.getAuthnStatements().add(authnStatement);
+        assertion.getAttributeStatements().add(attributeStatement);
 
         return assertion;
     }

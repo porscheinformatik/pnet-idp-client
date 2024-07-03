@@ -1,6 +1,7 @@
 package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,14 +28,14 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * When a POST Request is made to /forceauthentication, the user is logged out and redirected to the same page, but with
  * the force authentication parameter appended.
- *
+ * <p>
  * We have no session anymore, and Spring Security will call the authentication entry point again, which will then see
  * the force authentication parameter and force the authentication at the IDP.
- *
  */
 @Service
 public class ForceAuthenticationFilter extends GenericFilter
 {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final RequestMatcher requestMatcher;
@@ -73,7 +74,7 @@ public class ForceAuthenticationFilter extends GenericFilter
     {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        String authenticationType = null;
+        String authenticationType;
 
         if (principal instanceof PartnerNetOpenIdConnectUser)
         {
@@ -88,7 +89,8 @@ public class ForceAuthenticationFilter extends GenericFilter
             throw new IllegalStateException("Unknown authentication type " + principal.getClass());
         }
 
-        // We simply redirect to the same page displayed in the browser, but with the force authentication parameter appended.
+        // We simply redirect to the same page displayed in the browser, but with the force authentication parameter
+        // appended.
         UriComponents redirectUri = UriComponentsBuilder
             .fromHttpUrl(request.getHeader("Referer"))
             .replaceQueryParam("authenticationType", authenticationType)
@@ -103,8 +105,8 @@ public class ForceAuthenticationFilter extends GenericFilter
      * Verifies that the redirect URI belongs to our server. The referer can not be trusted. We do not want to have an
      * arbitrary redirect to an attacker controlled server.
      *
-     * @param request
-     * @param redirectUri
+     * @param request the request
+     * @param redirectUri the redirect URI
      */
     private void validateRedirectUri(HttpServletRequest request, UriComponents redirectUri)
     {

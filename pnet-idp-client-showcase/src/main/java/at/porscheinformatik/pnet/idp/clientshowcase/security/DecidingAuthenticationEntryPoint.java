@@ -45,62 +45,35 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
             throw new IllegalArgumentException("The authenticationType query parameter is mandatory.");
         }
 
-        UriComponentsBuilder path;
-
-        switch (authenticationType)
+        UriComponentsBuilder path = switch (authenticationType)
         {
-            case "oidc":
-                path = oidcPath();
-                break;
-
-            case "oidc_force":
-                path = PartnerNetOAuth2AuthorizationRequestResolver.forceAuthentication(oidcPath());
-                break;
+            case "oidc" -> oidcPath();
+            case "oidc_force" -> PartnerNetOAuth2AuthorizationRequestResolver.forceAuthentication(oidcPath());
 
             // OpenID Connect with multifactor authentication
-            case "oidc_mfa":
-                path = PartnerNetOAuth2AuthorizationRequestResolver.requestNistAuthenticationLevels(oidcPath(), 3);
-                break;
-
-            case "saml2":
-                path = saml2Path();
-                break;
+            case "oidc_mfa" ->
+                PartnerNetOAuth2AuthorizationRequestResolver.requestNistAuthenticationLevels(oidcPath(), 3);
+            case "saml2" -> saml2Path();
 
             // SAML 2 with forced authentication
-            case "saml2_force":
-                path = Saml2Utils.forceAuthentication(saml2Path());
-                break;
+            case "saml2_force" -> Saml2Utils.forceAuthentication(saml2Path());
 
             // SAML 2 with multifactor authentication
-            case "saml2_mfa":
-                path = Saml2Utils.requestNistAuthenticationLevel(saml2Path(), 3);
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unsupported authenticationType " + authenticationType);
-        }
+            case "saml2_mfa" -> Saml2Utils.requestNistAuthenticationLevel(saml2Path(), 3);
+            default -> throw new IllegalArgumentException("Unsupported authenticationType " + authenticationType);
+        };
 
         String tenant = request.getParameter(TENANT_PARAMETER_NAME);
 
         if (tenant != null)
         {
-            switch (authenticationType)
+            path = switch (authenticationType)
             {
-                case "oidc":
-                case "oidc_force":
-                case "oidc_mfa":
-                    path = PartnerNetOAuth2AuthorizationRequestResolver.requestTenant(path, tenant);
-                    break;
-
-                case "saml2":
-                case "saml2_force":
-                case "saml2_mfa":
-                    path = Saml2Utils.requestTenant(path, tenant);
-                    break;
-
-                default:
-                    throw new IllegalArgumentException("Unsupported authenticationType " + authenticationType);
-            }
+                case "oidc", "oidc_force", "oidc_mfa" ->
+                    PartnerNetOAuth2AuthorizationRequestResolver.requestTenant(path, tenant);
+                case "saml2", "saml2_force", "saml2_mfa" -> Saml2Utils.requestTenant(path, tenant);
+                default -> throw new IllegalArgumentException("Unsupported authenticationType " + authenticationType);
+            };
         }
 
         return path;

@@ -57,8 +57,7 @@ public class PartnerNetSaml2ConfigurerTest
     public void authenticationFilterIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer
-            .apply(http, IDP_ENTITY_ID) //
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
         DefaultSecurityFilterChain filterChain = http.build();
@@ -72,8 +71,7 @@ public class PartnerNetSaml2ConfigurerTest
     public void metadataFilterIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer
-            .apply(http, IDP_ENTITY_ID) //
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
         DefaultSecurityFilterChain filterChain = http.build();
@@ -87,8 +85,7 @@ public class PartnerNetSaml2ConfigurerTest
     public void authenticationProviderIsConfigured() throws Exception
     {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer
-            .apply(http, IDP_ENTITY_ID) //
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID) //
             .credentials(Saml2TestUtils::defaultCredentials);
 
         DefaultSecurityFilterChain filterChain = http.build();
@@ -110,7 +107,7 @@ public class PartnerNetSaml2ConfigurerTest
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID);
 
-        NullPointerException e = assertThrows(NullPointerException.class, () -> http.build());
+        NullPointerException e = assertThrows(NullPointerException.class, http::build);
         assertThat(e.getMessage(), equalTo("No credentials configured"));
     }
 

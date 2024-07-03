@@ -129,8 +129,9 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnMultipleAssertions() throws Exception
     {
-        Assertion additionalAssertion = Saml2ObjectUtils
-            .assertion(IDP_ENTITY_ID, Saml2ObjectUtils.subject(SP_ENTITY_ID, 10, "XYZ"), null, null, null);
+        Assertion additionalAssertion =
+            Saml2ObjectUtils.assertion(IDP_ENTITY_ID, Saml2ObjectUtils.subject(SP_ENTITY_ID, 10, "XYZ"), null, null,
+                null);
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(assertion(additionalAssertion));
 
         testException(tokenAndResponse, MessageHandlerException.class,
@@ -149,8 +150,8 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnMultipleAuthnStatements() throws Exception
     {
-        AuthnStatement additionalAuthnStatement = Saml2ObjectUtils
-            .authnStatement(Instant.now(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
+        AuthnStatement additionalAuthnStatement = Saml2ObjectUtils.authnStatement(Instant.now(),
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(authnStatement(additionalAuthnStatement));
 
         testException(tokenAndResponse, MessageHandlerException.class,
@@ -409,8 +410,9 @@ public class Saml2ResponseProcessorTest
     @Test
     public void failsOnNotMatchingRelayState() throws Exception
     {
-        TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null, null,
-            UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        TokenAndResponse tokenAndResponse =
+            buildTokenAndResponse(true, false, false, false, 2, null, null, UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
 
         testException(tokenAndResponse, MessageHandlerException.class,
             "Requested relay state doesn't match relay state in response");
@@ -463,8 +465,8 @@ public class Saml2ResponseProcessorTest
             response.setStatus(Saml2ObjectUtils.status(StatusCode.SUCCESS, null));
             Subject subject = Saml2ObjectUtils.subject(RESPONSE_DESTINATION, 5 * 60, authnRequestId);
             Conditions conditions = Saml2ObjectUtils.conditions(SP_ENTITY_ID);
-            AuthnStatement authnStatement = Saml2ObjectUtils
-                .authnStatement(Instant.now(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
+            AuthnStatement authnStatement = Saml2ObjectUtils.authnStatement(Instant.now(),
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
             AttributeStatement attributeStatement = Saml2ObjectUtils.attributeStatement();
             response
                 .getAssertions()
@@ -579,21 +581,19 @@ public class Saml2ResponseProcessorTest
             .entityId(SP_ENTITY_ID)
             .assertionConsumerServiceBinding(Saml2MessageBinding.POST)
             .assertionConsumerServiceLocation(RESPONSE_DESTINATION)
-            .decryptionX509Credentials(credentials -> credentials
-                .addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION)))
-            .assertingPartyDetails(builder -> {
-                builder
-                    .entityId(IDP_ENTITY_ID)
-                    .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
-                    .singleSignOnServiceLocation(IDP_ENDPOINT_URL)
-                    .wantAuthnRequestsSigned(false)
-                    .verificationX509Credentials(credentials -> credentialsManager
-                        .getCredentials(Saml2X509CredentialType.SIGNING)
-                        .stream()
-                        .map(Saml2X509Credential::getCertificate)
-                        .map(Saml2X509Credential::verification)
-                        .forEach(credentials::add));
-            })
+            .decryptionX509Credentials(credentials -> credentials.addAll(
+                credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION)))
+            .assertingPartyDetails(builder -> builder
+                .entityId(IDP_ENTITY_ID)
+                .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
+                .singleSignOnServiceLocation(IDP_ENDPOINT_URL)
+                .wantAuthnRequestsSigned(false)
+                .verificationX509Credentials(credentials -> credentialsManager
+                    .getCredentials(Saml2X509CredentialType.SIGNING)
+                    .stream()
+                    .map(Saml2X509Credential::getCertificate)
+                    .map(Saml2X509Credential::verification)
+                    .forEach(credentials::add)))
             .build();
 
     }

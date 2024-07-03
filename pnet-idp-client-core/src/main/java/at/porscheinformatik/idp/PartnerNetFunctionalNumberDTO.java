@@ -3,11 +3,14 @@
  */
 package at.porscheinformatik.idp;
 
+import java.io.Serial;
+
 /**
  * @author Daniel Furtlehner
  */
 public class PartnerNetFunctionalNumberDTO extends AbstractCompanyDependentClaim
 {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String matchcode;

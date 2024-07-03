@@ -148,7 +148,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
 
         for (Entry<String, List<String>> param : uri.getQueryParams().entrySet())
         {
-            request.addParameter(param.getKey(), param.getValue().toArray(new String[param.getValue().size()]));
+            request.addParameter(param.getKey(), param.getValue().toArray(new String[0]));
         }
 
         return request;

@@ -23,8 +23,8 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 /**
  * There is no easy way to add custom ID Token validation based on the authorizationrequest.
- * https://github.com/spring-projects/spring-security/issues/8342 So we add our own custom authentication provider, that
- * does the validation afterwards.
+ * <a href="https://github.com/spring-projects/spring-security/issues/8342">https://github.com/spring-projects/spring-security/issues/8342</a>
+ * So we add our own custom authentication provider, that does the validation afterwards.
  *
  * @author Daniel Furtlehner
  */

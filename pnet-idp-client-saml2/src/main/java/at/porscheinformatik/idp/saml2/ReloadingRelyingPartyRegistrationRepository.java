@@ -167,14 +167,12 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
                 .assertionConsumerServiceLocation("{baseUrl}" + loginProcessingUrl)
                 .decryptionX509Credentials(credentials -> credentials
                     .addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION)))
-                .assertingPartyDetails(builder -> {
-                    builder
-                        .entityId(descriptor.getEntityID())
-                        .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
-                        .singleSignOnServiceLocation(getSingleSignOnLocation(descriptor))
-                        .wantAuthnRequestsSigned(wantsAuthnRequestSigned(descriptor))
-                        .verificationX509Credentials(certificates -> certificates.addAll(getSigningKeys(descriptor)));
-                })
+                .assertingPartyDetails(builder -> builder
+                    .entityId(descriptor.getEntityID())
+                    .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
+                    .singleSignOnServiceLocation(getSingleSignOnLocation(descriptor))
+                    .wantAuthnRequestsSigned(wantsAuthnRequestSigned(descriptor))
+                    .verificationX509Credentials(certificates -> certificates.addAll(getSigningKeys(descriptor))))
                 .build();
         }
 

@@ -112,8 +112,9 @@ public class Saml2ServiceProviderMetadataFilterTest
             .stream()
             .map(EncryptionMethod::getAlgorithm)
             .collect(Collectors.toList());
-        assertThat(encryptionMethods.toString(), encryptionMethods, containsInAnyOrder(
-            EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM, EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256_GCM));
+        assertThat(encryptionMethods.toString(), encryptionMethods,
+            containsInAnyOrder(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM,
+                EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256_GCM));
 
         EntityAttributes entityAttributes =
             getObjectOfType(entityDescriptor.getExtensions().getUnknownXMLObjects(), EntityAttributes.class);
@@ -141,10 +142,7 @@ public class Saml2ServiceProviderMetadataFilterTest
     private KeyDescriptor assertKeyOfType(List<KeyDescriptor> keyDescriptors, UsageType usage)
     {
         KeyDescriptor keyDescriptor = keyDescriptors //
-            .stream()
-            .filter(key -> key.getUse() == usage)
-            .findAny()
-            .get();
+            .stream().filter(key -> key.getUse() == usage).findAny().get();
 
         assertThat(keyDescriptor.getKeyInfo(), notNullValue());
 
@@ -203,17 +201,15 @@ public class Saml2ServiceProviderMetadataFilterTest
             .entityId(SP_ENTITY_ID)
             .assertionConsumerServiceBinding(Saml2MessageBinding.POST)
             .assertionConsumerServiceLocation(RESPONSE_DESTINATION)
-            .decryptionX509Credentials(credentials -> credentials
-                .addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION)))
+            .decryptionX509Credentials(credentials -> credentials.addAll(
+                credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION)))
             .signingX509Credentials(
                 credentials -> credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.SIGNING)))
-            .assertingPartyDetails(builder -> {
-                builder
-                    .entityId("https://idp.com/saml2")
-                    .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
-                    .singleSignOnServiceLocation("https://idp.com/saml2/sso")
-                    .wantAuthnRequestsSigned(false);
-            })
+            .assertingPartyDetails(builder -> builder
+                .entityId("https://idp.com/saml2")
+                .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
+                .singleSignOnServiceLocation("https://idp.com/saml2/sso")
+                .wantAuthnRequestsSigned(false))
             .build();
 
         return new InMemoryRelyingPartyRegistrationRepository(registration);

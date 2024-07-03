@@ -44,12 +44,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     /**
      * @param http the http security to configure
      * @param provider the authentication provider to use.
-     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
-     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
-     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
-     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
      * @return the configurer for further customization
      * @throws Exception when an exception occurs while configuring
      */
@@ -61,12 +55,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     /**
      * @param http the http security to configure
      * @param entityId the entity id of the identity provider to use
-     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
-     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
-     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
-     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
      * @return the configurer for further customization
      * @throws Exception on occasion
      */
@@ -79,12 +67,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param http the http security to configure
      * @param entityId the entity id of the identity provider to use
      * @param metadataUrl the URL pointing to the identity providers metadata
-     * @param useAuthorizeHttpRequests Spring implemented a new, easier way to do access control
-     *            {@link HttpSecurity#authorizeHttpRequests()}. Now two methods
-     *            {@link HttpSecurity#authorizeHttpRequests()} and {@link HttpSecurity#authorizeRequests()} exist. They
-     *            can not be mixed in a single {@link HttpSecurity} configuration. If this flag is true,
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used. Otherwise
-     *            {@link HttpSecurity#authorizeHttpRequests()} will be used.
      * @return the configurer for further customization
      * @throws Exception when an exception occurs while configuring
      */
@@ -252,7 +234,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * Adds a customizer that allows you to further customize the {@link AuthnRequestContext}. This is necessary, if
      * values like maxSessionAge, the tenant or the nistLevel aren't provided by request parameters.
      *
-     * @param authnRequestCustomizer
+     * @param authnRequestCustomizer the request customizer
      * @return the builder for a fluent api
      */
     public PartnerNetSaml2Configurer authnRequestCustomizer(Consumer<AuthnRequestContext> authnRequestCustomizer)
@@ -329,42 +311,26 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     private Saml2ResponseParser getResponseParser()
     {
-        if (responseParser == null)
-        {
-            return new PartnerNetSaml2ResponseParser(getAuthoritiesMapper());
-        }
+        return requireNonNullElseGet(responseParser, () -> new PartnerNetSaml2ResponseParser(getAuthoritiesMapper()));
 
-        return responseParser;
     }
 
     private PartnerNetSaml2AuthoritiesMapper getAuthoritiesMapper()
     {
-        if (authoritiesMapper == null)
-        {
-            return PartnerNetSaml2AuthoritiesMapper.defaultInstance();
-        }
+        return requireNonNullElseGet(authoritiesMapper, PartnerNetSaml2AuthoritiesMapper::defaultInstance);
 
-        return authoritiesMapper;
     }
 
     public Consumer<AuthnRequestContext> getAuthnRequestCustomizer()
     {
-        if (authnRequestCustomizer == null)
-        {
-            return new PartnerNetSaml2AuthnRequestCustomizer();
-        }
+        return requireNonNullElseGet(authnRequestCustomizer, PartnerNetSaml2AuthnRequestCustomizer::new);
 
-        return authnRequestCustomizer;
     }
 
     private Saml2ResponseProcessor getResponseProcessor()
     {
-        if (responseProcessor == null)
-        {
-            return Saml2ResponseProcessor.withDefaultHandlers();
-        }
+        return requireNonNullElseGet(responseProcessor, Saml2ResponseProcessor::withDefaultHandlers);
 
-        return responseProcessor;
     }
 
     private Saml2CredentialsManager getCredentialsManager()

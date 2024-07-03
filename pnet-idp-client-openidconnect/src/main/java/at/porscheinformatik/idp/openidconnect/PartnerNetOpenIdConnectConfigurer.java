@@ -112,20 +112,14 @@ public class PartnerNetOpenIdConnectConfigurer
         builder.oauth2Login(oauth2Login -> {
             oauth2Login.clientRegistrationRepository(clientRegistrationRepository);
 
-            oauth2Login.authorizationEndpoint(authorizationEndpoint -> {
-                authorizationEndpoint
-                    .authorizationRequestResolver(
-                        new PartnerNetOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
-                            OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI));
-            });
+            oauth2Login.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+                .authorizationRequestResolver(
+                    new PartnerNetOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
+                        OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI)));
 
-            oauth2Login.tokenEndpoint(tokenEnpoint -> {
-                tokenEnpoint.accessTokenResponseClient(accessTokenResponseClient);
-            });
+            oauth2Login.tokenEndpoint(tokenEnpoint -> tokenEnpoint.accessTokenResponseClient(accessTokenResponseClient));
 
-            oauth2Login.userInfoEndpoint(userInfoEndpoint -> {
-                userInfoEndpoint.oidcUserService(userService);
-            });
+            oauth2Login.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.oidcUserService(userService));
 
             // Let users add custom configurations if they want to
             customizer.customize(oauth2Login);

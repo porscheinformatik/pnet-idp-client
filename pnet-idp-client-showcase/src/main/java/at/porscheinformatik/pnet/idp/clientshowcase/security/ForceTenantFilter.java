@@ -1,6 +1,7 @@
 package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class ForceTenantFilter extends GenericFilter
 {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final SecurityContextRepository securityContextRepository;
@@ -86,7 +88,7 @@ public class ForceTenantFilter extends GenericFilter
     {
         Object principal = authentication.getPrincipal();
 
-        String authenticationType = null;
+        String authenticationType;
 
         if (principal instanceof PartnerNetOpenIdConnectUser)
         {
@@ -115,8 +117,8 @@ public class ForceTenantFilter extends GenericFilter
      * Verifies that the redirect URI belongs to our server. The referer can not be trusted. We do not want to have an
      * arbitrary redirect to an attacker controlled server.
      *
-     * @param request
-     * @param redirectUri
+     * @param request the request
+     * @param redirectUri the redirect URI
      */
     private void validateRedirectUri(HttpServletRequest request, UriComponents redirectUri)
     {

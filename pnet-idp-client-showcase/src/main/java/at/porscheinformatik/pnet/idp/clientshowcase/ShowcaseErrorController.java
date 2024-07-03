@@ -37,8 +37,8 @@ public class ShowcaseErrorController implements ErrorController
     {
         ServletWebRequest requestAttributes = new ServletWebRequest(request);
 
-        Map<String, Object> attributes = errorAttributes
-            .getErrorAttributes(requestAttributes, ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION));
+        Map<String, Object> attributes = errorAttributes.getErrorAttributes(requestAttributes,
+            ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION));
 
         Throwable e = (Throwable) attributes.get("exception");
 
@@ -83,10 +83,7 @@ public class ShowcaseErrorController implements ErrorController
 
     private String buildExceptionMessage(Exception e, String message)
     {
-        StringBuilder builder =
-            new StringBuilder(message).append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
-
-        return builder.toString();
+        return message + e.getClass().getSimpleName() + ": " + e.getMessage();
     }
 
     private Exception extractLoginException(HttpServletRequest request)

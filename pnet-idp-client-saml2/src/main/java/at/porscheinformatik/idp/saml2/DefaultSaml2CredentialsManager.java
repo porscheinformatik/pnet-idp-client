@@ -73,8 +73,6 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
 
     /**
      * Checks for updates and reloads the certificate and keystore if needed.
-     *
-     * @throws Exception on occasion
      */
     @Scheduled(fixedDelay = 60 * 1000)
     public void refresh()
@@ -182,7 +180,7 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
     /**
      * Checks each certificate and remove it from the list if it is outdated.
      *
-     * @param newEntries the entries to check
+     * @param entries the entries to check
      */
     private void removeOutdatedCertificates(List<Saml2X509Credential> entries)
     {
@@ -212,10 +210,9 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager
                 if (monthAgo.before(now)
                     && (lastNotificationSent == -1 || lastNotificationSent + NOTIFICATION_INTERVAL_MILLIS < nowMillis))
                 {
-                    LOG
-                        .error("A Certificate in the configuration will expire on "
-                            + cert.getNotAfter()
-                            + " Configure a new Keystore in addition to the current one. ");
+                    LOG.error(
+                        "A Certificate in the configuration will expire on {} Configure a new Keystore in addition to the current one. ",
+                        cert.getNotAfter());
 
                     lastNotificationSent = nowMillis;
                 }

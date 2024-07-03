@@ -118,10 +118,9 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
         List<String> allowedSigningAlgorithms = signingConfig //
             .getSignatureAlgorithms()
             .stream()
-            .filter(algorithm -> AlgorithmSupport
-                .validateAlgorithmURI(algorithm, signingConfig.getIncludedAlgorithms(),
-                    signingConfig.getExcludedAlgorithms()))
-            .collect(Collectors.toList());
+            .filter(algorithm -> AlgorithmSupport.validateAlgorithmURI(algorithm, signingConfig.getIncludedAlgorithms(),
+                signingConfig.getExcludedAlgorithms()))
+            .toList();
 
         for (String allowedAlgorithm : allowedSigningAlgorithms)
         {
@@ -137,10 +136,9 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
         List<String> allowedDigestAlgorithms = signingConfig //
             .getSignatureReferenceDigestMethods()
             .stream()
-            .filter(algorithm -> AlgorithmSupport
-                .validateAlgorithmURI(algorithm, signingConfig.getIncludedAlgorithms(),
-                    signingConfig.getExcludedAlgorithms()))
-            .collect(Collectors.toList());
+            .filter(algorithm -> AlgorithmSupport.validateAlgorithmURI(algorithm, signingConfig.getIncludedAlgorithms(),
+                signingConfig.getExcludedAlgorithms()))
+            .toList();
 
         for (String allowedAlgorithm : allowedDigestAlgorithms)
         {
@@ -243,8 +241,8 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver
         Set<String> allowedAlgorithms = config //
             .getDataEncryptionAlgorithms()
             .stream()
-            .filter(algorithm -> AlgorithmSupport
-                .validateAlgorithmURI(algorithm, config.getIncludedAlgorithms(), config.getExcludedAlgorithms()))
+            .filter(algorithm -> AlgorithmSupport.validateAlgorithmURI(algorithm, config.getIncludedAlgorithms(),
+                config.getExcludedAlgorithms()))
             .collect(Collectors.toSet());
 
         for (String allowedAlgorithm : allowedAlgorithms)

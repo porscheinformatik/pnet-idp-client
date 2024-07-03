@@ -14,7 +14,7 @@ public class MaxSessionAgeUnmarshaller extends AbstractXMLObjectUnmarshaller
 
         if (elementContent != null)
         {
-            sessionAge.setSessionAgeInSeconds(Integer.valueOf(elementContent.trim()));
+            sessionAge.setSessionAgeInSeconds(Integer.parseInt(elementContent.trim()));
         }
     }
 

@@ -13,11 +13,6 @@ public class AdditionalLocalesConverter implements Converter<Object, List<Locale
     @Override
     public List<Locale> convert(Object source)
     {
-        if (source == null)
-        {
-            return null;
-        }
-
         Collection<String> languageTags = ConverterUtils.cast(source, String.class);
 
         return languageTags //

@@ -21,11 +21,6 @@ public class PartnerNetContactCompaniesConverter implements Converter<Object, Co
     @Override
     public Collection<Integer> convert(Object source)
     {
-        if (source == null)
-        {
-            return null;
-        }
-
         Collection<Number> collection = ConverterUtils.cast(source, Number.class);
 
         // We map the collection to a set here to ensure, it always has the same type, regardless of the type parsed by the claims parser.

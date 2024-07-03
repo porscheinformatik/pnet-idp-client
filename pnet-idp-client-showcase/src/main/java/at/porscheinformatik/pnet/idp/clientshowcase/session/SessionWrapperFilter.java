@@ -113,7 +113,7 @@ public class SessionWrapperFilter extends OncePerRequestFilter
         {
             if (value == null)
             {
-                delegate.setAttribute(name, value);
+                delegate.setAttribute(name, null);
             }
 
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();

@@ -3,6 +3,7 @@
  */
 package at.porscheinformatik.idp;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -10,6 +11,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractCompanyDependentClaim implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 6859100546707295055L;
 
     private final Integer companyId;

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
@@ -113,8 +112,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         String state = PartnerNetOpenIdConnectStateUtils //
             .buildState(authorizationRequest.getState(), request.getParameter(CUSTOM_STATE));
 
-        return OAuth2AuthorizationRequest
-            .from(authorizationRequest) //
+        return OAuth2AuthorizationRequest.from(authorizationRequest) //
             .scope(OidcScopes.OPENID)
             .state(state)
             .additionalParameters(additionalParameters)
@@ -180,7 +178,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
     private String buildAcrRequest(String[] acrs)
     {
-        String acr = Arrays.stream(acrs).collect(Collectors.joining(","));
+        String acr = String.join(",", acrs);
 
         return String.format("{\"id_token\":{\"acr\": {\"values\": [\"%s\"], \"essential\": true}}}", acr);
     }

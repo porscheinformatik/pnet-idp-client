@@ -4,7 +4,6 @@
 package at.porscheinformatik.idp.saml2;
 
 import static java.time.temporal.ChronoUnit.*;
-import static java.util.Arrays.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -214,17 +213,17 @@ public interface SamlResponseCustomizer
 
     static SamlResponseCustomizer singleStringAttribute(String name, String value)
     {
-        return attribute(name, () -> asList(XmlUtils.xmlString(value)));
+        return attribute(name, () -> List.of(XmlUtils.xmlString(value)));
     }
 
     static SamlResponseCustomizer singleIntegerAttribute(String name, Integer value)
     {
-        return attribute(name, () -> asList(XmlUtils.xmlInt(value)));
+        return attribute(name, () -> List.of(XmlUtils.xmlInt(value)));
     }
 
     static SamlResponseCustomizer singleBooleanAttribute(String name, Boolean value)
     {
-        return attribute(name, () -> asList(XmlUtils.xmlBoolean(value)));
+        return attribute(name, () -> List.of(XmlUtils.xmlBoolean(value)));
     }
 
     static SamlResponseCustomizer multiStringAttribute(String name, String... values)

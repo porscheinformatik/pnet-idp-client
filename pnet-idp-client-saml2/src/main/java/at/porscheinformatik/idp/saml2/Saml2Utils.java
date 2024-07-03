@@ -58,7 +58,7 @@ public class Saml2Utils
 
     public static boolean isForceAuthentication(HttpServletRequest request)
     {
-        return Boolean.valueOf(request.getParameter(FORCE_AUTHENTICATION_PARAM));
+        return Boolean.parseBoolean(request.getParameter(FORCE_AUTHENTICATION_PARAM));
     }
 
     public static UriComponentsBuilder maxSessionAge(UriComponentsBuilder uriComponentsBuilder,
