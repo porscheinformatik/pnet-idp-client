@@ -29,32 +29,35 @@ public class AuthenticationDTO
     {
         return new AuthenticationDTO("OpenId Connect", principal.getExternalId(),
             principal.getNistAuthenticationLevel() > 2, principal.getTransientSessionId(),
-            principal.isSupportDataAvailable(), principal.getNistAuthenticationLevel(), principal.getUserType(), principal.getName(),
-            principal.getEmail(), principal.getPhoneNumber(), principal.getPnetGender(), principal.getPnetLocale(),
-            principal.getUpdatedAt(), principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(),
-            principal.getGuid(), principal.getCostcentre(), principal.getCountry(), principal.getLegacyId(),
-            principal.getFavoriteCompanyId(), principal.getFavoriteBrand(), principal.getAdditionalLocales(),
-            principal.getFunctionalNumbers(), principal.getCompanies(), principal.getContactCompanyIds(),
-            principal.getCompaniesAddress(), principal.getRoles(), principal.getContracts(),
-            principal.getCompanyTypes(), principal.getSupportCompanies(), principal.getSupportContactCompanyIds(),
-            principal.getSupportCompaniesAddress(), principal.getSupportRoles(), principal.getSupportContract(),
-            principal.getSupportCompanyTypes());
+            principal.isSupportDataAvailable(), principal.getNistAuthenticationLevel(), principal.getUserType(),
+            principal.getName(), principal.getEmail(), principal.getPhoneNumber(), principal.getPnetGender(),
+            principal.getPnetLocale(), principal.getUpdatedAt(), principal.getAcademicTitle(),
+            principal.getAcademicTitlePostNominal(), principal.getGuid(), principal.getCostcentre(),
+            principal.getCountry(), principal.getLegacyId(), principal.getFavoriteCompanyId(),
+            principal.getFavoriteBrand(), principal.getAdditionalLocales(), principal.getFunctionalNumbers(),
+            principal.getCompanies(), principal.getContactCompanyIds(), principal.getCompaniesAddress(),
+            principal.getRoles(), principal.getContracts(), principal.getCompanyTypes(),
+            principal.getResponsibleUserExternalId(), principal.getResponsibleUserName(),
+            principal.getResponsibleUserEmail(), principal.getResponsibleUserGuid(), principal.getSupportCompanies(),
+            principal.getSupportContactCompanyIds(), principal.getSupportCompaniesAddress(),
+            principal.getSupportRoles(), principal.getSupportContract(), principal.getSupportCompanyTypes());
     }
 
     public static AuthenticationDTO of(PartnerNetSaml2AuthenticationPrincipal principal)
     {
         return new AuthenticationDTO("Saml2.0", principal.getSubjectIdentifier(), principal.isStronglyAuthenticated(),
             principal.getTransientSessionId(), principal.isSupportDataAvailable(),
-            principal.getAuthnContextClass().getNistLevel(), principal.getUserType(), principal.getName(), principal.getMailAddress(),
-            principal.getPhoneNumber(), principal.getGender(), principal.getLanguage(), principal.getLastUpdate(),
-            principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(), principal.getGuid(),
-            principal.getCostCenter(), principal.getTenant(), principal.getLegacyId(), principal.getFavoriteCompanyId(),
-            principal.getFavoriteBrand(), principal.getAdditionalLanguages(), principal.getFunctionalNumbers(),
-            principal.getEmployments(), principal.getContactCompanyIds(), principal.getEmploymentsAddress(),
-            principal.getRoles(), principal.getContracts(), principal.getCompanyTypes(),
-            principal.getSupportEmployments(), principal.getSupportContactCompanyIds(),
-            principal.getSupportEmploymentsAddress(), principal.getSupportRoles(), principal.getSupportContracts(),
-            principal.getSupportCompanyTypes());
+            principal.getAuthnContextClass().getNistLevel(), principal.getUserType(), principal.getName(),
+            principal.getMailAddress(), principal.getPhoneNumber(), principal.getGender(), principal.getLanguage(),
+            principal.getLastUpdate(), principal.getAcademicTitle(), principal.getAcademicTitlePostNominal(),
+            principal.getGuid(), principal.getCostCenter(), principal.getTenant(), principal.getLegacyId(),
+            principal.getFavoriteCompanyId(), principal.getFavoriteBrand(), principal.getAdditionalLanguages(),
+            principal.getFunctionalNumbers(), principal.getEmployments(), principal.getContactCompanyIds(),
+            principal.getEmploymentsAddress(), principal.getRoles(), principal.getContracts(),
+            principal.getCompanyTypes(), principal.getResponsibleUserExternalId(), principal.getResponsibleUserName(),
+            principal.getResponsibleUserEmail(), principal.getResponsibleUserGuid(), principal.getSupportEmployments(),
+            principal.getSupportContactCompanyIds(), principal.getSupportEmploymentsAddress(),
+            principal.getSupportRoles(), principal.getSupportContracts(), principal.getSupportCompanyTypes());
     }
 
     private final String info;
@@ -87,6 +90,10 @@ public class AuthenticationDTO
     private final Collection<PartnerNetRoleDTO> roles;
     private final Collection<PartnerNetContractDTO> contracts;
     private final Collection<PartnerNetCompanyTypeDTO> companyTypes;
+    private final String responsibleUserExternalId;
+    private final String responsibleUserName;
+    private final String responsibleUserEmail;
+    private final String responsibleUserGuid;
     private final Collection<PartnerNetCompanyDTO> supportCompanies;
     private final Collection<Integer> supportContactCompanyIds;
     private final Collection<PartnerNetCompanyAddressDTO> supportCompaniesAddress;
@@ -95,14 +102,15 @@ public class AuthenticationDTO
     private final Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes;
 
     public AuthenticationDTO(String info, String externalId, boolean secondFactorUsed, String transientSessionId,
-        boolean supportDataAvailable, int nistAuthenticationLevel, PartnerNetUserType userType, String name, String email, String phoneNumber,
-        Gender gender, Locale locale, Instant updatedAt, String academicTitle, String academicTitlePostNominal,
-        String guid, String costcentre, String country, Integer internalId, Integer favoriteCompanyId,
-        String favoriteBrand, List<Locale> additionalLocales,
+        boolean supportDataAvailable, int nistAuthenticationLevel, PartnerNetUserType userType, String name,
+        String email, String phoneNumber, Gender gender, Locale locale, Instant updatedAt, String academicTitle,
+        String academicTitlePostNominal, String guid, String costcentre, String country, Integer internalId,
+        Integer favoriteCompanyId, String favoriteBrand, List<Locale> additionalLocales,
         Collection<PartnerNetFunctionalNumberDTO> functionalNumbers, Collection<PartnerNetCompanyDTO> companies,
         Collection<Integer> contactCompanyIds, Collection<PartnerNetCompanyAddressDTO> companiesAddress,
         Collection<PartnerNetRoleDTO> roles, Collection<PartnerNetContractDTO> contracts,
-        Collection<PartnerNetCompanyTypeDTO> companyTypes, Collection<PartnerNetCompanyDTO> supportCompanies,
+        Collection<PartnerNetCompanyTypeDTO> companyTypes, String responsibleUserExternalId, String responsibleUserName,
+        String responsibleUserEmail, String responsibleUserGuid, Collection<PartnerNetCompanyDTO> supportCompanies,
         Collection<Integer> supportContactCompanyIds, Collection<PartnerNetCompanyAddressDTO> supportCompaniesAddress,
         Collection<PartnerNetRoleDTO> supportRoles, Collection<PartnerNetContractDTO> supportContract,
         Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes)
@@ -138,6 +146,10 @@ public class AuthenticationDTO
         this.roles = roles;
         this.contracts = contracts;
         this.companyTypes = companyTypes;
+        this.responsibleUserExternalId = responsibleUserExternalId;
+        this.responsibleUserName = responsibleUserName;
+        this.responsibleUserEmail = responsibleUserEmail;
+        this.responsibleUserGuid = responsibleUserGuid;
         this.supportCompanies = supportCompanies;
         this.supportContactCompanyIds = supportContactCompanyIds;
         this.supportCompaniesAddress = supportCompaniesAddress;
@@ -289,6 +301,26 @@ public class AuthenticationDTO
     public Collection<PartnerNetCompanyTypeDTO> getCompanyTypes()
     {
         return companyTypes;
+    }
+
+    public String getResponsibleUserExternalId()
+    {
+        return responsibleUserExternalId;
+    }
+
+    public String getResponsibleUserName()
+    {
+        return responsibleUserName;
+    }
+
+    public String getResponsibleUserEmail()
+    {
+        return responsibleUserEmail;
+    }
+
+    public String getResponsibleUserGuid()
+    {
+        return responsibleUserGuid;
     }
 
     public Collection<PartnerNetCompanyDTO> getSupportCompanies()

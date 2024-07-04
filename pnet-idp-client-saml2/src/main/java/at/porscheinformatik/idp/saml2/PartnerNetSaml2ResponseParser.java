@@ -81,6 +81,12 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         List<PartnerNetCompanyAddressDTO> employmentsAddress = addressList(data, attributeName("employment_address"));
         List<PartnerNetRoleDTO> roles = roleList(data, attributeName("roles"));
         List<PartnerNetContractDTO> contracts = contractsList(data, attributeName("employment_contracts"));
+        boolean responsibleUser = singleBoolean(data, attributeName("responsible_user"));
+        String responsibleUserExternalId = singleString(data, attributeName("responsible_user_external_id"));
+        String responsibleUserFirstname = singleString(data, attributeName("responsible_user_firstname"));
+        String responsibleUserLastname = singleString(data, attributeName("responsible_user_lastname"));
+        String responsibleUserEmail = singleString(data, attributeName("responsible_user_email"));
+        String responsibleUserGuid = singleString(data, attributeName("responsible_user_guid"));
         boolean supportData = singleBoolean(data, attributeName("support_data"));
         List<PartnerNetCompanyDTO> supportEmployments = employmentList(data, attributeName("support_employment"));
         List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress =
@@ -99,11 +105,12 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
             companyTypeList(data, attributeName("support_employment_companytypes"));
 
         return new PartnerNetSaml2AuthenticationPrincipal(subjectIdentifier, relayState, nameId, contextClass,
-            lastUpdate, guid, personnelNumber, legacyId, userType, academicTitle, academicTitlePostNominal, firstname, lastname,
-            gender, language, additionalLanguages, mailAddress, phoneNumber, tenant, costCenter, favoriteCompanyId,
-            favoriteBrand, functionalNumbers, employments, employmentsAddress, roles, contracts, contactCompanyIds,
-            companyTypes, supportData, supportEmployments, supportEmploymentsAddress, supportRoles, supportContracts,
-            supportContactCompanyIds, supportCompanyTypes);
+            lastUpdate, guid, personnelNumber, legacyId, userType, academicTitle, academicTitlePostNominal, firstname,
+            lastname, gender, language, additionalLanguages, mailAddress, phoneNumber, tenant, costCenter,
+            favoriteCompanyId, favoriteBrand, functionalNumbers, employments, employmentsAddress, roles, contracts,
+            contactCompanyIds, companyTypes, responsibleUser, responsibleUserExternalId, responsibleUserFirstname,
+            responsibleUserLastname, responsibleUserEmail, responsibleUserGuid, supportData, supportEmployments,
+            supportEmploymentsAddress, supportRoles, supportContracts, supportContactCompanyIds, supportCompanyTypes);
     }
 
     private List<Locale> localeList(Saml2Data data, String attributeName)
@@ -111,8 +118,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         Stream<String> languageTags = stringStream(data, attributeName);
 
         return languageTags //
-            .map(Locale::forLanguageTag)
-            .collect(Collectors.toList());
+            .map(Locale::forLanguageTag).collect(Collectors.toList());
     }
 
     private List<PartnerNetFunctionalNumberDTO> functionalNumbersList(Saml2Data data, String attributeName)
@@ -257,8 +263,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         }
         else
         {
-            @SuppressWarnings("unchecked")
-            List<String> valueList = (List<String>) value;
+            @SuppressWarnings("unchecked") List<String> valueList = (List<String>) value;
 
             stringEntries.addAll(valueList);
         }
@@ -284,8 +289,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
         }
         else
         {
-            @SuppressWarnings("unchecked")
-            List<Integer> valueList = (List<Integer>) value;
+            @SuppressWarnings("unchecked") List<Integer> valueList = (List<Integer>) value;
 
             entries.addAll(valueList);
         }

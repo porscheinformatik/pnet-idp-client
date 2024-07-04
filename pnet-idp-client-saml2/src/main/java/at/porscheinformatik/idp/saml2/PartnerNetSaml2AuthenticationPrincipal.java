@@ -57,6 +57,13 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     private final Collection<Integer> contactCompanyIds;
     private final Collection<PartnerNetCompanyTypeDTO> companyTypes;
 
+    private final boolean responsibleUser;
+    private final String responsibleUserExternalId;
+    private final String responsibleUserFirstname;
+    private final String responsibleUserLastname;
+    private final String responsibleUserEmail;
+    private final String responsibleUserGuid;
+
     private final boolean supportData;
     private final List<PartnerNetCompanyDTO> supportEmployments;
     private final List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress;
@@ -67,16 +74,18 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
 
     public PartnerNetSaml2AuthenticationPrincipal(String subjectIdentifier, String relayState,
         String transientSessionId, AuthnContextClass authnContextClass, Instant lastUpdate, String guid,
-        String personnelNumber, Integer legacyId, PartnerNetUserType userType, String academicTitle, String academicTitlePostNominal,
-        String firstname, String lastname, Gender gender, Locale language, List<Locale> additionalLanguages,
-        String mailAddress, String phoneNumber, String tenant, String costCenter, Integer favoriteCompanyId,
-        String favoriteBrand, List<PartnerNetFunctionalNumberDTO> functionalNumbers,
+        String personnelNumber, Integer legacyId, PartnerNetUserType userType, String academicTitle,
+        String academicTitlePostNominal, String firstname, String lastname, Gender gender, Locale language,
+        List<Locale> additionalLanguages, String mailAddress, String phoneNumber, String tenant, String costCenter,
+        Integer favoriteCompanyId, String favoriteBrand, List<PartnerNetFunctionalNumberDTO> functionalNumbers,
         List<PartnerNetCompanyDTO> employments, List<PartnerNetCompanyAddressDTO> employmentsAddress,
         List<PartnerNetRoleDTO> roles, List<PartnerNetContractDTO> contracts, Collection<Integer> contactCompanyIds,
-        Collection<PartnerNetCompanyTypeDTO> companyTypes, boolean supportData,
-        List<PartnerNetCompanyDTO> supportEmployments, List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
-        List<PartnerNetRoleDTO> supportRoles, List<PartnerNetContractDTO> supportContracts,
-        Collection<Integer> supportContactCompanyIds, Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes)
+        Collection<PartnerNetCompanyTypeDTO> companyTypes, boolean responsibleUser, String responsibleUserExternalId,
+        String responsibleUserFirstname, String responsibleUserLastname, String responsibleUserEmail,
+        String responsibleUserGuid, boolean supportData, List<PartnerNetCompanyDTO> supportEmployments,
+        List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress, List<PartnerNetRoleDTO> supportRoles,
+        List<PartnerNetContractDTO> supportContracts, Collection<Integer> supportContactCompanyIds,
+        Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes)
     {
         super();
 
@@ -109,6 +118,12 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         this.contracts = contracts;
         this.contactCompanyIds = contactCompanyIds;
         this.companyTypes = companyTypes;
+        this.responsibleUser = responsibleUser;
+        this.responsibleUserExternalId = responsibleUserExternalId;
+        this.responsibleUserFirstname = responsibleUserFirstname;
+        this.responsibleUserLastname = responsibleUserLastname;
+        this.responsibleUserEmail = responsibleUserEmail;
+        this.responsibleUserGuid = responsibleUserGuid;
         this.supportData = supportData;
         this.supportEmployments = supportEmployments;
         this.supportEmploymentsAddress = supportEmploymentsAddress;
@@ -253,6 +268,36 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         return companyTypes;
     }
 
+    public boolean isResponsibleUserAvailable()
+    {
+        return responsibleUser;
+    }
+
+    public String getResponsibleUserExternalId()
+    {
+        return responsibleUserExternalId;
+    }
+
+    public String getResponsibleUserFirstname()
+    {
+        return responsibleUserFirstname;
+    }
+
+    public String getResponsibleUserLastname()
+    {
+        return responsibleUserLastname;
+    }
+
+    public String getResponsibleUserEmail()
+    {
+        return responsibleUserEmail;
+    }
+
+    public String getResponsibleUserGuid()
+    {
+        return responsibleUserGuid;
+    }
+
     public boolean isSupportDataAvailable()
     {
         return supportData;
@@ -289,6 +334,19 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     }
 
     public String getName()
+    {
+        String givenName = getFirstname();
+        String familyName = getLastname();
+
+        if (givenName == null || familyName == null)
+        {
+            return getSubjectIdentifier();
+        }
+
+        return givenName + " " + familyName;
+    }
+
+    public String getResponsibleUserName()
     {
         String givenName = getFirstname();
         String familyName = getLastname();

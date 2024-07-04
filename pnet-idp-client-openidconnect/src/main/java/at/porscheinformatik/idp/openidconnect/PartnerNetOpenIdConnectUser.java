@@ -31,6 +31,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     private static final long serialVersionUID = 1L;
 
     public static final String ID_TOKEN_TRANSIENT_SESSION = "transient_session_id";
+    public static final String ID_TOKEN_RESPONSIBLE_USER_AVAILABLE = "pnet_responsible_user_available";
     public static final String ID_TOKEN_SUPPORT_AVAILABLE = "pnet_support_available";
 
     private static final String USER_INFO_INTERNAL_ID = "pnet_internal_id";
@@ -50,6 +51,11 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     public static final String USER_INFO_FAVORITE_BRAND = "pnet_favorite_brand";
     public static final String USER_INFO_CONTACT_COMPANIES = "pnet_contact_companies";
     public static final String USER_INFO_COMPANY_TYPES = "pnet_company_types";
+
+    public static final String USER_INFO_RESPONSIBLE_USER_EXTERNAL_ID = "pnet_responsible_user_external_id";
+    public static final String USER_INFO_RESPONSIBLE_USER_NAME = "pnet_responsible_user_name";
+    public static final String USER_INFO_RESPONSIBLE_USER_EMAIL = "pnet_responsible_user_email";
+    public static final String USER_INFO_RESPONSIBLE_USER_GUID = "pnet_responsible_user_guid";
 
     public static final String USER_INFO_SUPPORT_COMPANIES = "pnet_support_companies";
     public static final String USER_INFO_SUPPORT_COMPANIES_ADDRESS = "pnet_support_companies_address";
@@ -79,6 +85,13 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
         return idTokenClaim(ID_TOKEN_TRANSIENT_SESSION);
     }
 
+    public boolean isResponsibleUserAvailable()
+    {
+        Boolean value = idTokenClaim(ID_TOKEN_RESPONSIBLE_USER_AVAILABLE);
+
+        return value != null && value;
+    }
+    
     public boolean isSupportDataAvailable()
     {
         Boolean value = idTokenClaim(ID_TOKEN_SUPPORT_AVAILABLE);
@@ -91,7 +104,8 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
         return Integer.parseInt(getAuthenticationContextClass());
     }
 
-    public PartnerNetUserType getUserType() {
+    public PartnerNetUserType getUserType()
+    {
         return PartnerNetUserType.fromOidcValue(userInfoClaims(USER_INFO_USER_TYPE));
     }
 
@@ -224,6 +238,26 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     public Collection<Integer> getContactCompanyIds()
     {
         return userInfoClaims(USER_INFO_CONTACT_COMPANIES);
+    }
+
+    public String getResponsibleUserExternalId()
+    {
+        return userInfoClaims(USER_INFO_RESPONSIBLE_USER_EXTERNAL_ID);
+    }
+
+    public String getResponsibleUserName()
+    {
+        return userInfoClaims(USER_INFO_RESPONSIBLE_USER_NAME);
+    }
+
+    public String getResponsibleUserEmail()
+    {
+        return userInfoClaims(USER_INFO_RESPONSIBLE_USER_EMAIL);
+    }
+
+    public String getResponsibleUserGuid()
+    {
+        return userInfoClaims(USER_INFO_RESPONSIBLE_USER_GUID);
     }
 
     public Collection<Integer> getSupportContactCompanyIds()
