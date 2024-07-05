@@ -225,14 +225,14 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase
 
     private PartnerNetUserType singleUserType(Saml2Data data, String attributeName)
     {
-        Integer value = singleInteger(data, attributeName);
+        String value = singleString(data, attributeName);
 
         if (value == null)
         {
             return null;
         }
 
-        return PartnerNetUserType.fromCode(value);
+        return PartnerNetUserType.valueOfOrUnknown(value);
     }
 
     private Stream<String[]> entryStream(Saml2Data data, String attributeName)

@@ -91,7 +91,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
 
         return value != null && value;
     }
-    
+
     public boolean isSupportDataAvailable()
     {
         Boolean value = idTokenClaim(ID_TOKEN_SUPPORT_AVAILABLE);
@@ -106,7 +106,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
 
     public PartnerNetUserType getUserType()
     {
-        return PartnerNetUserType.fromOidcValue(userInfoClaims(USER_INFO_USER_TYPE));
+        return PartnerNetUserType.valueOfOrUnknown(userInfoClaims(USER_INFO_USER_TYPE));
     }
 
     @Override
