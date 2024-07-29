@@ -74,9 +74,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         throws Exception
     {
         http //
-            .authorizeHttpRequests()
-            .requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
-            .permitAll();
+            .authorizeHttpRequests().requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH).permitAll();
 
         return http.apply(new PartnerNetSaml2Configurer(entityId, metadataUrl));
     }
@@ -128,19 +126,44 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     /**
      * @param credentialConfigs static list of credentials to use for authentication
      * @return the builder for a fluent api
+     * @deprecated Do not use this method, as it is buggy! It instantiates the DefaultSaml2CredentialsManager, that
+     * contains annotated methods which only work inside a Spring bean! This is not fixable. As a result, this is an
+     * intended breaking change. Use the {@link #credentials(Saml2CredentialsManager)} method instead and pass a
+     * DefaultSaml2CredentialsManager bean as manager!
      */
-    public PartnerNetSaml2Configurer credentials(Saml2CredentialsConfig... credentialConfigs)
+    @Deprecated(forRemoval = true)
+    PartnerNetSaml2Configurer credentials(Saml2CredentialsConfig... credentialConfigs)
     {
-        return credentials(() -> Arrays.asList(credentialConfigs));
+        credentialsManager = new DefaultSaml2CredentialsManager(() -> Arrays.asList(credentialConfigs));
+
+        return this;
     }
 
     /**
      * @param supplier the supplier that will be called periodically to load the most up to date set of credentials
      * @return the builder for a fluent api
+     * @deprecated Do not use this method, as it is buggy! It instantiates the DefaultSaml2CredentialsManager, that
+     * contains annotated methods which only work inside a Spring bean! This is not fixable. As a result, this is an
+     * intended breaking change. Use the {@link #credentials(Saml2CredentialsManager)} method instead and pass a
+     * DefaultSaml2CredentialsManager bean as manager!
      */
-    public PartnerNetSaml2Configurer credentials(Supplier<List<Saml2CredentialsConfig>> supplier)
+    @Deprecated(forRemoval = true)
+    PartnerNetSaml2Configurer credentials(Supplier<List<Saml2CredentialsConfig>> supplier)
     {
         credentialsManager = new DefaultSaml2CredentialsManager(supplier);
+
+        return this;
+    }
+
+    /**
+     * Set the credentials manager to use for loading the credentials.
+     *
+     * @param credentialsManager the credentials manager to use
+     * @return the builder for a fluent api
+     */
+    public PartnerNetSaml2Configurer credentials(Saml2CredentialsManager credentialsManager)
+    {
+        this.credentialsManager = credentialsManager;
 
         return this;
     }
@@ -335,7 +358,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
 
     private Saml2CredentialsManager getCredentialsManager()
     {
-        return postProcess(requireNonNull(credentialsManager, "No credentials configured"));
+        return requireNonNull(credentialsManager, "No credentials configured");
     }
 
     private RelyingPartyRegistrationRepository getRelyingPartyRegistrationRepository(
@@ -361,11 +384,12 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
             new OpenSaml4AuthenticationRequestResolver(relyingPartyRegistrationResolver);
 
         resolver.setAuthnRequestCustomizer(getAuthnRequestCustomizer());
-        resolver
-            .setRelayStateResolver(request -> Saml2Utils //
-                .getRelayState(request)
-                .map(relayState -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), relayState)) // pre-append a random string
-                .orElseGet(() -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), ""))); // default to the auto generated UUID;
+        resolver.setRelayStateResolver(request -> Saml2Utils //
+            .getRelayState(request)
+            .map(relayState -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(),
+                relayState)) // pre-append a random string
+            .orElseGet(() -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(),
+                ""))); // default to the auto generated UUID;
 
         return resolver;
     }

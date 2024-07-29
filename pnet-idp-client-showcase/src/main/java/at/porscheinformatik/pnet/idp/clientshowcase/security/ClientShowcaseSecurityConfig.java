@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -21,9 +22,11 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectProvider;
+import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager;
 import at.porscheinformatik.idp.saml2.EnablePartnerNetSaml2;
 import at.porscheinformatik.idp.saml2.PartnerNetSaml2Configurer;
 import at.porscheinformatik.idp.saml2.PartnerNetSaml2Provider;
+import at.porscheinformatik.idp.saml2.Saml2CredentialsManager;
 import at.porscheinformatik.idp.saml2.Saml2CredentialsProperties;
 
 /**
@@ -33,6 +36,7 @@ import at.porscheinformatik.idp.saml2.Saml2CredentialsProperties;
 @EnableWebSecurity
 @EnablePartnerNetOpenIdConnect
 @EnablePartnerNetSaml2
+@EnableScheduling
 public class ClientShowcaseSecurityConfig
 {
     private static final Profiles PROD = Profiles.of("prod");
@@ -44,11 +48,13 @@ public class ClientShowcaseSecurityConfig
     public AuthenticationManager authenticationManager(List<AuthenticationProvider> providers)
     {
         /*
-         * To get rid of the default AuthenticationManager registered by spring boot, that uses a auto generated password
+         * To get rid of the default AuthenticationManager registered by spring boot, that uses a auto generated
+         * password
          * visible in the logs, we register our own AuthenticationManager.
          *
          * If no providers are registered, we register a dummy provider that does nothing.
-         * If custom authentication mechanisms are registered, they have to register a authentication provider, or handle the authentication
+         * If custom authentication mechanisms are registered, they have to register a authentication provider, or
+         * handle the authentication
          * on their own.
          */
         if (providers.isEmpty())
@@ -60,8 +66,14 @@ public class ClientShowcaseSecurityConfig
     }
 
     @Bean
+    public Saml2CredentialsManager saml2CredentialsManager(Saml2CredentialsProperties samlCredentialsConfig)
+    {
+        return new DefaultSaml2CredentialsManager(samlCredentialsConfig);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment,
-        Saml2CredentialsProperties samlCredentialsConfig, ForceAuthenticationFilter forceAuthenticationFilter,
+        Saml2CredentialsManager saml2CredentialsManager, ForceAuthenticationFilter forceAuthenticationFilter,
         ForceTenantFilter forceTenantFilter) throws Exception
     {
         if (environment.acceptsProfiles(LOCAL))
@@ -82,7 +94,7 @@ public class ClientShowcaseSecurityConfig
 
         PartnerNetSaml2Configurer
             .apply(http, getPartnerNetSaml2Provider(environment))
-            .credentials(samlCredentialsConfig)
+            .credentials(saml2CredentialsManager)
             .customizer(saml2 -> saml2.failureUrl("/loginerror"));
 
         http.logout(logout -> {
