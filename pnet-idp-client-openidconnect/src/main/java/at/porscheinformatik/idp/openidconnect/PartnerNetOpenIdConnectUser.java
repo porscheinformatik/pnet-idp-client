@@ -35,7 +35,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     public static final String ID_TOKEN_SUPPORT_AVAILABLE = "pnet_support_available";
 
     private static final String USER_INFO_INTERNAL_ID = "pnet_internal_id";
-    public static final String USER_INFO_USER_TYPE = "pnet_user_type";
+    public static final String USER_INFO_USER_TYPE = "pnet_person_type";
     public static final String USER_INFO_ACADEMIC_TITLE = "pnet_academic_title";
     public static final String USER_INFO_ACADEMIC_TITLE_POST_NOMINAL = "pnet_academic_title_post_nominal";
     public static final String USER_INFO_GUID = "pnet_guid";
