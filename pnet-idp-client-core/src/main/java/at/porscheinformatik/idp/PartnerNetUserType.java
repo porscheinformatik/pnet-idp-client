@@ -6,8 +6,10 @@ public enum PartnerNetUserType
 {
     UNKNOWN,
     PERSON,
+    PRIVILEGED,
     BOT,
-    TEST_USER;
+    TEST_USER,
+    PRIVILEGED_TEST_USER;
 
     public static PartnerNetUserType valueOfOrUnknown(String value)
     {
