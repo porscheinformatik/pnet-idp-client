@@ -42,11 +42,5 @@ environment: one of `local`, `dev`, `qa`, `prod`. Depending on what IDP you want
 
 The keystore needs to contain a certificate that is also configured in the IDP environment you are using.
 
-In order to test the showcase application, use the following links:
-- OIDC Authentication: https://localhost:8443/data/authorization?authenticationType=oidc
-- OIDC Multi-Factor-Authentication: https://localhost:8443/data/authorization?authenticationType=oidc_mfa
-- SAML2 Authentication: https://localhost:8443/data/authorization?authenticationType=saml2
-- Forced SAML2 Authentication (even if already authenticated): https://localhost:8443/data/authorization?authenticationType=saml2_force
-- SAML2 Multi-Factor-Authentication: https://localhost:8443/data/authorization?authenticationType=saml2_mfa
-
-You may add `&tenant=<UPPERCASE-TENANT>` to the request, in order to force a login, if the tenant (country) of the logged in user does not match the specified value.
+In order to test the showcase application, use the following link:
+- https://localhost:8443/

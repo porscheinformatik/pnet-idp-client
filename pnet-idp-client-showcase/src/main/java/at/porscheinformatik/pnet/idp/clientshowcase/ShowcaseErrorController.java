@@ -38,15 +38,13 @@ public class ShowcaseErrorController implements ErrorController
         ServletWebRequest requestAttributes = new ServletWebRequest(request);
 
         Map<String, Object> attributes = errorAttributes.getErrorAttributes(requestAttributes,
-            ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION));
+            ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION, Include.STACK_TRACE));
 
-        Throwable e = (Throwable) attributes.get("exception");
+        String exception = attributes.get("exception").toString();
+        String trace = attributes.get("trace").toString();
+        String message = attributes.get("message").toString();
 
-        if (e == null)
-        {
-            return "Came here without exception";
-        }
-        logger.error("Error in app", e);
+        logger.error("Exception {} {}: {}", exception, message, trace);
 
         return (String) attributes.get("message");
     }

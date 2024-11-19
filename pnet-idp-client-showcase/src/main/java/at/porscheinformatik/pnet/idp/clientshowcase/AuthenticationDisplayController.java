@@ -3,27 +3,20 @@
  */
 package at.porscheinformatik.pnet.idp.clientshowcase;
 
-import java.util.Optional;
-
+import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
+import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
 
-import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
-import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
-
-/**
- * @author Daniel Furtlehner
- */
 @Controller
-@RequestMapping({"/", "/data/authorization"})
 public class AuthenticationDisplayController
 {
     private final ObjectMapper objectMapper;
@@ -36,7 +29,18 @@ public class AuthenticationDisplayController
         this.objectMapper = objectMapper;
     }
 
-    @GetMapping
+    @GetMapping("/")
+    public String getIndex()
+    {
+        if (buildAuthentication().isPresent())
+        {
+            return "redirect:/data/authorization";
+        }
+
+        return "index";
+    }
+
+    @GetMapping("/data/authorization")
     public String getAuthentication(Model model) throws JsonProcessingException
     {
         Optional<AuthenticationDTO> dto = buildAuthentication();
@@ -54,13 +58,7 @@ public class AuthenticationDisplayController
                             SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
         }
 
-        return "index";
-    }
-
-    @GetMapping("/logoutinfo")
-    public String getLogout() throws JsonProcessingException
-    {
-        return "logout";
+        return "auth-data";
     }
 
     private Optional<AuthenticationDTO> buildAuthentication()
