@@ -99,6 +99,48 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
     }
 
     @Test
+    public void testMaxAgeMfaParameter()
+    {
+        PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
+        builder = requestMaxAgeMfa(builder, 300);
+        MockHttpServletRequest request = buildRequest(builder);
+
+        OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
+
+        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+
+        MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
+
+        assertThat(queryParams.getFirst("max_age_mfa"), equalTo("300"));
+    }
+
+    @Test
+    public void testMultipleExtensions()
+    {
+        PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
+        builder = requestMaxAge(builder, 3600);
+        builder = requestMaxAgeMfa(builder, 300);
+        builder = requestTenant(builder, "AT");
+        builder = requestPreselectTenant(builder, "CZ");
+        MockHttpServletRequest request = buildRequest(builder);
+
+        OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
+
+        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+
+        MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
+
+        assertThat(queryParams.getFirst("max_age_mfa"), equalTo("300"));
+        assertThat(queryParams.getFirst("max_age"), equalTo("3600"));
+        assertThat(queryParams.getFirst("tenant"), equalTo("AT"));
+        assertThat(queryParams.getFirst("preselect_tenant"), equalTo("CZ"));
+    }
+
+    @Test
     public void testCustomState()
     {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
