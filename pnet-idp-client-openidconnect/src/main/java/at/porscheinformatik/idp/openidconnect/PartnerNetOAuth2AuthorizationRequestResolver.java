@@ -26,6 +26,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 {
     public static final String ACR_PARAM = "acr";
     public static final String MAX_AGE_PARAM = "max_age";
+    public static final String MAX_AGE_MFA_PARAM = "max_age_mfa";
     public static final String TENANT_PARAM = "tenant";
     public static final String PRESELECT_TENANT_PARAM = "preselect_tenant";
     public static final String CUSTOM_STATE = "custom_state";
@@ -51,6 +52,11 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
     public static UriComponentsBuilder requestMaxAge(UriComponentsBuilder uri, int maxAge)
     {
         return uri.queryParam(MAX_AGE_PARAM, maxAge);
+    }
+
+    public static UriComponentsBuilder requestMaxAgeMfa(UriComponentsBuilder uri, int maxAgeMfa)
+    {
+        return uri.queryParam(MAX_AGE_MFA_PARAM, maxAgeMfa);
     }
 
     public static UriComponentsBuilder requestTenant(UriComponentsBuilder uri, String tenant)
@@ -106,6 +112,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
         addRequestedAcrParameter(request, additionalParameters, attributes);
         addRequestedMaxAge(request, additionalParameters, attributes);
+        addRequestedMaxAgeMfa(request, additionalParameters, attributes);
         addRequestedTenant(request, additionalParameters, attributes);
         addRequestedPreselectTenant(request, additionalParameters, attributes);
 
@@ -160,6 +167,20 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
         attributes.put(MAX_AGE_PARAM, maxAge);
         additionalParameters.put("max_age", maxAge); // not necessarily the same as MAX_AGE_PARAM!
+    }
+
+    private void addRequestedMaxAgeMfa(HttpServletRequest request, Map<String, Object> additionalParameters,
+        Map<String, Object> attributes)
+    {
+        String maxAgeMfa = request.getParameter(MAX_AGE_MFA_PARAM);
+
+        if (maxAgeMfa == null)
+        {
+            return;
+        }
+
+        attributes.put(MAX_AGE_MFA_PARAM, maxAgeMfa);
+        additionalParameters.put("max_age_mfa", maxAgeMfa); // not necessarily the same as MAX_AGE_MFA_PARAM!
     }
 
     private void addRequestedAcrParameter(HttpServletRequest request, Map<String, Object> additionalParameters,
