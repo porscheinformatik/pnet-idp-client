@@ -28,6 +28,7 @@ public class Saml2Utils
     private static final String FORCE_AUTHENTICATION_PARAM = "forceAuthn";
     private static final String NIST_LEVEL_PARAM = "nistLevel";
     private static final String MAX_SESSION_AGE_PARAM = "maxSessionAge";
+    private static final String MAX_AGE_MFA_PARAM = "maxAgeMfa";
     private static final String TENANT_PARAM = "tenant";
 
     //Specification says between 128 and 160 bit are perfect
@@ -67,9 +68,27 @@ public class Saml2Utils
         return uriComponentsBuilder.replaceQueryParam(MAX_SESSION_AGE_PARAM, sessionAgeInSeconds);
     }
 
+    public static UriComponentsBuilder maxAgeMfa(UriComponentsBuilder uriComponentsBuilder,
+        Integer maxAgeInSeconds)
+    {
+        return uriComponentsBuilder.replaceQueryParam(MAX_AGE_MFA_PARAM, maxAgeInSeconds);
+    }
+
     public static Optional<Integer> retrieveMaxSessionAge(HttpServletRequest request)
     {
         String value = request.getParameter(MAX_SESSION_AGE_PARAM);
+
+        if (value != null)
+        {
+            return Optional.of(Integer.parseInt(value));
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<Integer> retrieveMaxAgeMfa(HttpServletRequest request)
+    {
+        String value = request.getParameter(MAX_AGE_MFA_PARAM);
 
         if (value != null)
         {
@@ -155,6 +174,7 @@ public class Saml2Utils
             .fromUriString(url)
             .replaceQueryParam(FORCE_AUTHENTICATION_PARAM)
             .replaceQueryParam(MAX_SESSION_AGE_PARAM)
+            .replaceQueryParam(MAX_AGE_MFA_PARAM)
             .replaceQueryParam(TENANT_PARAM)
             .replaceQueryParam(NIST_LEVEL_PARAM)
             .replaceQueryParam(RELAY_STATE_PARAM)

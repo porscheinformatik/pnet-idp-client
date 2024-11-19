@@ -5,13 +5,13 @@ import java.util.List;
 import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 
-import at.porscheinformatik.idp.saml2.MaxSessionAge;
+import at.porscheinformatik.idp.saml2.MaxAge;
 
-public class MaxSessionAgeImpl extends AbstractXMLObject implements MaxSessionAge
+public class MaxAgeImpl extends AbstractXMLObject implements MaxAge
 {
     private int value;
 
-    MaxSessionAgeImpl(String namespaceURI, String elementLocalName, String namespacePrefix)
+    MaxAgeImpl(String namespaceURI, String elementLocalName, String namespacePrefix)
     {
         super(namespaceURI, elementLocalName, namespacePrefix);
     }
@@ -23,15 +23,15 @@ public class MaxSessionAgeImpl extends AbstractXMLObject implements MaxSessionAg
     }
 
     @Override
-    public int getSessionAgeInSeconds()
+    public int getMaxAgeInSeconds()
     {
         return value;
     }
 
     @Override
-    public void setSessionAgeInSeconds(int sessionAgeInSeconds)
+    public void setMaxAgeInSeconds(int maxAgeInSeconds)
     {
-        value = prepareForAssignment(value, sessionAgeInSeconds);
+        value = prepareForAssignment(value, maxAgeInSeconds);
     }
 
 }

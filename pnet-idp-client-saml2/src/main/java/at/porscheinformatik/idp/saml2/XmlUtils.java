@@ -47,6 +47,7 @@ public final class XmlUtils
     public static final String PNET_NAMESPACE = "https://identity.auto-partner.net/identity/saml2";
     public static final String DEFAULT_PREFIX = "pnet";
     public static final QName MAX_SESSION_AGE_ELEMENT_NAME = new QName(PNET_NAMESPACE, "MaxSessionAge", DEFAULT_PREFIX);
+    public static final QName MAX_AGE_MFA_ELEMENT_NAME = new QName(PNET_NAMESPACE, "MaxAgeMfa", DEFAULT_PREFIX);
     public static final QName TENANT_ELEMENT_NAME = new QName(PNET_NAMESPACE, "Tenant", DEFAULT_PREFIX);
 
     private XmlUtils()
@@ -154,13 +155,22 @@ public final class XmlUtils
 
     }
 
-    public static MaxSessionAge maxSessionAgeRequest(Integer sessionAgeInSeconds)
+    public static MaxAge maxSessionAgeRequest(Integer sessionAgeInSeconds)
     {
-        MaxSessionAge sessionAgeRequest = createXmlObject(MAX_SESSION_AGE_ELEMENT_NAME);
+        MaxAge sessionAgeRequest = createXmlObject(MAX_SESSION_AGE_ELEMENT_NAME);
 
-        sessionAgeRequest.setSessionAgeInSeconds(sessionAgeInSeconds);
+        sessionAgeRequest.setMaxAgeInSeconds(sessionAgeInSeconds);
 
         return sessionAgeRequest;
+    }
+
+    public static MaxAge maxAgeMfaRequest(Integer maxAgeInSeconds)
+    {
+        MaxAge request = createXmlObject(MAX_AGE_MFA_ELEMENT_NAME);
+
+        request.setMaxAgeInSeconds(maxAgeInSeconds);
+
+        return request;
     }
 
     public static Tenant tenantRequest(String tenant)
