@@ -9,6 +9,11 @@
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
     </head>
     <body>
-    	Logout success!
+
+        <form th:action="@{/logout}" method="POST">
+    		<button type="submit">Logout</button>
+    	</form>
+
+        <pre th:text="${authData}"></pre>
     </body>
 </html>

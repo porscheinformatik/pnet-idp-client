@@ -16,7 +16,6 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
@@ -73,8 +72,7 @@ public class ClientShowcaseSecurityConfig
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment,
-        Saml2CredentialsManager saml2CredentialsManager, ForceAuthenticationFilter forceAuthenticationFilter,
-        ForceTenantFilter forceTenantFilter) throws Exception
+        Saml2CredentialsManager saml2CredentialsManager) throws Exception
     {
         if (environment.acceptsProfiles(LOCAL))
         {
@@ -98,7 +96,7 @@ public class ClientShowcaseSecurityConfig
             .customizer(saml2 -> saml2.failureUrl("/loginerror"));
 
         http.logout(logout -> {
-            logout.logoutSuccessUrl("/logoutinfo");
+            logout.logoutSuccessUrl("/");
             logout.deleteCookies("JSESSIONID");
         });
 
@@ -117,15 +115,12 @@ public class ClientShowcaseSecurityConfig
         http //
             .authorizeHttpRequests()
             .shouldFilterAllDispatcherTypes(true)
-            .requestMatchers("/accessdenied", "/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
+            .requestMatchers("/", "/accessdenied", "/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
             .permitAll()
-            .requestMatchers("/", "/data/authorization")
+            .requestMatchers("/data/authorization")
             .fullyAuthenticated()
             .anyRequest()
             .denyAll();
-
-        http.addFilterBefore(forceAuthenticationFilter, LogoutFilter.class);
-        http.addFilterBefore(forceTenantFilter, LogoutFilter.class);
 
         http.requiresChannel().anyRequest().requiresSecure();
 
