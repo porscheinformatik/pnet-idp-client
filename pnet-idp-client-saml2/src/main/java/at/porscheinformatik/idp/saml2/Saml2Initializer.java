@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import at.porscheinformatik.idp.saml2.xml.*;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
@@ -21,13 +22,6 @@ import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 import org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.springframework.security.saml2.core.OpenSamlInitializationService;
-
-import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeBuilder;
-import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeMarshaller;
-import at.porscheinformatik.idp.saml2.xml.MaxSessionAgeUnmarshaller;
-import at.porscheinformatik.idp.saml2.xml.TenantBuilder;
-import at.porscheinformatik.idp.saml2.xml.TenantMarshaller;
-import at.porscheinformatik.idp.saml2.xml.TenantUnmarshaller;
 
 /**
  * @author Daniel Furtlehner
@@ -61,8 +55,12 @@ public final class Saml2Initializer
         XMLObjectProviderRegistry registry = ConfigurationService.get(XMLObjectProviderRegistry.class);
 
         registry
-            .registerObjectProvider(XmlUtils.MAX_SESSION_AGE_ELEMENT_NAME, new MaxSessionAgeBuilder(),
-                new MaxSessionAgeMarshaller(), new MaxSessionAgeUnmarshaller());
+            .registerObjectProvider(XmlUtils.MAX_SESSION_AGE_ELEMENT_NAME, new MaxAgeBuilder(),
+                new MaxAgeMarshaller(), new MaxAgeUnmarshaller());
+
+        registry
+            .registerObjectProvider(XmlUtils.MAX_AGE_MFA_ELEMENT_NAME, new MaxAgeBuilder(),
+                new MaxAgeMarshaller(), new MaxAgeUnmarshaller());
 
         registry
             .registerObjectProvider(XmlUtils.TENANT_ELEMENT_NAME, new TenantBuilder(), new TenantMarshaller(),

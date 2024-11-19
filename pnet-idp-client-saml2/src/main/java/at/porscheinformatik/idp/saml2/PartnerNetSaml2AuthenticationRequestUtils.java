@@ -8,6 +8,7 @@ public final class PartnerNetSaml2AuthenticationRequestUtils
 {
     private static final String FORCE_AUTHENTICATION_ATTR = "poi.saml2.force_authn";
     private static final String SESSION_AGE_ATTR = "poi.saml2.session_age";
+    private static final String MAX_AGE_MFA_ATTR = "poi.saml2.max_age_mfa";
     private static final String TENANT_ATTR = "poi.saml2.tenant";
     private static final String NIST_LEVEL_ATTR = "poi.saml2.nist_level";
 
@@ -42,6 +43,18 @@ public final class PartnerNetSaml2AuthenticationRequestUtils
         else
         {
             request.getSession().removeAttribute(SESSION_AGE_ATTR);
+        }
+    }
+
+    public static void storeMaxAgeMfa(HttpServletRequest request, Optional<Integer> maxAgeMfa)
+    {
+        if (maxAgeMfa.isPresent())
+        {
+            request.getSession().setAttribute(MAX_AGE_MFA_ATTR, maxAgeMfa.get());
+        }
+        else
+        {
+            request.getSession().removeAttribute(MAX_AGE_MFA_ATTR);
         }
     }
 
