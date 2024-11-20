@@ -11,7 +11,6 @@ import static org.springframework.web.util.UriComponentsBuilder.*;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map.Entry;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -28,14 +27,13 @@ import org.springframework.web.util.UriUtils;
 /**
  * @author Daniel Furtlehner
  */
-public class PartnerNetOAuth2AuthorizationRequestResolverTest
-{
+public class PartnerNetOAuth2AuthorizationRequestResolverTest {
+
     private static final String BASE_URI = "/oauth/authorize";
     private static final String CLIENT_ID = "me_myself_and_i";
 
     @Test
-    public void testAcrParameter()
-    {
+    public void testAcrParameter() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -54,16 +52,20 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
         assertThat(queryParams.getFirst("response_type"), equalTo("code"));
         assertThat(queryParams.get("redirect_uri"), contains("https://localhost:8443/redirect/uri"));
         assertThat(queryParams.getFirst("state"), not(emptyOrNullString()));
-        assertThat(queryParams.getFirst("claims"),
-            equalTo(UriUtils
-                .encodeQueryParam("{\"id_token\":{\"acr\": {\"values\": [\"2,3\"], \"essential\": true}}}",
-                    Charset.forName("UTF-8"))));
+        assertThat(
+            queryParams.getFirst("claims"),
+            equalTo(
+                UriUtils.encodeQueryParam(
+                    "{\"id_token\":{\"acr\": {\"values\": [\"2,3\"], \"essential\": true}}}",
+                    Charset.forName("UTF-8")
+                )
+            )
+        );
     }
 
     // Test that the max_age parameter is appended to the authorization request
     @Test
-    public void testMaxAgeParameter()
-    {
+    public void testMaxAgeParameter() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -81,8 +83,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
 
     // Test that forceAuthentication appends a max_age parameter with value 0 to the authorization request
     @Test
-    public void testForceAuthentication()
-    {
+    public void testForceAuthentication() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -99,8 +100,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
     }
 
     @Test
-    public void testMaxAgeMfaParameter()
-    {
+    public void testMaxAgeMfaParameter() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -117,8 +117,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
     }
 
     @Test
-    public void testMultipleExtensions()
-    {
+    public void testMultipleExtensions() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -141,8 +140,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
     }
 
     @Test
-    public void testCustomState()
-    {
+    public void testCustomState() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -161,8 +159,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
     }
 
     @Test
-    public void testPreselectTenant()
-    {
+    public void testPreselectTenant() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -180,32 +177,27 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest
         assertThat(tenant, is(expectedTenant));
     }
 
-    protected MockHttpServletRequest buildRequest(UriComponentsBuilder builder)
-    {
+    protected MockHttpServletRequest buildRequest(UriComponentsBuilder builder) {
         UriComponents uri = builder.build();
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setPathInfo(uri.getPath());
         request.setQueryString(uri.getQuery());
 
-        for (Entry<String, List<String>> param : uri.getQueryParams().entrySet())
-        {
+        for (Entry<String, List<String>> param : uri.getQueryParams().entrySet()) {
             request.addParameter(param.getKey(), param.getValue().toArray(new String[0]));
         }
 
         return request;
     }
 
-    private PartnerNetOAuth2AuthorizationRequestResolver buildResolver()
-    {
+    private PartnerNetOAuth2AuthorizationRequestResolver buildResolver() {
         ClientRegistrationRepository clientRegistrationRepository = buildClientRegistrationRepository();
         return new PartnerNetOAuth2AuthorizationRequestResolver(clientRegistrationRepository, BASE_URI);
     }
 
-    private ClientRegistrationRepository buildClientRegistrationRepository()
-    {
-        ClientRegistration registration = ClientRegistration //
-            .withRegistrationId("pnet")
+    private ClientRegistrationRepository buildClientRegistrationRepository() {
+        ClientRegistration registration = ClientRegistration.withRegistrationId("pnet") //
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .clientId(CLIENT_ID)
             .redirectUri("https://localhost:8443/redirect/uri")

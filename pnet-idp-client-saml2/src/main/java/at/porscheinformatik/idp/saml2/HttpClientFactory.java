@@ -1,35 +1,27 @@
 package at.porscheinformatik.idp.saml2;
 
 import java.time.Duration;
-
+import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import org.apache.http.client.HttpClient;
 import org.springframework.security.saml2.Saml2Exception;
 
-import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
-
 @FunctionalInterface
-public interface HttpClientFactory
-{
-
+public interface HttpClientFactory {
     /**
      * The default client factory builds a client with 5 seconds connection timeout and 10 seconds socket timeout.
      *
      * @return the default http client
      */
-    static HttpClientFactory defaultClient()
-    {
+    static HttpClientFactory defaultClient() {
         return () -> {
-            try
-            {
+            try {
                 HttpClientBuilder clientBuilder = new HttpClientBuilder();
 
                 clientBuilder.setConnectionTimeout(Duration.ofSeconds(5));
                 clientBuilder.setSocketTimeout(Duration.ofSeconds(10));
 
                 return clientBuilder.buildClient();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new Saml2Exception("Error building HttpClient", e);
             }
         };
@@ -40,5 +32,4 @@ public interface HttpClientFactory
      * @throws Saml2Exception if something goes wrong building the client
      */
     HttpClient newClient() throws Saml2Exception;
-
 }

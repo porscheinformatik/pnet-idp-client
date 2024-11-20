@@ -1,12 +1,5 @@
 package at.porscheinformatik.idp.saml2;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
 import at.porscheinformatik.idp.Gender;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
@@ -15,9 +8,15 @@ import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
 import at.porscheinformatik.idp.PartnerNetUserType;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
-public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
-{
+public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 8462523068524794768L;
 
@@ -72,23 +71,51 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
     private final Collection<Integer> supportContactCompanyIds;
     private final Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes;
 
-    public PartnerNetSaml2AuthenticationPrincipal(String subjectIdentifier, String relayState,
-        String transientSessionId, AuthnContextClass authnContextClass, Instant lastUpdate, String guid,
-        String personnelNumber, Integer legacyId, PartnerNetUserType userType, String academicTitle,
-        String academicTitlePostNominal, String firstname, String lastname, Gender gender, Locale language,
-        List<Locale> additionalLanguages, String mailAddress, String phoneNumber, String tenant, String costCenter,
-        Integer favoriteCompanyId, String favoriteBrand, List<PartnerNetFunctionalNumberDTO> functionalNumbers,
-        List<PartnerNetCompanyDTO> employments, List<PartnerNetCompanyAddressDTO> employmentsAddress,
-        List<PartnerNetRoleDTO> roles, List<PartnerNetContractDTO> contracts, Collection<Integer> contactCompanyIds,
-        Collection<PartnerNetCompanyTypeDTO> companyTypes, boolean responsibleUser, String responsibleUserExternalId,
-        String responsibleUserFirstname, String responsibleUserLastname, String responsibleUserEmail,
-        String responsibleUserGuid, boolean supportData, List<PartnerNetCompanyDTO> supportEmployments,
-        List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress, List<PartnerNetRoleDTO> supportRoles,
-        List<PartnerNetContractDTO> supportContracts, Collection<Integer> supportContactCompanyIds,
-        Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes)
-    {
+    public PartnerNetSaml2AuthenticationPrincipal(
+        String subjectIdentifier,
+        String relayState,
+        String transientSessionId,
+        AuthnContextClass authnContextClass,
+        Instant lastUpdate,
+        String guid,
+        String personnelNumber,
+        Integer legacyId,
+        PartnerNetUserType userType,
+        String academicTitle,
+        String academicTitlePostNominal,
+        String firstname,
+        String lastname,
+        Gender gender,
+        Locale language,
+        List<Locale> additionalLanguages,
+        String mailAddress,
+        String phoneNumber,
+        String tenant,
+        String costCenter,
+        Integer favoriteCompanyId,
+        String favoriteBrand,
+        List<PartnerNetFunctionalNumberDTO> functionalNumbers,
+        List<PartnerNetCompanyDTO> employments,
+        List<PartnerNetCompanyAddressDTO> employmentsAddress,
+        List<PartnerNetRoleDTO> roles,
+        List<PartnerNetContractDTO> contracts,
+        Collection<Integer> contactCompanyIds,
+        Collection<PartnerNetCompanyTypeDTO> companyTypes,
+        boolean responsibleUser,
+        String responsibleUserExternalId,
+        String responsibleUserFirstname,
+        String responsibleUserLastname,
+        String responsibleUserEmail,
+        String responsibleUserGuid,
+        boolean supportData,
+        List<PartnerNetCompanyDTO> supportEmployments,
+        List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
+        List<PartnerNetRoleDTO> supportRoles,
+        List<PartnerNetContractDTO> supportContracts,
+        Collection<Integer> supportContactCompanyIds,
+        Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes
+    ) {
         super();
-
         this.subjectIdentifier = subjectIdentifier;
         this.relayState = relayState;
         this.transientSessionId = transientSessionId;
@@ -133,23 +160,19 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
         this.supportCompanyTypes = supportCompanyTypes;
     }
 
-    public String getSubjectIdentifier()
-    {
+    public String getSubjectIdentifier() {
         return subjectIdentifier;
     }
 
-    public String getRelayState()
-    {
+    public String getRelayState() {
         return relayState;
     }
 
-    public String getGuid()
-    {
+    public String getGuid() {
         return guid;
     }
 
-    public String getPersonnelNumber()
-    {
+    public String getPersonnelNumber() {
         return personnelNumber;
     }
 
@@ -158,224 +181,181 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable
      * @deprecated will be removed in a future release. Migrate to {@link #getSubjectIdentifier()}
      */
     @Deprecated
-    public Integer getLegacyId()
-    {
+    public Integer getLegacyId() {
         return legacyId;
     }
 
-    public PartnerNetUserType getUserType()
-    {
+    public PartnerNetUserType getUserType() {
         return userType;
     }
 
-    public String getAcademicTitle()
-    {
+    public String getAcademicTitle() {
         return academicTitle;
     }
 
-    public String getAcademicTitlePostNominal()
-    {
+    public String getAcademicTitlePostNominal() {
         return academicTitlePostNominal;
     }
 
-    public String getFirstname()
-    {
+    public String getFirstname() {
         return firstname;
     }
 
-    public String getLastname()
-    {
+    public String getLastname() {
         return lastname;
     }
 
-    public Gender getGender()
-    {
+    public Gender getGender() {
         return gender;
     }
 
-    public Locale getLanguage()
-    {
+    public Locale getLanguage() {
         return language;
     }
 
-    public List<Locale> getAdditionalLanguages()
-    {
+    public List<Locale> getAdditionalLanguages() {
         return additionalLanguages;
     }
 
-    public String getMailAddress()
-    {
+    public String getMailAddress() {
         return mailAddress;
     }
 
-    public String getPhoneNumber()
-    {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public String getTenant()
-    {
+    public String getTenant() {
         return tenant;
     }
 
-    public String getCostCenter()
-    {
+    public String getCostCenter() {
         return costCenter;
     }
 
-    public Integer getFavoriteCompanyId()
-    {
+    public Integer getFavoriteCompanyId() {
         return favoriteCompanyId;
     }
 
-    public String getFavoriteBrand()
-    {
+    public String getFavoriteBrand() {
         return favoriteBrand;
     }
 
-    public List<PartnerNetFunctionalNumberDTO> getFunctionalNumbers()
-    {
+    public List<PartnerNetFunctionalNumberDTO> getFunctionalNumbers() {
         return functionalNumbers;
     }
 
-    public List<PartnerNetCompanyDTO> getEmployments()
-    {
+    public List<PartnerNetCompanyDTO> getEmployments() {
         return employments;
     }
 
-    public List<PartnerNetCompanyAddressDTO> getEmploymentsAddress()
-    {
+    public List<PartnerNetCompanyAddressDTO> getEmploymentsAddress() {
         return employmentsAddress;
     }
 
-    public List<PartnerNetRoleDTO> getRoles()
-    {
+    public List<PartnerNetRoleDTO> getRoles() {
         return roles;
     }
 
-    public List<PartnerNetContractDTO> getContracts()
-    {
+    public List<PartnerNetContractDTO> getContracts() {
         return contracts;
     }
 
-    public Collection<Integer> getContactCompanyIds()
-    {
+    public Collection<Integer> getContactCompanyIds() {
         return contactCompanyIds;
     }
 
-    public Collection<PartnerNetCompanyTypeDTO> getCompanyTypes()
-    {
+    public Collection<PartnerNetCompanyTypeDTO> getCompanyTypes() {
         return companyTypes;
     }
 
-    public boolean isResponsibleUserAvailable()
-    {
+    public boolean isResponsibleUserAvailable() {
         return responsibleUser;
     }
 
-    public String getResponsibleUserExternalId()
-    {
+    public String getResponsibleUserExternalId() {
         return responsibleUserExternalId;
     }
 
-    public String getResponsibleUserFirstname()
-    {
+    public String getResponsibleUserFirstname() {
         return responsibleUserFirstname;
     }
 
-    public String getResponsibleUserLastname()
-    {
+    public String getResponsibleUserLastname() {
         return responsibleUserLastname;
     }
 
-    public String getResponsibleUserEmail()
-    {
+    public String getResponsibleUserEmail() {
         return responsibleUserEmail;
     }
 
-    public String getResponsibleUserGuid()
-    {
+    public String getResponsibleUserGuid() {
         return responsibleUserGuid;
     }
 
-    public boolean isSupportDataAvailable()
-    {
+    public boolean isSupportDataAvailable() {
         return supportData;
     }
 
-    public List<PartnerNetCompanyDTO> getSupportEmployments()
-    {
+    public List<PartnerNetCompanyDTO> getSupportEmployments() {
         return supportEmployments;
     }
 
-    public List<PartnerNetCompanyAddressDTO> getSupportEmploymentsAddress()
-    {
+    public List<PartnerNetCompanyAddressDTO> getSupportEmploymentsAddress() {
         return supportEmploymentsAddress;
     }
 
-    public List<PartnerNetRoleDTO> getSupportRoles()
-    {
+    public List<PartnerNetRoleDTO> getSupportRoles() {
         return supportRoles;
     }
 
-    public List<PartnerNetContractDTO> getSupportContracts()
-    {
+    public List<PartnerNetContractDTO> getSupportContracts() {
         return supportContracts;
     }
 
-    public Collection<Integer> getSupportContactCompanyIds()
-    {
+    public Collection<Integer> getSupportContactCompanyIds() {
         return supportContactCompanyIds;
     }
 
-    public Collection<PartnerNetCompanyTypeDTO> getSupportCompanyTypes()
-    {
+    public Collection<PartnerNetCompanyTypeDTO> getSupportCompanyTypes() {
         return supportCompanyTypes;
     }
 
-    public String getName()
-    {
+    public String getName() {
         String givenName = getFirstname();
         String familyName = getLastname();
 
-        if (givenName == null || familyName == null)
-        {
+        if (givenName == null || familyName == null) {
             return getSubjectIdentifier();
         }
 
         return givenName + " " + familyName;
     }
 
-    public String getResponsibleUserName()
-    {
+    public String getResponsibleUserName() {
         String givenName = getFirstname();
         String familyName = getLastname();
 
-        if (givenName == null || familyName == null)
-        {
+        if (givenName == null || familyName == null) {
             return getSubjectIdentifier();
         }
 
         return givenName + " " + familyName;
     }
 
-    public String getTransientSessionId()
-    {
+    public String getTransientSessionId() {
         return transientSessionId;
     }
 
-    public AuthnContextClass getAuthnContextClass()
-    {
+    public AuthnContextClass getAuthnContextClass() {
         return authnContextClass;
     }
 
-    public boolean isStronglyAuthenticated()
-    {
+    public boolean isStronglyAuthenticated() {
         return authnContextClass.isStrongerThan(AuthnContextClass.USERPASS);
     }
 
-    public Instant getLastUpdate()
-    {
+    public Instant getLastUpdate() {
         return lastUpdate;
     }
 }

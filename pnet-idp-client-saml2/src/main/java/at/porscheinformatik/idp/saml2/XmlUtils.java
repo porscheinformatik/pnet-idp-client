@@ -9,10 +9,9 @@ import java.io.Serializable;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
-
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
-
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 import org.apache.commons.codec.binary.Base64;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
@@ -37,21 +36,18 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.w3c.dom.Element;
 
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-
 /**
  * @author Daniel Furtlehner
  */
-public final class XmlUtils
-{
+public final class XmlUtils {
+
     public static final String PNET_NAMESPACE = "https://identity.auto-partner.net/identity/saml2";
     public static final String DEFAULT_PREFIX = "pnet";
     public static final QName MAX_SESSION_AGE_ELEMENT_NAME = new QName(PNET_NAMESPACE, "MaxSessionAge", DEFAULT_PREFIX);
     public static final QName MAX_AGE_MFA_ELEMENT_NAME = new QName(PNET_NAMESPACE, "MaxAgeMfa", DEFAULT_PREFIX);
     public static final QName TENANT_ELEMENT_NAME = new QName(PNET_NAMESPACE, "Tenant", DEFAULT_PREFIX);
 
-    private XmlUtils()
-    {
+    private XmlUtils() {
         super();
     }
 
@@ -103,60 +99,49 @@ public final class XmlUtils
      * @return the objects value
      */
     @Nullable
-    public static Serializable getXmlValue(XMLObject xmlObject)
-    {
-        if (xmlObject.isNil())
-        {
+    public static Serializable getXmlValue(XMLObject xmlObject) {
+        if (xmlObject.isNil()) {
             return null;
         }
 
-        if (xmlObject instanceof XSAny)
-        {
+        if (xmlObject instanceof XSAny) {
             return ((XSAny) xmlObject).getTextContent();
         }
 
-        if (xmlObject instanceof XSBase64Binary)
-        {
+        if (xmlObject instanceof XSBase64Binary) {
             String base64String = ((XSBase64Binary) xmlObject).getValue();
 
             return Base64.decodeBase64(base64String);
         }
 
-        if (xmlObject instanceof XSBoolean)
-        {
+        if (xmlObject instanceof XSBoolean) {
             return ((XSBoolean) xmlObject).getValue().getValue();
         }
 
-        if (xmlObject instanceof XSDateTime)
-        {
+        if (xmlObject instanceof XSDateTime) {
             Instant dateTime = ((XSDateTime) xmlObject).getValue();
 
             return dateTime;
         }
 
-        if (xmlObject instanceof XSInteger)
-        {
+        if (xmlObject instanceof XSInteger) {
             return ((XSInteger) xmlObject).getValue();
         }
 
-        if (xmlObject instanceof XSString)
-        {
+        if (xmlObject instanceof XSString) {
             return ((XSString) xmlObject).getValue();
         }
 
-        if (xmlObject instanceof XSURI)
-        {
+        if (xmlObject instanceof XSURI) {
             String uriString = ((XSURI) xmlObject).getURI();
 
             return URI.create(uriString);
         }
 
         throw new IllegalArgumentException("Unsupported xml object type " + xmlObject.getClass());
-
     }
 
-    public static MaxAge maxSessionAgeRequest(Integer sessionAgeInSeconds)
-    {
+    public static MaxAge maxSessionAgeRequest(Integer sessionAgeInSeconds) {
         MaxAge sessionAgeRequest = createXmlObject(MAX_SESSION_AGE_ELEMENT_NAME);
 
         sessionAgeRequest.setMaxAgeInSeconds(sessionAgeInSeconds);
@@ -164,8 +149,7 @@ public final class XmlUtils
         return sessionAgeRequest;
     }
 
-    public static MaxAge maxAgeMfaRequest(Integer maxAgeInSeconds)
-    {
+    public static MaxAge maxAgeMfaRequest(Integer maxAgeInSeconds) {
         MaxAge request = createXmlObject(MAX_AGE_MFA_ELEMENT_NAME);
 
         request.setMaxAgeInSeconds(maxAgeInSeconds);
@@ -173,8 +157,7 @@ public final class XmlUtils
         return request;
     }
 
-    public static Tenant tenantRequest(String tenant)
-    {
+    public static Tenant tenantRequest(String tenant) {
         Tenant renantRequest = createXmlObject(TENANT_ELEMENT_NAME);
 
         renantRequest.setTenant(tenant);
@@ -182,8 +165,7 @@ public final class XmlUtils
         return renantRequest;
     }
 
-    public static RequestedAuthnContext requestedAuthnContext(List<AuthnContextClass> authnContextClasses)
-    {
+    public static RequestedAuthnContext requestedAuthnContext(List<AuthnContextClass> authnContextClasses) {
         RequestedAuthnContext authnContext = createSamlObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
         authnContext.setComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);
 
@@ -196,8 +178,7 @@ public final class XmlUtils
         return authnContext;
     }
 
-    private static AuthnContextClassRef authnContextClassRef(String reference)
-    {
+    private static AuthnContextClassRef authnContextClassRef(String reference) {
         AuthnContextClassRef authnContext = createSamlObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
         authnContext.setURI(reference);
 
@@ -210,8 +191,7 @@ public final class XmlUtils
      * @param issuer the issuer value
      * @return the saml issuer
      */
-    public static Issuer issuer(String issuer)
-    {
+    public static Issuer issuer(String issuer) {
         Issuer samlIssuer = createSamlObject(Issuer.DEFAULT_ELEMENT_NAME);
         samlIssuer.setValue(requireNonNull(issuer, "Issuer value must not be null"));
 
@@ -223,8 +203,7 @@ public final class XmlUtils
      * @return marshalled object.
      * @throws MarshallingException if an exception occurs while marshalling
      */
-    public static String marshall(SAMLObject object) throws MarshallingException
-    {
+    public static String marshall(SAMLObject object) throws MarshallingException {
         return serialize(XMLObjectSupport.marshall(object), false);
     }
 
@@ -234,18 +213,15 @@ public final class XmlUtils
      *            Signature is not valid on pretty printed xmls.
      * @return the string representation of the given element
      */
-    private static String serialize(Element element, boolean prettyprint)
-    {
-        if (prettyprint)
-        {
+    private static String serialize(Element element, boolean prettyprint) {
+        if (prettyprint) {
             return SerializeSupport.prettyPrintXML(element);
         }
 
         return SerializeSupport.nodeToString(element);
     }
 
-    public static <T extends SAMLObject> T createSamlObject(QName defaultName)
-    {
+    public static <T extends SAMLObject> T createSamlObject(QName defaultName) {
         XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         @SuppressWarnings("unchecked")
@@ -254,8 +230,7 @@ public final class XmlUtils
         return builder.buildObject();
     }
 
-    public static <T extends XMLObject> T createXmlObject(QName defaultName)
-    {
+    public static <T extends XMLObject> T createXmlObject(QName defaultName) {
         XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         @SuppressWarnings("unchecked")
@@ -265,39 +240,30 @@ public final class XmlUtils
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends XMLObject> T createXMLObject(QName typeName, QName defaultName)
-    {
+    public static <T extends XMLObject> T createXMLObject(QName typeName, QName defaultName) {
         XMLObjectBuilder<?> builder = XMLObjectSupport.getBuilder(typeName);
 
         return (T) builder.buildObject(defaultName, typeName);
     }
 
-    public static XSInteger xmlInt(Integer value)
-    {
+    public static XSInteger xmlInt(Integer value) {
         XSInteger xsInteger = createXMLObject(XSInteger.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
 
-        if (value == null)
-        {
+        if (value == null) {
             xsInteger.setNil(Boolean.TRUE);
-        }
-        else
-        {
+        } else {
             xsInteger.setValue(value);
         }
 
         return xsInteger;
     }
 
-    public static XSBoolean xmlBoolean(Boolean value)
-    {
+    public static XSBoolean xmlBoolean(Boolean value) {
         XSBoolean xsBoolean = createXMLObject(XSBoolean.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
 
-        if (value == null)
-        {
+        if (value == null) {
             xsBoolean.setNil(Boolean.TRUE);
-        }
-        else
-        {
+        } else {
             xsBoolean.setValue(new XSBooleanValue(value, false));
         }
 
@@ -308,20 +274,15 @@ public final class XmlUtils
      * @param value - String
      * @return XML String
      */
-    public static XSString xmlString(String value)
-    {
+    public static XSString xmlString(String value) {
         XSString xsstring = createXMLObject(XSString.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
 
-        if (value == null)
-        {
+        if (value == null) {
             xsstring.setNil(Boolean.TRUE);
-        }
-        else
-        {
+        } else {
             xsstring.setValue(value);
         }
 
         return xsstring;
     }
-
 }

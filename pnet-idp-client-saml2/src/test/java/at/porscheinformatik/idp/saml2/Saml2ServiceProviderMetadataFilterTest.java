@@ -7,10 +7,14 @@ import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration.*;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
@@ -41,19 +45,11 @@ import org.springframework.security.saml2.provider.service.web.RelyingPartyRegis
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
  * @author Daniel Furtlehner
  */
-public class Saml2ServiceProviderMetadataFilterTest
-{
-    static
-    {
+public class Saml2ServiceProviderMetadataFilterTest {
+    static {
         Saml2Initializer.initialize();
     }
 
@@ -61,8 +57,7 @@ public class Saml2ServiceProviderMetadataFilterTest
     private static final String RESPONSE_DESTINATION = SP_ENTITY_ID + "/authenticate/pnet";
 
     @Test
-    public void filterNotCalled() throws Exception
-    {
+    public void filterNotCalled() throws Exception {
         TestFilterChain chain = new TestFilterChain();
         Saml2ServiceProviderMetadataFilter filter = buildFilter();
         HttpServletRequest request = buildRequestFromUrl("https://service.com/something");
@@ -75,8 +70,7 @@ public class Saml2ServiceProviderMetadataFilterTest
     }
 
     @Test
-    public void metadataInResponse() throws Exception
-    {
+    public void metadataInResponse() throws Exception {
         TestFilterChain chain = new TestFilterChain();
         Saml2ServiceProviderMetadataFilter filter = buildFilter();
         HttpServletRequest request = buildRequestFromUrl(SP_ENTITY_ID);
@@ -92,8 +86,9 @@ public class Saml2ServiceProviderMetadataFilterTest
         assertThat(entityDescriptor.getValidUntil(), notNullValue());
         assertThat(ssoDescriptor, notNullValue());
 
-        AssertionConsumerService assertionConsumerService =
-            assertSingleList(ssoDescriptor.getAssertionConsumerServices());
+        AssertionConsumerService assertionConsumerService = assertSingleList(
+            ssoDescriptor.getAssertionConsumerServices()
+        );
 
         assertThat(assertionConsumerService, notNullValue());
         assertThat(assertionConsumerService.getBinding(), equalTo(SAMLConstants.SAML2_POST_BINDING_URI));
@@ -112,37 +107,55 @@ public class Saml2ServiceProviderMetadataFilterTest
             .stream()
             .map(EncryptionMethod::getAlgorithm)
             .collect(Collectors.toList());
-        assertThat(encryptionMethods.toString(), encryptionMethods,
-            containsInAnyOrder(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM,
-                EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256_GCM));
+        assertThat(
+            encryptionMethods.toString(),
+            encryptionMethods,
+            containsInAnyOrder(
+                EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM,
+                EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256_GCM
+            )
+        );
 
-        EntityAttributes entityAttributes =
-            getObjectOfType(entityDescriptor.getExtensions().getUnknownXMLObjects(), EntityAttributes.class);
+        EntityAttributes entityAttributes = getObjectOfType(
+            entityDescriptor.getExtensions().getUnknownXMLObjects(),
+            EntityAttributes.class
+        );
 
         Attribute attribute = entityAttributes.getAttributes().get(0);
         assertThat(attribute.getName(), equalTo(PartnerNetSaml2MetadataResolver.SUBJECT_ID_REQUIREMENT_NAME));
         assertThat(((XSString) attribute.getAttributeValues().get(0)).getValue(), equalTo("subject-id"));
 
-        List<String> signingMethods =
-            getObjectsOfType(entityDescriptor.getExtensions().getUnknownXMLObjects(), SigningMethod.class)
-                .stream()
-                .map(SigningMethod::getAlgorithm)
-                .collect(Collectors.toList());
-        assertThat(signingMethods, containsInAnyOrder(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256,
-            SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256));
+        List<String> signingMethods = getObjectsOfType(
+            entityDescriptor.getExtensions().getUnknownXMLObjects(),
+            SigningMethod.class
+        )
+            .stream()
+            .map(SigningMethod::getAlgorithm)
+            .collect(Collectors.toList());
+        assertThat(
+            signingMethods,
+            containsInAnyOrder(
+                SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256,
+                SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256
+            )
+        );
 
-        List<String> digestMethods =
-            getObjectsOfType(entityDescriptor.getExtensions().getUnknownXMLObjects(), DigestMethod.class)
-                .stream()
-                .map(DigestMethod::getAlgorithm)
-                .collect(Collectors.toList());
+        List<String> digestMethods = getObjectsOfType(
+            entityDescriptor.getExtensions().getUnknownXMLObjects(),
+            DigestMethod.class
+        )
+            .stream()
+            .map(DigestMethod::getAlgorithm)
+            .collect(Collectors.toList());
         assertThat(digestMethods, containsInAnyOrder(SignatureConstants.ALGO_ID_DIGEST_SHA256));
     }
 
-    private KeyDescriptor assertKeyOfType(List<KeyDescriptor> keyDescriptors, UsageType usage)
-    {
+    private KeyDescriptor assertKeyOfType(List<KeyDescriptor> keyDescriptors, UsageType usage) {
         KeyDescriptor keyDescriptor = keyDescriptors //
-            .stream().filter(key -> key.getUse() == usage).findAny().get();
+            .stream()
+            .filter(key -> key.getUse() == usage)
+            .findAny()
+            .get();
 
         assertThat(keyDescriptor.getKeyInfo(), notNullValue());
 
@@ -153,12 +166,9 @@ public class Saml2ServiceProviderMetadataFilterTest
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getObjectOfType(List<XMLObject> objects, Class<T> type)
-    {
-        for (XMLObject xmlObject : objects)
-        {
-            if (type.isAssignableFrom(xmlObject.getClass()))
-            {
+    private <T> T getObjectOfType(List<XMLObject> objects, Class<T> type) {
+        for (XMLObject xmlObject : objects) {
+            if (type.isAssignableFrom(xmlObject.getClass())) {
                 return (T) xmlObject;
             }
         }
@@ -167,8 +177,7 @@ public class Saml2ServiceProviderMetadataFilterTest
     }
 
     @SuppressWarnings("unchecked")
-    private <T> List<T> getObjectsOfType(List<XMLObject> objects, Class<T> type)
-    {
+    private <T> List<T> getObjectsOfType(List<XMLObject> objects, Class<T> type) {
         return objects
             .stream()
             .filter(xmlObject -> type.isAssignableFrom(xmlObject.getClass()))
@@ -176,47 +185,51 @@ public class Saml2ServiceProviderMetadataFilterTest
             .collect(Collectors.toList());
     }
 
-    private <T> T assertSingleList(List<T> list)
-    {
+    private <T> T assertSingleList(List<T> list) {
         assertThat(list.size(), equalTo(1));
 
         return list.get(0);
     }
 
-    private Saml2ServiceProviderMetadataFilter buildFilter() throws Exception
-    {
-        RelyingPartyRegistrationResolver registrationResolver =
-            new DefaultRelyingPartyRegistrationResolver(buildRelyingPartyRepository());
+    private Saml2ServiceProviderMetadataFilter buildFilter() throws Exception {
+        RelyingPartyRegistrationResolver registrationResolver = new DefaultRelyingPartyRegistrationResolver(
+            buildRelyingPartyRepository()
+        );
         Saml2MetadataResolver metadataResolver = new PartnerNetSaml2MetadataResolver();
 
-        return new Saml2ServiceProviderMetadataFilter("/saml2/{registrationId}", registrationResolver,
-            metadataResolver);
+        return new Saml2ServiceProviderMetadataFilter(
+            "/saml2/{registrationId}",
+            registrationResolver,
+            metadataResolver
+        );
     }
 
-    private RelyingPartyRegistrationRepository buildRelyingPartyRepository() throws Exception
-    {
+    private RelyingPartyRegistrationRepository buildRelyingPartyRepository() throws Exception {
         Saml2CredentialsManager credentialsManager = Saml2TestUtils.defaultCredentialsManager();
 
         RelyingPartyRegistration registration = withRegistrationId("pnet")
             .entityId(SP_ENTITY_ID)
             .assertionConsumerServiceBinding(Saml2MessageBinding.POST)
             .assertionConsumerServiceLocation(RESPONSE_DESTINATION)
-            .decryptionX509Credentials(credentials -> credentials.addAll(
-                credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION)))
-            .signingX509Credentials(
-                credentials -> credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.SIGNING)))
-            .assertingPartyDetails(builder -> builder
-                .entityId("https://idp.com/saml2")
-                .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
-                .singleSignOnServiceLocation("https://idp.com/saml2/sso")
-                .wantAuthnRequestsSigned(false))
+            .decryptionX509Credentials(credentials ->
+                credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION))
+            )
+            .signingX509Credentials(credentials ->
+                credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.SIGNING))
+            )
+            .assertingPartyDetails(builder ->
+                builder
+                    .entityId("https://idp.com/saml2")
+                    .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
+                    .singleSignOnServiceLocation("https://idp.com/saml2/sso")
+                    .wantAuthnRequestsSigned(false)
+            )
             .build();
 
         return new InMemoryRelyingPartyRegistrationRepository(registration);
     }
 
-    private MockHttpServletRequest buildRequestFromUrl(String url)
-    {
+    private MockHttpServletRequest buildRequestFromUrl(String url) {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(url).build();
@@ -230,13 +243,12 @@ public class Saml2ServiceProviderMetadataFilterTest
         return request;
     }
 
-    private static class TestFilterChain implements FilterChain
-    {
+    private static class TestFilterChain implements FilterChain {
+
         private int numberOfTimesCalled = 0;
 
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException
-        {
+        public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
             numberOfTimesCalled++;
         }
     }

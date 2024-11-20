@@ -1,7 +1,8 @@
 package at.porscheinformatik.pnet.idp.clientshowcase;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -14,31 +15,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
 @Controller
-public class ShowcaseErrorController implements ErrorController
-{
+public class ShowcaseErrorController implements ErrorController {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final ErrorAttributes errorAttributes;
 
-    public ShowcaseErrorController(ErrorAttributes errorAttributes)
-    {
+    public ShowcaseErrorController(ErrorAttributes errorAttributes) {
         super();
-
         this.errorAttributes = errorAttributes;
     }
 
     @GetMapping("/error")
     @ResponseBody
-    public String getErrorMessage(HttpServletRequest request)
-    {
+    public String getErrorMessage(HttpServletRequest request) {
         ServletWebRequest requestAttributes = new ServletWebRequest(request);
 
-        Map<String, Object> attributes = errorAttributes.getErrorAttributes(requestAttributes,
-            ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION, Include.STACK_TRACE));
+        Map<String, Object> attributes = errorAttributes.getErrorAttributes(
+            requestAttributes,
+            ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION, Include.STACK_TRACE)
+        );
 
         String exception = attributes.get("exception").toString();
         String trace = attributes.get("trace").toString();
@@ -51,12 +48,10 @@ public class ShowcaseErrorController implements ErrorController
 
     @GetMapping("/loginerror")
     @ResponseBody
-    public String getLoginErrorMessage(HttpServletRequest request)
-    {
+    public String getLoginErrorMessage(HttpServletRequest request) {
         Exception e = extractLoginException(request);
 
-        if (e == null)
-        {
+        if (e == null) {
             return "Came here without exception";
         }
         logger.error("Error on authentication", e);
@@ -66,12 +61,10 @@ public class ShowcaseErrorController implements ErrorController
 
     @GetMapping("/accessdenied")
     @ResponseBody
-    public String getAccessDeniedErrorMessage(HttpServletRequest request)
-    {
+    public String getAccessDeniedErrorMessage(HttpServletRequest request) {
         Exception e = (Exception) request.getAttribute(WebAttributes.ACCESS_DENIED_403);
 
-        if (e == null)
-        {
+        if (e == null) {
             return "Came here without exception";
         }
         logger.error("Error on authentication", e);
@@ -79,24 +72,20 @@ public class ShowcaseErrorController implements ErrorController
         return buildExceptionMessage(e, "Got access denied exception: ");
     }
 
-    private String buildExceptionMessage(Exception e, String message)
-    {
+    private String buildExceptionMessage(Exception e, String message) {
         return message + e.getClass().getSimpleName() + ": " + e.getMessage();
     }
 
-    private Exception extractLoginException(HttpServletRequest request)
-    {
+    private Exception extractLoginException(HttpServletRequest request) {
         Exception exception = (Exception) request.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 
-        if (exception != null)
-        {
+        if (exception != null) {
             return exception;
         }
 
         HttpSession session = request.getSession(false);
 
-        if (session != null)
-        {
+        if (session != null) {
             return (Exception) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
         }
 

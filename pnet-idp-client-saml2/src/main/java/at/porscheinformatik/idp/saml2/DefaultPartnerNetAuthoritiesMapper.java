@@ -1,28 +1,26 @@
 package at.porscheinformatik.idp.saml2;
 
+import at.porscheinformatik.idp.PartnerNetRoleDTO;
+import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.CollectionUtils;
-
-import at.porscheinformatik.idp.PartnerNetRoleDTO;
-import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
 
 /**
  * @deprecated use {@link DefaultPartnerNetSaml2AuthoritiesMapper} instead
  */
 @Deprecated
-public class DefaultPartnerNetAuthoritiesMapper implements PartnerNetSaml2AuthoritiesMapper
-{
+public class DefaultPartnerNetAuthoritiesMapper implements PartnerNetSaml2AuthoritiesMapper {
+
     @Override
-    public Collection<? extends GrantedAuthority> apply(PartnerNetSaml2AuthenticationPrincipal principal,
-        Saml2Data data)
-    {
-        if (CollectionUtils.isEmpty(principal.getRoles()))
-        {
+    public Collection<? extends GrantedAuthority> apply(
+        PartnerNetSaml2AuthenticationPrincipal principal,
+        Saml2Data data
+    ) {
+        if (CollectionUtils.isEmpty(principal.getRoles())) {
             return Collections.emptyList();
         }
 

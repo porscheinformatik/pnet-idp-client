@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head>
         <meta charset="utf-8" />
@@ -17,12 +17,15 @@
                 border-collapse: collapse;
             }
 
-            td, th {
+            td,
+            th {
                 border: 1px solid #ddd;
                 padding: 8px;
             }
 
-            tr:nth-child(even){background-color: #f2f2f2;}
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
 
             th {
                 text-align: left;
@@ -36,19 +39,18 @@
         </style>
     </head>
     <body>
-
         <form th:action="@{/data/authorization}" method="get">
             <div>
                 <div>
-                    <input type="radio" id="oidc" name="protocol" value="oidc" checked="checked"/>
+                    <input type="radio" id="oidc" name="protocol" value="oidc" checked="checked" />
                     <label for="oidc">OIDC</label>
 
-                    <input type="radio" id="saml2" name="protocol" value="saml2"/>
+                    <input type="radio" id="saml2" name="protocol" value="saml2" />
                     <label for="saml2">SAML2</label>
                 </div>
 
                 <div>
-                    <input type="checkbox" id="require_mfa" name="require_mfa"/>
+                    <input type="checkbox" id="require_mfa" name="require_mfa" />
                     <label for="require_mfa">Require MFA</label>
                 </div>
             </div>
@@ -73,8 +75,8 @@
                     </td>
                     <td>
                         When a user selected "Remember Me" during the login process, the Identity Provider will not ask
-                        the user to enter Username and Password for a specific time.
-                        You can override and shorten this time by setting the max_age parameter.<br>
+                        the user to enter Username and Password for a specific time. You can override and shorten this
+                        time by setting the max_age parameter.<br />
                         The value is in seconds.
                     </td>
                 </tr>
@@ -88,7 +90,7 @@
                         <input type="checkbox" id="force_authentication" name="force_authentication" />
                     </td>
                     <td>
-                        Same as max_age = 0 for OIDC<br>
+                        Same as max_age = 0 for OIDC<br />
                         Same as max_age = 300 for SAML2 (5 Minutes)
                     </td>
                 </tr>
@@ -102,10 +104,10 @@
                         <input type="number" id="max_age_mfa" name="max_age_mfa" />
                     </td>
                     <td>
-                        When the user selected "Remember" multi-factor authentication after a successful MFA login,
-                        the user technically makes the device the second factor for the next 30 days.
-                        You can override and shorten this time by setting the max_age_mfa parameter.<br>
-                        (Setting max_age_mfa to 0 will force the user to enter the MFA code every time.)<br>
+                        When the user selected "Remember" multi-factor authentication after a successful MFA login, the
+                        user technically makes the device the second factor for the next 30 days. You can override and
+                        shorten this time by setting the max_age_mfa parameter.<br />
+                        (Setting max_age_mfa to 0 will force the user to enter the MFA code every time.)<br />
                         The value is in seconds.
                     </td>
                 </tr>
@@ -119,9 +121,11 @@
                         <input type="text" id="tenant" name="tenant" />
                     </td>
                     <td>
-                        Forces a login, if the user is already logged in at the Identity Provider but to another tenant.<br>
+                        Forces a login, if the user is already logged in at the Identity Provider but to another
+                        tenant.<br />
                         Example values: AT, DE, CZ, etc.
                     </td>
+                </tr>
             </table>
 
             <button type="submit">Login</button>

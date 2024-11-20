@@ -13,12 +13,10 @@ import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
  * @author Daniel Furtlehner
  */
 @Configuration
-public class PartnerNetOpenidConnectConfiguration
-{
+public class PartnerNetOpenidConnectConfiguration {
 
     @Bean
-    public JwtDecoderFactory<ClientRegistration> jwtDecoderFactory()
-    {
+    public JwtDecoderFactory<ClientRegistration> jwtDecoderFactory() {
         OidcIdTokenDecoderFactory factory = new OidcIdTokenDecoderFactory();
         factory.setJwtValidatorFactory(new PartnerNetOidcValidatorFactory());
         return factory;

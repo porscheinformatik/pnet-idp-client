@@ -12,11 +12,12 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.time.Instant;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
-
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -62,28 +63,22 @@ import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.SignatureSupport;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
-
 /**
  * @author Daniel Furtlehner
  */
-public final class Saml2ObjectUtils
-{
+public final class Saml2ObjectUtils {
+
     //ID is required. Specification says between 128 and 160 bit are perfect
     private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy(20);
 
-    private Saml2ObjectUtils()
-    {
+    private Saml2ObjectUtils() {
         super();
     }
 
     /**
      * @return a random indentifier for saml messages
      */
-    public static String generateId()
-    {
+    public static String generateId() {
         return ID_GENERATOR.generateIdentifier();
     }
 
@@ -95,37 +90,36 @@ public final class Saml2ObjectUtils
      * @param inResponseTo - Id des SAML Requests
      * @return SAML Response
      */
-    public static Response response(@Nonnull String issuer, @Nullable String destination, @Nullable String inResponseTo)
-    {
+    public static Response response(
+        @Nonnull String issuer,
+        @Nullable String destination,
+        @Nullable String inResponseTo
+    ) {
         Response response = createSamlObject(Response.DEFAULT_ELEMENT_NAME);
 
         response.setIssueInstant(Instant.now());
         response.setID(generateId());
         response.setIssuer(issuer(issuer));
 
-        if (destination != null)
-        {
+        if (destination != null) {
             response.setDestination(destination);
         }
 
-        if (inResponseTo != null)
-        {
+        if (inResponseTo != null) {
             response.setInResponseTo(inResponseTo);
         }
 
         return response;
     }
 
-    public static Status status(@Nonnull String statusCode, @Nullable String message)
-    {
+    public static Status status(@Nonnull String statusCode, @Nullable String message) {
         Status status = createSamlObject(Status.DEFAULT_ELEMENT_NAME);
 
         StatusCode code = createSamlObject(StatusCode.DEFAULT_ELEMENT_NAME);
         code.setValue(statusCode);
         status.setStatusCode(code);
 
-        if (message != null)
-        {
+        if (message != null) {
             StatusMessage statusMessage = createSamlObject(StatusMessage.DEFAULT_ELEMENT_NAME);
             statusMessage.setValue(message);
             status.setStatusMessage(statusMessage);
@@ -140,8 +134,7 @@ public final class Saml2ObjectUtils
      * @param issuer the issuer value
      * @return the saml issuer
      */
-    public static Issuer issuer(String issuer)
-    {
+    public static Issuer issuer(String issuer) {
         Issuer samlIssuer = createSamlObject(Issuer.DEFAULT_ELEMENT_NAME);
         samlIssuer.setValue(requireNonNull(issuer, "Issuer value must not be null"));
 
@@ -149,8 +142,7 @@ public final class Saml2ObjectUtils
     }
 
     @Nonnull
-    public static Subject subject(String assertionConsumerServiceUrl, int validityInSeconds, String authnRequestId)
-    {
+    public static Subject subject(String assertionConsumerServiceUrl, int validityInSeconds, String authnRequestId) {
         Subject subject = createSamlObject(Subject.DEFAULT_ELEMENT_NAME);
 
         subject.setNameID(randomNameID());
@@ -162,8 +154,7 @@ public final class Saml2ObjectUtils
         confirmData.setRecipient(assertionConsumerServiceUrl);
         confirmData.setNotOnOrAfter(Instant.now().plusSeconds(validityInSeconds));
 
-        if (authnRequestId != null)
-        {
+        if (authnRequestId != null) {
             confirmData.setInResponseTo(authnRequestId);
         }
 
@@ -184,8 +175,7 @@ public final class Saml2ObjectUtils
      * @param nameFormat the name format
      * @return the attribute
      */
-    public static Attribute attribute(String name, String nameFormat)
-    {
+    public static Attribute attribute(String name, String nameFormat) {
         Attribute attribute = createSamlObject(Attribute.DEFAULT_ELEMENT_NAME);
         attribute.setName(name);
         attribute.setNameFormat(nameFormat);
@@ -193,19 +183,17 @@ public final class Saml2ObjectUtils
         return attribute;
     }
 
-    public static <T extends SAMLObject> T createSamlObject(QName defaultName)
-    {
+    public static <T extends SAMLObject> T createSamlObject(QName defaultName) {
         XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
-        @SuppressWarnings("unchecked") SAMLObjectBuilder<T> builder =
-            (SAMLObjectBuilder<T>) factory.getBuilder(defaultName);
+        @SuppressWarnings("unchecked")
+        SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) factory.getBuilder(defaultName);
 
         return builder.buildObject();
     }
 
     @Nonnull
-    public static Conditions conditions(String serviceIdentifier)
-    {
+    public static Conditions conditions(String serviceIdentifier) {
         Conditions conditions = createSamlObject(Conditions.DEFAULT_ELEMENT_NAME);
         conditions.getConditions().add(createSamlObject(OneTimeUse.DEFAULT_ELEMENT_NAME));
 
@@ -220,9 +208,10 @@ public final class Saml2ObjectUtils
     }
 
     @Nonnull
-    public static AuthnStatement authnStatement(@Nonnull Instant authenticationTime,
-        @Nonnull String authnContextClassRef)
-    {
+    public static AuthnStatement authnStatement(
+        @Nonnull Instant authenticationTime,
+        @Nonnull String authnContextClassRef
+    ) {
         AuthnStatement authn = createSamlObject(AuthnStatement.DEFAULT_ELEMENT_NAME);
 
         authn.setAuthnInstant(authenticationTime);
@@ -232,17 +221,20 @@ public final class Saml2ObjectUtils
         return authn;
     }
 
-    public static AttributeStatement attributeStatement()
-    {
+    public static AttributeStatement attributeStatement() {
         AttributeStatement attributeStatement = createSamlObject(AttributeStatement.DEFAULT_ELEMENT_NAME);
 
         return attributeStatement;
     }
 
     @Nonnull
-    public static Assertion assertion(@Nonnull String issuer, @Nonnull Subject subject, @Nonnull Conditions conditions,
-        @Nonnull AuthnStatement authnStatement, @Nonnull AttributeStatement attributeStatement)
-    {
+    public static Assertion assertion(
+        @Nonnull String issuer,
+        @Nonnull Subject subject,
+        @Nonnull Conditions conditions,
+        @Nonnull AuthnStatement authnStatement,
+        @Nonnull AttributeStatement attributeStatement
+    ) {
         Assertion assertion = createSamlObject(Assertion.DEFAULT_ELEMENT_NAME);
 
         assertion.setIssuer(issuer(issuer));
@@ -257,16 +249,18 @@ public final class Saml2ObjectUtils
     }
 
     @Nonnull
-    public static EncryptedAssertion encryptAssertion(Assertion assertion, String recipientEntityId,
-        Saml2X509Credential keyInfo) throws EncryptionException
-    {
+    public static EncryptedAssertion encryptAssertion(
+        Assertion assertion,
+        String recipientEntityId,
+        Saml2X509Credential keyInfo
+    ) throws EncryptionException {
         BasicX509Credential credential = new BasicX509Credential(keyInfo.getCertificate());
 
-        KeyInfoGeneratorFactory keyInfoGeneratorFactory = SecurityConfigurationSupport
-            .getGlobalEncryptionConfiguration()
-            .getKeyTransportKeyInfoGeneratorManager()
-            .getDefaultManager()
-            .getFactory(credential);
+        KeyInfoGeneratorFactory keyInfoGeneratorFactory =
+            SecurityConfigurationSupport.getGlobalEncryptionConfiguration()
+                .getKeyTransportKeyInfoGeneratorManager()
+                .getDefaultManager()
+                .getFactory(credential);
 
         DataEncryptionParameters dataParams = new DataEncryptionParameters();
         dataParams.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM);
@@ -283,9 +277,7 @@ public final class Saml2ObjectUtils
     }
 
     public static void sign(SignableSAMLObject signable, Saml2X509Credential credential)
-        throws SecurityException, MarshallingException, SignatureException, KeyStoreException, NoSuchAlgorithmException,
-        CertificateException, IOException
-    {
+        throws SecurityException, MarshallingException, SignatureException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         Credential samlCredential = new BasicX509Credential(credential.getCertificate(), credential.getPrivateKey());
 
         SignatureSigningParameters parameters = new SignatureSigningParameters();
@@ -303,8 +295,7 @@ public final class Saml2ObjectUtils
      * @return the name id
      */
     @Nonnull
-    private static NameID randomNameID()
-    {
+    private static NameID randomNameID() {
         NameID samlID = createSamlObject(NameID.DEFAULT_ELEMENT_NAME);
 
         samlID.setFormat(NameIDType.TRANSIENT);
@@ -314,8 +305,7 @@ public final class Saml2ObjectUtils
     }
 
     @Nonnull
-    private static AuthnContext authnContext(@Nonnull String authnContextClassRef)
-    {
+    private static AuthnContext authnContext(@Nonnull String authnContextClassRef) {
         AuthnContext context = createSamlObject(AuthnContext.DEFAULT_ELEMENT_NAME);
 
         AuthnContextClassRef classRef = createSamlObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
@@ -337,8 +327,7 @@ public final class Saml2ObjectUtils
      * @throws XMLParserException - when something goes wrong
      */
     @SuppressWarnings("unchecked")
-    public static <T> T unmarshal(String xmlAsString) throws UnmarshallingException, XMLParserException
-    {
+    public static <T> T unmarshal(String xmlAsString) throws UnmarshallingException, XMLParserException {
         return (T) XMLObjectSupport.unmarshallFromReader(getParserPool(), new StringReader(xmlAsString));
     }
 }

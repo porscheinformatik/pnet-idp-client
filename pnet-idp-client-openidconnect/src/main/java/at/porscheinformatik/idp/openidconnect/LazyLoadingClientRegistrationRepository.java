@@ -6,7 +6,6 @@ package at.porscheinformatik.idp.openidconnect;
 import static java.util.Objects.*;
 
 import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -16,8 +15,8 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 /**
  * @author Daniel Furtlehner
  */
-public class LazyLoadingClientRegistrationRepository implements ClientRegistrationRepository
-{
+public class LazyLoadingClientRegistrationRepository implements ClientRegistrationRepository {
+
     private static final Logger LOG = LoggerFactory.getLogger(LazyLoadingClientRegistrationRepository.class);
 
     private final String issuerUrl;
@@ -27,9 +26,12 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
 
     private ClientRegistration registration;
 
-    public LazyLoadingClientRegistrationRepository(String issuerUrl, String registrationId, String clientId,
-        String clientSecret)
-    {
+    public LazyLoadingClientRegistrationRepository(
+        String issuerUrl,
+        String registrationId,
+        String clientId,
+        String clientSecret
+    ) {
         this.issuerUrl = issuerUrl;
         this.registrationId = registrationId;
         this.clientId = requireNonNull(clientId, "Client Id must not be null");
@@ -37,36 +39,27 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
     }
 
     @Override
-    public ClientRegistration findByRegistrationId(String registrationId)
-    {
-        if (!Objects.equals(registrationId, this.registrationId))
-        {
+    public ClientRegistration findByRegistrationId(String registrationId) {
+        if (!Objects.equals(registrationId, this.registrationId)) {
             return null;
         }
 
-        if (registration == null)
-        {
+        if (registration == null) {
             tryToloadRegistration();
         }
 
         return registration;
     }
 
-    private void tryToloadRegistration()
-    {
-        try
-        {
-            registration = ClientRegistrations
-                .fromOidcIssuerLocation(issuerUrl)
+    private void tryToloadRegistration() {
+        try {
+            registration = ClientRegistrations.fromOidcIssuerLocation(issuerUrl)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .registrationId(registrationId)
                 .build();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             LOG.error("Could not fetch client registration for Open ID Connect. Trying again on next call.", e);
         }
     }
-
 }

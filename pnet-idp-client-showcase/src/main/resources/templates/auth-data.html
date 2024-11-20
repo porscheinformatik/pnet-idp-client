@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="utf-8" />
@@ -9,10 +9,9 @@
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
     </head>
     <body>
-
         <form th:action="@{/logout}" method="POST">
-    		<button type="submit">Logout</button>
-    	</form>
+            <button type="submit">Logout</button>
+        </form>
 
         <pre th:text="${authData}"></pre>
     </body>

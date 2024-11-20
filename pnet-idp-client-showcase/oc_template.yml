@@ -3,133 +3,133 @@ apiVersion: template.openshift.io/v1
 metadata:
   name: pnet-idp-client-showcase-template
 parameters:
-- name: ENVIRONMENT
-  description: The name of the Environment eg. DEV, QA, PROD
-  required: true
-- name: APPLICATION_NAME
-  description: The name of the application. Alle Resources are prefixed with this name
-  value: "pnet-idp-client-showcase"
-- name: HTTP_PORT
-  description: The TCP port to use for the container
-  value: "8080"
-- name: JAVA_OPTIONS
-  required: true
-- name: IMAGE_NAME
-  required: true
-- name: ROUTE_URL
-  required: true
-- name: GIT_COMMIT
-  description: SHA-1 hash of the commit
-  value: "none"
+  - name: ENVIRONMENT
+    description: The name of the Environment eg. DEV, QA, PROD
+    required: true
+  - name: APPLICATION_NAME
+    description: The name of the application. Alle Resources are prefixed with this name
+    value: "pnet-idp-client-showcase"
+  - name: HTTP_PORT
+    description: The TCP port to use for the container
+    value: "8080"
+  - name: JAVA_OPTIONS
+    required: true
+  - name: IMAGE_NAME
+    required: true
+  - name: ROUTE_URL
+    required: true
+  - name: GIT_COMMIT
+    description: SHA-1 hash of the commit
+    value: "none"
 
 objects:
-- kind: ImageStream
-  apiVersion: v1
-  metadata:
-    name: ${APPLICATION_NAME}-${ENVIRONMENT}
-    labels:
-      app: pnet-${ENVIRONMENT}
-      module: pnet-idp-client-showcase-${ENVIRONMENT}
-  spec:
-    tags:
-    - name: latest
-      from:
-        kind: DockerImage
-        name: ${IMAGE_NAME}:latest
-      referencePolicy:
-        type: Source
-
-- kind: Deployment
-  apiVersion: apps/v1
-  metadata:
-    name: ${APPLICATION_NAME}-${ENVIRONMENT}
-    labels:
-      app: pnet-${ENVIRONMENT}
-      module: pnet-idp-client-showcase-${ENVIRONMENT}
-      git-commit: ${GIT_COMMIT}
-  spec:
-    replicas: 1
-    selector:
-      matchLabels:
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: ${APPLICATION_NAME}-${ENVIRONMENT}
+      labels:
         app: pnet-${ENVIRONMENT}
         module: pnet-idp-client-showcase-${ENVIRONMENT}
-    template:
-      metadata:
-        labels:
+    spec:
+      tags:
+        - name: latest
+          from:
+            kind: DockerImage
+            name: ${IMAGE_NAME}:latest
+          referencePolicy:
+            type: Source
+
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      name: ${APPLICATION_NAME}-${ENVIRONMENT}
+      labels:
+        app: pnet-${ENVIRONMENT}
+        module: pnet-idp-client-showcase-${ENVIRONMENT}
+        git-commit: ${GIT_COMMIT}
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
           app: pnet-${ENVIRONMENT}
           module: pnet-idp-client-showcase-${ENVIRONMENT}
-          git-commit: ${GIT_COMMIT}
-      spec:
-        restartPolicy: Always
-        containers:
-        - name: ${APPLICATION_NAME}-${ENVIRONMENT}
-          image: ${IMAGE_NAME}:latest
-          imagePullPolicy: Always
-          ports:
-          - name: http
-            containerPort: ${{HTTP_PORT}}
-            protocol: TCP
-          env:
-          - name: JAVA_OPTIONS
-            value: ${JAVA_OPTIONS}
-          envFrom:
-            - secretRef:
-                name: ${APPLICATION_NAME}-${ENVIRONMENT}
-          volumeMounts:
-          - name: certificate-volume
-            mountPath: "/opt/app-root/certificates"
-            readOnly: true
-          readinessProbe:
-            tcpSocket:
-              port: ${{HTTP_PORT}}
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 5
-            timeoutSeconds: 5
-          resources:
-            requests:
-              cpu: 20m
-              memory: 500Mi
-            limits:
-              cpu: 200m
-              memory: 550Mi
-        volumes:
-        - name: certificate-volume
-          secret:
-           secretName: ${APPLICATION_NAME}-${ENVIRONMENT}-certificates
+      template:
+        metadata:
+          labels:
+            app: pnet-${ENVIRONMENT}
+            module: pnet-idp-client-showcase-${ENVIRONMENT}
+            git-commit: ${GIT_COMMIT}
+        spec:
+          restartPolicy: Always
+          containers:
+            - name: ${APPLICATION_NAME}-${ENVIRONMENT}
+              image: ${IMAGE_NAME}:latest
+              imagePullPolicy: Always
+              ports:
+                - name: http
+                  containerPort: ${{HTTP_PORT}}
+                  protocol: TCP
+              env:
+                - name: JAVA_OPTIONS
+                  value: ${JAVA_OPTIONS}
+              envFrom:
+                - secretRef:
+                    name: ${APPLICATION_NAME}-${ENVIRONMENT}
+              volumeMounts:
+                - name: certificate-volume
+                  mountPath: "/opt/app-root/certificates"
+                  readOnly: true
+              readinessProbe:
+                tcpSocket:
+                  port: ${{HTTP_PORT}}
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 5
+                timeoutSeconds: 5
+              resources:
+                requests:
+                  cpu: 20m
+                  memory: 500Mi
+                limits:
+                  cpu: 200m
+                  memory: 550Mi
+          volumes:
+            - name: certificate-volume
+              secret:
+                secretName: ${APPLICATION_NAME}-${ENVIRONMENT}-certificates
 
-- kind: Service
-  apiVersion: v1
-  metadata:
-    labels:
-      app: pnet-${ENVIRONMENT}
-      module: pnet-idp-client-showcase-${ENVIRONMENT}
-    name: ${APPLICATION_NAME}-${ENVIRONMENT}
-  spec:
-    ports:
-    - name: http
-      port: ${{HTTP_PORT}}
-      protocol: TCP
-      targetPort: ${{HTTP_PORT}}
-    selector:
-      app: pnet-${ENVIRONMENT}
-      module: pnet-idp-client-showcase-${ENVIRONMENT}
-    type: ClusterIP
-
-- kind: Route
-  apiVersion: v1
-  metadata:
-    name: ${APPLICATION_NAME}-${ENVIRONMENT}-ext
-    labels:
-      app: pnet-${ENVIRONMENT}
-      module: pnet-idp-client-showcase-${ENVIRONMENT}
-  spec:
-    host: ${ROUTE_URL}
-    port:
-      targetPort: http
-    tls:
-      termination: edge
-    to:
-      kind: Service
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      labels:
+        app: pnet-${ENVIRONMENT}
+        module: pnet-idp-client-showcase-${ENVIRONMENT}
       name: ${APPLICATION_NAME}-${ENVIRONMENT}
+    spec:
+      ports:
+        - name: http
+          port: ${{HTTP_PORT}}
+          protocol: TCP
+          targetPort: ${{HTTP_PORT}}
+      selector:
+        app: pnet-${ENVIRONMENT}
+        module: pnet-idp-client-showcase-${ENVIRONMENT}
+      type: ClusterIP
+
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: ${APPLICATION_NAME}-${ENVIRONMENT}-ext
+      labels:
+        app: pnet-${ENVIRONMENT}
+        module: pnet-idp-client-showcase-${ENVIRONMENT}
+    spec:
+      host: ${ROUTE_URL}
+      port:
+        targetPort: http
+      tls:
+        termination: edge
+      to:
+        kind: Service
+        name: ${APPLICATION_NAME}-${ENVIRONMENT}

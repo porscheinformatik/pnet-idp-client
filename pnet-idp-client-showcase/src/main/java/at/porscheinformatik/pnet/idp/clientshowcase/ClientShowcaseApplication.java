@@ -10,11 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Daniel Furtlehner
  */
 @SpringBootApplication
-public class ClientShowcaseApplication
-{
+public class ClientShowcaseApplication {
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         SpringApplication.run(ClientShowcaseApplication.class, args);
     }
 }

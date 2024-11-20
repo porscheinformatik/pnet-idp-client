@@ -10,18 +10,14 @@ import org.opensaml.saml.saml2.core.Response;
 /**
  * @author Daniel Furtlehner
  */
-public class ThrowOnMissingIdMessageHandler extends AbstractSimpleMessageHandler
-{
+public class ThrowOnMissingIdMessageHandler extends AbstractSimpleMessageHandler {
 
     @Override
-    public void invoke(MessageContext messageContext) throws MessageHandlerException
-    {
+    public void invoke(MessageContext messageContext) throws MessageHandlerException {
         Response response = getResponse(messageContext);
 
-        if (response.getID() == null)
-        {
+        if (response.getID() == null) {
             throw new MessageHandlerException("Message ID must not be null.");
         }
     }
-
 }

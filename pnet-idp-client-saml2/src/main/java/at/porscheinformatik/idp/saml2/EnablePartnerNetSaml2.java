@@ -5,7 +5,6 @@ import static java.lang.annotation.RetentionPolicy.*;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
@@ -14,10 +13,9 @@ import org.springframework.context.annotation.Import;
  *
  */
 @Retention(RUNTIME)
-@Target({TYPE})
+@Target({ TYPE })
 @Import(PartnerNetSaml2ImportSelector.class)
 @EnableConfigurationProperties(Saml2CredentialsProperties.class)
-public @interface EnablePartnerNetSaml2
-{
-    // No additional config needed
+public @interface EnablePartnerNetSaml2 {
+// No additional config needed
 }

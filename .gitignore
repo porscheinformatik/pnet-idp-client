@@ -14,4 +14,5 @@ buildNumber.properties
 .settings/
 
 # IntelliJ's project's and code style
-.idea
+.idea/
+node_modules/

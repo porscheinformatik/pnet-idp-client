@@ -7,6 +7,7 @@ import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectProvider;
 import at.porscheinformatik.idp.saml2.*;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -21,8 +22,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
-import java.util.List;
-
 /**
  * @author Daniel Furtlehner
  */
@@ -31,16 +30,15 @@ import java.util.List;
 @EnablePartnerNetOpenIdConnect
 @EnablePartnerNetSaml2
 @EnableScheduling
-public class ClientShowcaseSecurityConfig
-{
+public class ClientShowcaseSecurityConfig {
+
     private static final Profiles PROD = Profiles.of("prod");
     private static final Profiles QA = Profiles.of("qa");
     private static final Profiles DEV = Profiles.of("dev");
     private static final Profiles LOCAL = Profiles.of("local");
 
     @Bean
-    public AuthenticationManager authenticationManager(List<AuthenticationProvider> providers)
-    {
+    public AuthenticationManager authenticationManager(List<AuthenticationProvider> providers) {
         /*
          * To get rid of the default AuthenticationManager registered by spring boot, that uses a auto generated
          * password
@@ -51,8 +49,7 @@ public class ClientShowcaseSecurityConfig
          * handle the authentication
          * on their own.
          */
-        if (providers.isEmpty())
-        {
+        if (providers.isEmpty()) {
             providers = List.of(new NoopAuthenticationProvider());
         }
 
@@ -60,17 +57,17 @@ public class ClientShowcaseSecurityConfig
     }
 
     @Bean
-    public Saml2CredentialsManager saml2CredentialsManager(Saml2CredentialsProperties samlCredentialsConfig)
-    {
+    public Saml2CredentialsManager saml2CredentialsManager(Saml2CredentialsProperties samlCredentialsConfig) {
         return new DefaultSaml2CredentialsManager(samlCredentialsConfig);
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment,
-        Saml2CredentialsManager saml2CredentialsManager) throws Exception
-    {
-        if (environment.acceptsProfiles(LOCAL))
-        {
+    public SecurityFilterChain securityFilterChain(
+        HttpSecurity http,
+        Environment environment,
+        Saml2CredentialsManager saml2CredentialsManager
+    ) throws Exception {
+        if (environment.acceptsProfiles(LOCAL)) {
             http.headers(customizer -> {
                 customizer.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable);
 
@@ -81,14 +78,14 @@ public class ClientShowcaseSecurityConfig
             });
         }
 
-        http
-                .with(new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
+        http.with(
+            new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
-                                .clientSecret(environment.getProperty("oidc.client.secret")),
-                        customizer -> customizer.customize(oauth -> oauth.failureUrl("/loginerror")));
+                .clientSecret(environment.getProperty("oidc.client.secret")),
+            customizer -> customizer.customize(oauth -> oauth.failureUrl("/loginerror"))
+        );
 
-        PartnerNetSaml2Configurer
-            .apply(http, getPartnerNetSaml2Provider(environment))
+        PartnerNetSaml2Configurer.apply(http, getPartnerNetSaml2Provider(environment))
             .credentials(saml2CredentialsManager)
             .customizer(saml2 -> saml2.failureUrl("/loginerror"));
 
@@ -110,62 +107,62 @@ public class ClientShowcaseSecurityConfig
         });
 
         http.authorizeHttpRequests(customizer ->
-                customizer.requestMatchers("/", "/accessdenied", "/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
-                        .permitAll()
-                        .requestMatchers("/data/authorization")
-                        .fullyAuthenticated()
-                        .anyRequest()
-                        .denyAll());
+            customizer
+                .requestMatchers(
+                    "/",
+                    "/accessdenied",
+                    "/logoutinfo/**",
+                    "/logout/**",
+                    "/loginerror",
+                    "/error",
+                    "/favicon.ico"
+                )
+                .permitAll()
+                .requestMatchers("/data/authorization")
+                .fullyAuthenticated()
+                .anyRequest()
+                .denyAll()
+        );
 
         http.requiresChannel(customizer -> customizer.anyRequest().requiresSecure());
 
         return http.build();
     }
 
-    private PartnerNetOpenIdConnectProvider getPartnerNetOidcProvider(Environment environment)
-    {
-        if (environment.acceptsProfiles(PROD))
-        {
+    private PartnerNetOpenIdConnectProvider getPartnerNetOidcProvider(Environment environment) {
+        if (environment.acceptsProfiles(PROD)) {
             return PartnerNetOpenIdConnectProvider.PROD;
         }
 
-        if (environment.acceptsProfiles(QA))
-        {
+        if (environment.acceptsProfiles(QA)) {
             return PartnerNetOpenIdConnectProvider.QA;
         }
 
-        if (environment.acceptsProfiles(DEV))
-        {
+        if (environment.acceptsProfiles(DEV)) {
             return PartnerNetOpenIdConnectProvider.DEV;
         }
 
-        if (environment.acceptsProfiles(LOCAL))
-        {
+        if (environment.acceptsProfiles(LOCAL)) {
             return PartnerNetOpenIdConnectProvider.LOCAL;
         }
 
         throw new IllegalArgumentException("No supported profile found.");
     }
 
-    private PartnerNetSaml2Provider getPartnerNetSaml2Provider(Environment environment)
-    {
-        if (environment.acceptsProfiles(PROD))
-        {
+    private PartnerNetSaml2Provider getPartnerNetSaml2Provider(Environment environment) {
+        if (environment.acceptsProfiles(PROD)) {
             return PartnerNetSaml2Provider.PROD;
         }
 
-        if (environment.acceptsProfiles(QA))
-        {
+        if (environment.acceptsProfiles(QA)) {
             return PartnerNetSaml2Provider.QA;
         }
 
-        if (environment.acceptsProfiles(DEV))
-        {
+        if (environment.acceptsProfiles(DEV)) {
             return PartnerNetSaml2Provider.DEV;
         }
 
-        if (environment.acceptsProfiles(LOCAL))
-        {
+        if (environment.acceptsProfiles(LOCAL)) {
             return PartnerNetSaml2Provider.LOCAL;
         }
 

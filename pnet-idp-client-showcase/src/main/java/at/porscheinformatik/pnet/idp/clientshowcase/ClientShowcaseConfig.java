@@ -1,19 +1,16 @@
 package at.porscheinformatik.pnet.idp.clientshowcase;
 
+import at.porscheinformatik.pnet.idp.clientshowcase.session.SessionWrapperFilter;
 import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import at.porscheinformatik.pnet.idp.clientshowcase.session.SessionWrapperFilter;
-
 @Configuration
-public class ClientShowcaseConfig
-{
+public class ClientShowcaseConfig {
 
     @Bean
-    public TomcatContextCustomizer contextCustomizer()
-    {
+    public TomcatContextCustomizer contextCustomizer() {
         return context -> {
             // We have to set the same site attribute, otherwise saml authentication does not work because of missing session cookies
             Rfc6265CookieProcessor processor = new Rfc6265CookieProcessor();
@@ -37,8 +34,7 @@ public class ClientShowcaseConfig
      * @return the filter
      */
     @Bean
-    public SessionWrapperFilter sessionWrapperFilter()
-    {
+    public SessionWrapperFilter sessionWrapperFilter() {
         return new SessionWrapperFilter();
     }
 }

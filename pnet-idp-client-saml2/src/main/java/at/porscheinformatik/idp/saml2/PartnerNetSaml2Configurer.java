@@ -7,13 +7,14 @@ import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import static java.lang.String.*;
 import static java.util.Objects.*;
 
+import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
+import jakarta.servlet.Filter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,22 +34,19 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
-import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
-import jakarta.servlet.Filter;
-
 /**
  * @author Daniel Furtlehner
  */
-public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNetSaml2Configurer, HttpSecurity>
-{
+public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNetSaml2Configurer, HttpSecurity> {
+
     /**
      * @param http the http security to configure
      * @param provider the authentication provider to use.
      * @return the configurer for further customization
      * @throws Exception when an exception occurs while configuring
      */
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider) throws Exception
-    {
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider)
+        throws Exception {
         return apply(http, provider.getEntityId(), provider.getEntityId());
     }
 
@@ -58,8 +56,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @return the configurer for further customization
      * @throws Exception on occasion
      */
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId) throws Exception
-    {
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId) throws Exception {
         return apply(http, entityId, entityId);
     }
 
@@ -71,10 +68,11 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @throws Exception when an exception occurs while configuring
      */
     public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl)
-        throws Exception
-    {
+        throws Exception {
         http //
-            .authorizeHttpRequests().requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH).permitAll();
+            .authorizeHttpRequests()
+            .requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
+            .permitAll();
 
         return http.apply(new PartnerNetSaml2Configurer(entityId, metadataUrl));
     }
@@ -102,10 +100,8 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         // Noop customizer. Users can override this to add custom configurations
     };
 
-    private PartnerNetSaml2Configurer(String entityId, String metadataUrl)
-    {
+    private PartnerNetSaml2Configurer(String entityId, String metadataUrl) {
         super();
-
         this.entityId = entityId;
         this.metadataUrl = metadataUrl;
     }
@@ -116,8 +112,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      *
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer failOnStartup()
-    {
+    public PartnerNetSaml2Configurer failOnStartup() {
         failOnStartup = true;
 
         return this;
@@ -132,8 +127,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * DefaultSaml2CredentialsManager bean as manager!
      */
     @Deprecated(forRemoval = true)
-    PartnerNetSaml2Configurer credentials(Saml2CredentialsConfig... credentialConfigs)
-    {
+    PartnerNetSaml2Configurer credentials(Saml2CredentialsConfig... credentialConfigs) {
         credentialsManager = new DefaultSaml2CredentialsManager(() -> Arrays.asList(credentialConfigs));
 
         return this;
@@ -148,8 +142,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * DefaultSaml2CredentialsManager bean as manager!
      */
     @Deprecated(forRemoval = true)
-    PartnerNetSaml2Configurer credentials(Supplier<List<Saml2CredentialsConfig>> supplier)
-    {
+    PartnerNetSaml2Configurer credentials(Supplier<List<Saml2CredentialsConfig>> supplier) {
         credentialsManager = new DefaultSaml2CredentialsManager(supplier);
 
         return this;
@@ -161,8 +154,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param credentialsManager the credentials manager to use
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer credentials(Saml2CredentialsManager credentialsManager)
-    {
+    public PartnerNetSaml2Configurer credentials(Saml2CredentialsManager credentialsManager) {
         this.credentialsManager = credentialsManager;
 
         return this;
@@ -175,8 +167,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @return the builder for a fluent api
      * @see HttpClientFactory#defaultClient()
      */
-    public PartnerNetSaml2Configurer clientFactory(HttpClientFactory clientFactory)
-    {
+    public PartnerNetSaml2Configurer clientFactory(HttpClientFactory clientFactory) {
         this.clientFactory = clientFactory;
 
         return this;
@@ -188,8 +179,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param responseProcessor the response processor to use
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer responseProcessor(Saml2ResponseProcessor responseProcessor)
-    {
+    public PartnerNetSaml2Configurer responseProcessor(Saml2ResponseProcessor responseProcessor) {
         this.responseProcessor = responseProcessor;
 
         return this;
@@ -201,8 +191,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param responseParser the response parser to use
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer responseParser(Saml2ResponseParser responseParser)
-    {
+    public PartnerNetSaml2Configurer responseParser(Saml2ResponseParser responseParser) {
         this.responseParser = responseParser;
 
         return this;
@@ -215,8 +204,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param authoritiesMapper the new authorities mapper to use
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer authoritiesMapper(PartnerNetSaml2AuthoritiesMapper authoritiesMapper)
-    {
+    public PartnerNetSaml2Configurer authoritiesMapper(PartnerNetSaml2AuthoritiesMapper authoritiesMapper) {
         this.authoritiesMapper = authoritiesMapper;
 
         return this;
@@ -230,8 +218,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param successHandler the {@link AuthenticationSuccessHandler} to use
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer successHandler(AuthenticationSuccessHandler successHandler)
-    {
+    public PartnerNetSaml2Configurer successHandler(AuthenticationSuccessHandler successHandler) {
         this.successHandler = successHandler;
 
         return this;
@@ -246,8 +233,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param customizer the customizer to use
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer customizer(Customizer<Saml2LoginConfigurer<HttpSecurity>> customizer)
-    {
+    public PartnerNetSaml2Configurer customizer(Customizer<Saml2LoginConfigurer<HttpSecurity>> customizer) {
         this.customizer = Objects.requireNonNull(customizer, "Customizer must not be null");
 
         return this;
@@ -260,19 +246,18 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @param authnRequestCustomizer the request customizer
      * @return the builder for a fluent api
      */
-    public PartnerNetSaml2Configurer authnRequestCustomizer(Consumer<AuthnRequestContext> authnRequestCustomizer)
-    {
+    public PartnerNetSaml2Configurer authnRequestCustomizer(Consumer<AuthnRequestContext> authnRequestCustomizer) {
         this.authnRequestCustomizer = authnRequestCustomizer;
 
         return this;
     }
 
     @Override
-    public void init(HttpSecurity builder) throws Exception
-    {
+    public void init(HttpSecurity builder) throws Exception {
         Saml2CredentialsManager credManager = getCredentialsManager();
-        RelyingPartyRegistrationRepository relyingPartyRegistrationRepository =
-            getRelyingPartyRegistrationRepository(credManager);
+        RelyingPartyRegistrationRepository relyingPartyRegistrationRepository = getRelyingPartyRegistrationRepository(
+            credManager
+        );
         relyingPartyResolver = new DefaultRelyingPartyRegistrationResolver(relyingPartyRegistrationRepository);
 
         builder.authenticationProvider(buildAuthenticationProvider());
@@ -285,12 +270,9 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
             saml2Login.loginProcessingUrl(DEFAULT_LOGIN_PROCESSING_URL);
             saml2Login.successHandler(getSuccessHandler());
 
-            if (failureHandler != null)
-            {
+            if (failureHandler != null) {
                 saml2Login.failureHandler(failureHandler);
-            }
-            else if (failureUrl != null)
-            {
+            } else if (failureUrl != null) {
                 saml2Login.failureUrl(failureUrl);
             }
 
@@ -298,10 +280,8 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         });
     }
 
-    private AuthenticationSuccessHandler getSuccessHandler()
-    {
-        if (successHandler != null)
-        {
+    private AuthenticationSuccessHandler getSuccessHandler() {
+        if (successHandler != null) {
             return successHandler;
         }
 
@@ -312,84 +292,79 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     }
 
     @Override
-    public void configure(HttpSecurity builder) throws Exception
-    {
+    public void configure(HttpSecurity builder) throws Exception {
         builder.addFilterBefore(buildMetadataFilter(), Saml2WebSsoAuthenticationFilter.class);
         builder.saml2Login().authenticationManager(builder.getSharedObject(AuthenticationManager.class));
     }
 
-    private Filter buildMetadataFilter()
-    {
+    private Filter buildMetadataFilter() {
         Saml2MetadataResolver metadataResolver = new PartnerNetSaml2MetadataResolver();
         return new Saml2ServiceProviderMetadataFilter(DEFAULT_ENTITY_ID_PATH, relyingPartyResolver, metadataResolver);
     }
 
-    private AuthenticationProvider buildAuthenticationProvider()
-    {
+    private AuthenticationProvider buildAuthenticationProvider() {
         Saml2ResponseProcessor responseProcessor = getResponseProcessor();
         Saml2ResponseParser parser = getResponseParser();
 
         return postProcess(new PartnerNetSamlAuthenticationProvider(responseProcessor, parser));
     }
 
-    private Saml2ResponseParser getResponseParser()
-    {
+    private Saml2ResponseParser getResponseParser() {
         return requireNonNullElseGet(responseParser, () -> new PartnerNetSaml2ResponseParser(getAuthoritiesMapper()));
-
     }
 
-    private PartnerNetSaml2AuthoritiesMapper getAuthoritiesMapper()
-    {
+    private PartnerNetSaml2AuthoritiesMapper getAuthoritiesMapper() {
         return requireNonNullElseGet(authoritiesMapper, PartnerNetSaml2AuthoritiesMapper::defaultInstance);
-
     }
 
-    public Consumer<AuthnRequestContext> getAuthnRequestCustomizer()
-    {
+    public Consumer<AuthnRequestContext> getAuthnRequestCustomizer() {
         return requireNonNullElseGet(authnRequestCustomizer, PartnerNetSaml2AuthnRequestCustomizer::new);
-
     }
 
-    private Saml2ResponseProcessor getResponseProcessor()
-    {
+    private Saml2ResponseProcessor getResponseProcessor() {
         return requireNonNullElseGet(responseProcessor, Saml2ResponseProcessor::withDefaultHandlers);
-
     }
 
-    private Saml2CredentialsManager getCredentialsManager()
-    {
+    private Saml2CredentialsManager getCredentialsManager() {
         return requireNonNull(credentialsManager, "No credentials configured");
     }
 
     private RelyingPartyRegistrationRepository getRelyingPartyRegistrationRepository(
-        Saml2CredentialsManager credManager)
-    {
-        ReloadingRelyingPartyRegistrationRepository repository =
-            new ReloadingRelyingPartyRegistrationRepository(DEFAULT_REGISTRATION_ID, entityId, metadataUrl, credManager,
-                clientFactory, DEFAULT_LOGIN_PROCESSING_URL, DEFAULT_ENTITY_ID_PATH);
+        Saml2CredentialsManager credManager
+    ) {
+        ReloadingRelyingPartyRegistrationRepository repository = new ReloadingRelyingPartyRegistrationRepository(
+            DEFAULT_REGISTRATION_ID,
+            entityId,
+            metadataUrl,
+            credManager,
+            clientFactory,
+            DEFAULT_LOGIN_PROCESSING_URL,
+            DEFAULT_ENTITY_ID_PATH
+        );
 
-        if (failOnStartup)
-        {
-            requireNonNull(repository.findByRegistrationId(DEFAULT_REGISTRATION_ID),
-                format("No RelyingPartyRegistration for metadata %s found", metadataUrl));
+        if (failOnStartup) {
+            requireNonNull(
+                repository.findByRegistrationId(DEFAULT_REGISTRATION_ID),
+                format("No RelyingPartyRegistration for metadata %s found", metadataUrl)
+            );
         }
 
         return repository;
     }
 
     private Saml2AuthenticationRequestResolver buildRequestResolver(
-        RelyingPartyRegistrationResolver relyingPartyRegistrationResolver)
-    {
-        OpenSaml4AuthenticationRequestResolver resolver =
-            new OpenSaml4AuthenticationRequestResolver(relyingPartyRegistrationResolver);
+        RelyingPartyRegistrationResolver relyingPartyRegistrationResolver
+    ) {
+        OpenSaml4AuthenticationRequestResolver resolver = new OpenSaml4AuthenticationRequestResolver(
+            relyingPartyRegistrationResolver
+        );
 
         resolver.setAuthnRequestCustomizer(getAuthnRequestCustomizer());
-        resolver.setRelayStateResolver(request -> Saml2Utils //
-            .getRelayState(request)
-            .map(relayState -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(),
-                relayState)) // pre-append a random string
-            .orElseGet(() -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(),
-                ""))); // default to the auto generated UUID;
+        resolver.setRelayStateResolver(request ->
+            Saml2Utils.getRelayState(request) //
+                .map(relayState -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), relayState)) // pre-append a random string
+                .orElseGet(() -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), ""))
+        ); // default to the auto generated UUID;
 
         return resolver;
     }

@@ -2,8 +2,7 @@ package at.porscheinformatik.idp;
 
 import java.util.Objects;
 
-public enum PartnerNetUserType
-{
+public enum PartnerNetUserType {
     UNKNOWN,
     PERSON,
     PRIVILEGED,
@@ -11,14 +10,11 @@ public enum PartnerNetUserType
     TEST_USER,
     PRIVILEGED_TEST_USER;
 
-    public static PartnerNetUserType valueOfOrUnknown(String value)
-    {
+    public static PartnerNetUserType valueOfOrUnknown(String value) {
         value = value.toLowerCase();
-        
-        for (PartnerNetUserType userType : values())
-        {
-            if (Objects.equals(userType.name().toLowerCase(), value))
-            {
+
+        for (PartnerNetUserType userType : values()) {
+            if (Objects.equals(userType.name().toLowerCase(), value)) {
                 return userType;
             }
         }

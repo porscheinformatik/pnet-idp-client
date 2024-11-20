@@ -6,38 +6,28 @@ package at.porscheinformatik.idp.saml2;
 /**
  * @author Daniel Furtlehner
  */
-public enum PartnerNetSaml2Provider
-{
-
-    PROD
-    {
+public enum PartnerNetSaml2Provider {
+    PROD {
         @Override
-        public String getEntityId()
-        {
+        public String getEntityId() {
             return "https://identity.auto-partner.net/identity/saml2";
         }
     },
-    QA
-    {
+    QA {
         @Override
-        public String getEntityId()
-        {
+        public String getEntityId() {
             return "https://qa-identity.auto-partner.net/identity/saml2";
         }
     },
-    DEV
-    {
+    DEV {
         @Override
-        public String getEntityId()
-        {
+        public String getEntityId() {
             return "https://pnet-identity-web-app-dev.nonprod1.ocp.porscheinformatik.cloud/identity/saml2";
         }
     },
-    LOCAL
-    {
+    LOCAL {
         @Override
-        public String getEntityId()
-        {
+        public String getEntityId() {
             return "https://localhost:5443/identity/saml2";
         }
     };

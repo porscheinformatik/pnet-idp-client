@@ -1,36 +1,30 @@
 package at.porscheinformatik.idp.saml2.xml;
 
+import at.porscheinformatik.idp.saml2.Tenant;
 import java.util.List;
-
 import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 
-import at.porscheinformatik.idp.saml2.Tenant;
+public class TenantImpl extends AbstractXMLObject implements Tenant {
 
-public class TenantImpl extends AbstractXMLObject implements Tenant
-{
     private String value;
 
-    TenantImpl(String namespaceURI, String elementLocalName, String namespacePrefix)
-    {
+    TenantImpl(String namespaceURI, String elementLocalName, String namespacePrefix) {
         super(namespaceURI, elementLocalName, namespacePrefix);
     }
 
     @Override
-    public List<XMLObject> getOrderedChildren()
-    {
+    public List<XMLObject> getOrderedChildren() {
         return null;
     }
 
     @Override
-    public String getTenant()
-    {
+    public String getTenant() {
         return value;
     }
 
     @Override
-    public void setTenant(String tenant)
-    {
+    public void setTenant(String tenant) {
         value = prepareForAssignment(value, tenant);
     }
 }

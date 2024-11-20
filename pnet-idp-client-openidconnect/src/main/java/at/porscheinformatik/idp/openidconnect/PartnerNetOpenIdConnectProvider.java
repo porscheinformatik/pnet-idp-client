@@ -9,38 +9,28 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 /**
  * @author Daniel Furtlehner
  */
-public enum PartnerNetOpenIdConnectProvider
-{
-
-    PROD
-    {
+public enum PartnerNetOpenIdConnectProvider {
+    PROD {
         @Override
-        public String getIssuer()
-        {
+        public String getIssuer() {
             return "https://identity.auto-partner.net/identity";
         }
     },
-    QA
-    {
+    QA {
         @Override
-        public String getIssuer()
-        {
+        public String getIssuer() {
             return "https://qa-identity.auto-partner.net/identity";
         }
     },
-    DEV
-    {
+    DEV {
         @Override
-        public String getIssuer()
-        {
+        public String getIssuer() {
             return "https://pnet-identity-web-app-dev.nonprod1.ocp.porscheinformatik.cloud/identity";
         }
     },
-    LOCAL
-    {
+    LOCAL {
         @Override
-        public String getIssuer()
-        {
+        public String getIssuer() {
             return "https://localhost:5443/identity";
         }
     };
@@ -51,8 +41,7 @@ public enum PartnerNetOpenIdConnectProvider
      *
      * @return a builder instance
      */
-    public ClientRegistration.Builder getBuilder()
-    {
+    public ClientRegistration.Builder getBuilder() {
         return ClientRegistrations.fromOidcIssuerLocation(getIssuer()).registrationId("pnet");
     }
 

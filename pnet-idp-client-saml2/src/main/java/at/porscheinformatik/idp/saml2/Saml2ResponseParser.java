@@ -4,7 +4,6 @@
 package at.porscheinformatik.idp.saml2;
 
 import java.util.Optional;
-
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.saml2.Saml2Exception;
@@ -12,9 +11,7 @@ import org.springframework.security.saml2.Saml2Exception;
 /**
  * @author Daniel Furtlehner
  */
-public interface Saml2ResponseParser
-{
-
+public interface Saml2ResponseParser {
     /**
      * Parses the response and generates a authentication object that is passed to the authentication manager for
      * further processing.

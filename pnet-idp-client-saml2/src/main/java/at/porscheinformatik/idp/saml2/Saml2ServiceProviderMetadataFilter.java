@@ -3,8 +3,11 @@
  */
 package at.porscheinformatik.idp.saml2;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
@@ -14,25 +17,21 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 /**
  * @author Daniel Furtlehner
  */
-public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter
-{
+public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter {
+
     private final RequestMatcher requestMatcher;
     private final RelyingPartyRegistrationResolver relyingPartyRegistrationResolver;
     private final Saml2MetadataResolver metadataResolver;
 
-    public Saml2ServiceProviderMetadataFilter(String metadataProcessingUrl,
-        RelyingPartyRegistrationResolver relyingPartyRegistrationResolver, Saml2MetadataResolver metadataResolver)
-    {
+    public Saml2ServiceProviderMetadataFilter(
+        String metadataProcessingUrl,
+        RelyingPartyRegistrationResolver relyingPartyRegistrationResolver,
+        Saml2MetadataResolver metadataResolver
+    ) {
         super();
-
         requestMatcher = new AntPathRequestMatcher(metadataProcessingUrl, "GET");
         this.relyingPartyRegistrationResolver = relyingPartyRegistrationResolver;
         this.metadataResolver = metadataResolver;
@@ -40,21 +39,17 @@ public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-        throws ServletException, IOException
-    {
-        if (!requestMatcher.matches(request))
-        {
+        throws ServletException, IOException {
+        if (!requestMatcher.matches(request)) {
             filterChain.doFilter(request, response);
 
             return;
         }
 
-        try
-        {
+        try {
             RelyingPartyRegistration relyingPartyRegistration = relyingPartyRegistrationResolver.resolve(request, null);
 
-            if (relyingPartyRegistration == null)
-            {
+            if (relyingPartyRegistration == null) {
                 response.sendError(HttpStatus.NOT_FOUND.value());
 
                 return;
@@ -68,11 +63,8 @@ public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter
 
             response.getWriter().append(metadata);
             response.getWriter().flush();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new IOException("Error buiding metadata", e);
         }
     }
-
 }

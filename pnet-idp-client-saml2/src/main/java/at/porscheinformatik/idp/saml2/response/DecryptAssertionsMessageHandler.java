@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -34,34 +33,29 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 /**
  * @author Daniel Furtlehner
  */
-public class DecryptAssertionsMessageHandler extends AbstractSuccessResponseMessageHandler
-{
+public class DecryptAssertionsMessageHandler extends AbstractSuccessResponseMessageHandler {
+
     @Override
-    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException
-    {
+    protected void doInvoke(Response response, MessageContext messageContext) throws MessageHandlerException {
         List<EncryptedAssertion> encryptedAssertions = response.getEncryptedAssertions();
 
-        if (encryptedAssertions.isEmpty())
-        {
+        if (encryptedAssertions.isEmpty()) {
             return;
         }
 
         List<Assertion> assertionsToAdd = new ArrayList<>();
-        RelyingPartyRegistration relyingPartyRegistration =
-            getAuthenticationToken(messageContext).getRelyingPartyRegistration();
+        RelyingPartyRegistration relyingPartyRegistration = getAuthenticationToken(
+            messageContext
+        ).getRelyingPartyRegistration();
         Collection<Saml2X509Credential> credentials = relyingPartyRegistration.getDecryptionX509Credentials();
         String entityId = relyingPartyRegistration.getEntityId();
 
         Decrypter decrypter = buildDecrypter(entityId, credentials);
 
-        for (EncryptedAssertion encryptedAssertion : encryptedAssertions)
-        {
-            try
-            {
+        for (EncryptedAssertion encryptedAssertion : encryptedAssertions) {
+            try {
                 assertionsToAdd.add(decrypter.decrypt(encryptedAssertion));
-            }
-            catch (DecryptionException e)
-            {
+            } catch (DecryptionException e) {
                 throw new MessageHandlerException("Error decrypting EncryptedAssertions", e);
             }
         }
@@ -69,8 +63,7 @@ public class DecryptAssertionsMessageHandler extends AbstractSuccessResponseMess
         response.getAssertions().addAll(assertionsToAdd);
     }
 
-    private Decrypter buildDecrypter(String entityId, Collection<Saml2X509Credential> credentials)
-    {
+    private Decrypter buildDecrypter(String entityId, Collection<Saml2X509Credential> credentials) {
         List<Credential> samlCredentials = credentials
             .stream()
             .map(key -> CredentialSupport.getSimpleCredential(key.getCertificate(), key.getPrivateKey()))
@@ -89,8 +82,10 @@ public class DecryptAssertionsMessageHandler extends AbstractSuccessResponseMess
         encryptedKeyResolvers.add(new EncryptedElementTypeEncryptedKeyResolver());
         encryptedKeyResolvers.add(new SimpleRetrievalMethodEncryptedKeyResolver());
 
-        ChainingEncryptedKeyResolver encryptedKeyResolver =
-            new ChainingEncryptedKeyResolver(encryptedKeyResolvers, entityId);
+        ChainingEncryptedKeyResolver encryptedKeyResolver = new ChainingEncryptedKeyResolver(
+            encryptedKeyResolvers,
+            entityId
+        );
 
         return new Decrypter(null, keyResolver, encryptedKeyResolver);
     }

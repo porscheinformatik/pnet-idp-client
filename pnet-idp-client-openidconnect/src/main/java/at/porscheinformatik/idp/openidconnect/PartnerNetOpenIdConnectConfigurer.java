@@ -4,7 +4,6 @@
 package at.porscheinformatik.idp.openidconnect;
 
 import java.util.Objects;
-
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,8 +22,8 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
  * @author Daniel Furtlehner
  */
 public class PartnerNetOpenIdConnectConfigurer
-    extends AbstractHttpConfigurer<PartnerNetOpenIdConnectConfigurer, HttpSecurity>
-{
+    extends AbstractHttpConfigurer<PartnerNetOpenIdConnectConfigurer, HttpSecurity> {
+
     private final String issuerUrl;
 
     private boolean failOnStartup;
@@ -36,15 +35,12 @@ public class PartnerNetOpenIdConnectConfigurer
 
     private OidcUserService userService = new PartnerNetOpenIdConnectUserService();
 
-    public PartnerNetOpenIdConnectConfigurer(PartnerNetOpenIdConnectProvider provider)
-    {
+    public PartnerNetOpenIdConnectConfigurer(PartnerNetOpenIdConnectProvider provider) {
         this(provider.getIssuer());
     }
 
-    public PartnerNetOpenIdConnectConfigurer(String issuerUrl)
-    {
+    public PartnerNetOpenIdConnectConfigurer(String issuerUrl) {
         super();
-
         this.issuerUrl = issuerUrl;
     }
 
@@ -54,29 +50,25 @@ public class PartnerNetOpenIdConnectConfigurer
      *
      * @return the builder for a fluent api
      */
-    public PartnerNetOpenIdConnectConfigurer failOnStartup()
-    {
+    public PartnerNetOpenIdConnectConfigurer failOnStartup() {
         failOnStartup = true;
 
         return this;
     }
 
-    public PartnerNetOpenIdConnectConfigurer clientId(String clientId)
-    {
+    public PartnerNetOpenIdConnectConfigurer clientId(String clientId) {
         this.clientId = clientId;
 
         return this;
     }
 
-    public PartnerNetOpenIdConnectConfigurer clientSecret(String clientSecret)
-    {
+    public PartnerNetOpenIdConnectConfigurer clientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
 
         return this;
     }
 
-    public PartnerNetOpenIdConnectConfigurer userService(OidcUserService userService)
-    {
+    public PartnerNetOpenIdConnectConfigurer userService(OidcUserService userService) {
         this.userService = userService;
 
         return this;
@@ -91,33 +83,36 @@ public class PartnerNetOpenIdConnectConfigurer
      * @param customizer the customizer to use
      * @return the builder for a fluent api
      */
-    public PartnerNetOpenIdConnectConfigurer customize(Customizer<OAuth2LoginConfigurer<HttpSecurity>> customizer)
-    {
+    public PartnerNetOpenIdConnectConfigurer customize(Customizer<OAuth2LoginConfigurer<HttpSecurity>> customizer) {
         this.customizer = Objects.requireNonNull(customizer, "Customizer must not be null");
 
         return this;
     }
 
     @Override
-    public void init(HttpSecurity builder) throws Exception
-    {
+    public void init(HttpSecurity builder) throws Exception {
         final ClientRegistrationRepository clientRegistrationRepository = getClientRegistrationRepository();
         final OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient =
             new DefaultAuthorizationCodeTokenResponseClient();
 
-        builder
-            .authenticationProvider(
-                new PartnerNetOpenIdConnectAuthenticationProvider(accessTokenResponseClient, userService));
+        builder.authenticationProvider(
+            new PartnerNetOpenIdConnectAuthenticationProvider(accessTokenResponseClient, userService)
+        );
 
         builder.oauth2Login(oauth2Login -> {
             oauth2Login.clientRegistrationRepository(clientRegistrationRepository);
 
-            oauth2Login.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
-                .authorizationRequestResolver(
-                    new PartnerNetOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
-                        OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI)));
+            oauth2Login.authorizationEndpoint(authorizationEndpoint ->
+                authorizationEndpoint.authorizationRequestResolver(
+                    new PartnerNetOAuth2AuthorizationRequestResolver(
+                        clientRegistrationRepository,
+                        OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI
+                    )
+                )
+            );
 
-            oauth2Login.tokenEndpoint(tokenEnpoint -> tokenEnpoint.accessTokenResponseClient(accessTokenResponseClient));
+            oauth2Login.tokenEndpoint(tokenEnpoint -> tokenEnpoint.accessTokenResponseClient(accessTokenResponseClient)
+            );
 
             oauth2Login.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.oidcUserService(userService));
 
@@ -127,17 +122,13 @@ public class PartnerNetOpenIdConnectConfigurer
     }
 
     @Override
-    public void configure(HttpSecurity builder) throws Exception
-    {
+    public void configure(HttpSecurity builder) throws Exception {
         // Nothing to do here
     }
 
-    private ClientRegistrationRepository getClientRegistrationRepository()
-    {
-        if (failOnStartup)
-        {
-            ClientRegistration clientRegistration = ClientRegistrations
-                .fromOidcIssuerLocation(issuerUrl)
+    private ClientRegistrationRepository getClientRegistrationRepository() {
+        if (failOnStartup) {
+            ClientRegistration clientRegistration = ClientRegistrations.fromOidcIssuerLocation(issuerUrl)
                 .registrationId("pnet")
                 .clientId(clientId)
                 .clientSecret(clientSecret)

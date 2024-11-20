@@ -3,16 +3,6 @@
  */
 package at.porscheinformatik.idp.openidconnect;
 
-import java.io.Serial;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-
 import at.porscheinformatik.idp.Gender;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
@@ -21,12 +11,20 @@ import at.porscheinformatik.idp.PartnerNetContractDTO;
 import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
 import at.porscheinformatik.idp.PartnerNetUserType;
+import java.io.Serial;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
 /**
  * @author Daniel Furtlehner
  */
-public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
-{
+public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
+
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -64,9 +62,11 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
     public static final String USER_INFO_SUPPORT_CONTACT_COMPANIES = "pnet_support_contact_companies";
     public static final String USER_INFO_SUPPORT_COMPANY_TYPES = "pnet_support_company_types";
 
-    public PartnerNetOpenIdConnectUser(Collection<? extends GrantedAuthority> authorities, OidcIdToken idToken,
-        OidcUserInfo userInfo)
-    {
+    public PartnerNetOpenIdConnectUser(
+        Collection<? extends GrantedAuthority> authorities,
+        OidcIdToken idToken,
+        OidcUserInfo userInfo
+    ) {
         super(authorities, idToken, userInfo);
     }
 
@@ -75,126 +75,103 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
      *
      * @return the external id
      */
-    public String getExternalId()
-    {
+    public String getExternalId() {
         return getSubject();
     }
 
-    public String getTransientSessionId()
-    {
+    public String getTransientSessionId() {
         return idTokenClaim(ID_TOKEN_TRANSIENT_SESSION);
     }
 
-    public boolean isResponsibleUserAvailable()
-    {
+    public boolean isResponsibleUserAvailable() {
         Boolean value = idTokenClaim(ID_TOKEN_RESPONSIBLE_USER_AVAILABLE);
 
         return value != null && value;
     }
 
-    public boolean isSupportDataAvailable()
-    {
+    public boolean isSupportDataAvailable() {
         Boolean value = idTokenClaim(ID_TOKEN_SUPPORT_AVAILABLE);
 
         return value != null && value;
     }
 
-    public int getNistAuthenticationLevel()
-    {
+    public int getNistAuthenticationLevel() {
         return Integer.parseInt(getAuthenticationContextClass());
     }
 
-    public PartnerNetUserType getUserType()
-    {
+    public PartnerNetUserType getUserType() {
         return PartnerNetUserType.valueOfOrUnknown(userInfoClaims(USER_INFO_USER_TYPE));
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         String givenName = getGivenName();
         String familyName = getFamilyName();
 
-        if (givenName == null || familyName == null)
-        {
+        if (givenName == null || familyName == null) {
             return getExternalId();
         }
 
         return givenName + " " + familyName;
     }
 
-    public String getAcademicTitle()
-    {
+    public String getAcademicTitle() {
         return userInfoClaims(USER_INFO_ACADEMIC_TITLE);
     }
 
-    public String getAcademicTitlePostNominal()
-    {
+    public String getAcademicTitlePostNominal() {
         return userInfoClaims(USER_INFO_ACADEMIC_TITLE_POST_NOMINAL);
     }
 
-    public String getGuid()
-    {
+    public String getGuid() {
         return userInfoClaims(USER_INFO_GUID);
     }
 
-    public String getCostcentre()
-    {
+    public String getCostcentre() {
         return userInfoClaims(USER_INFO_COSTCENTRE);
     }
 
-    public String getCountry()
-    {
+    public String getCountry() {
         return userInfoClaims(USER_INFO_COUNTRY);
     }
 
-    public List<Locale> getAdditionalLocales()
-    {
+    public List<Locale> getAdditionalLocales() {
         return userInfoClaims(USER_INFO_ADDITIONAL_LOCALES);
     }
 
-    public Collection<PartnerNetFunctionalNumberDTO> getFunctionalNumbers()
-    {
+    public Collection<PartnerNetFunctionalNumberDTO> getFunctionalNumbers() {
         return userInfoClaims(USER_INFO_FUNCTIONAL_NUMBERS);
     }
 
-    public Collection<PartnerNetCompanyDTO> getCompanies()
-    {
+    public Collection<PartnerNetCompanyDTO> getCompanies() {
         return userInfoClaims(USER_INFO_COMPANIES);
     }
 
-    public Collection<PartnerNetCompanyAddressDTO> getCompaniesAddress()
-    {
+    public Collection<PartnerNetCompanyAddressDTO> getCompaniesAddress() {
         return userInfoClaims(USER_INFO_COMPANIES_ADDRESS);
     }
 
-    public Collection<PartnerNetRoleDTO> getRoles()
-    {
+    public Collection<PartnerNetRoleDTO> getRoles() {
         return userInfoClaims(USER_INFO_ROLES);
     }
 
-    public Collection<PartnerNetContractDTO> getContracts()
-    {
+    public Collection<PartnerNetContractDTO> getContracts() {
         return userInfoClaims(USER_INFO_CONTRACTS);
     }
 
-    public Collection<PartnerNetCompanyDTO> getSupportCompanies()
-    {
+    public Collection<PartnerNetCompanyDTO> getSupportCompanies() {
         return userInfoClaims(USER_INFO_SUPPORT_COMPANIES);
     }
 
-    public Collection<PartnerNetCompanyAddressDTO> getSupportCompaniesAddress()
-    {
+    public Collection<PartnerNetCompanyAddressDTO> getSupportCompaniesAddress() {
         return userInfoClaims(USER_INFO_SUPPORT_COMPANIES_ADDRESS);
     }
 
-    public Collection<PartnerNetRoleDTO> getSupportRoles()
-    {
+    public Collection<PartnerNetRoleDTO> getSupportRoles() {
         return userInfoClaims(USER_INFO_SUPPORT_ROLES);
     }
 
-    public Collection<PartnerNetContractDTO> getSupportContract()
-    {
+    public Collection<PartnerNetContractDTO> getSupportContract() {
         return userInfoClaims(USER_INFO_SUPPORT_CONTRACTS);
     }
 
@@ -203,85 +180,69 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser
      * @deprecated will be removed in a future release. Migrate to {@link #getExternalId()}
      */
     @Deprecated
-    public Integer getLegacyId()
-    {
+    public Integer getLegacyId() {
         return userInfoClaims(USER_INFO_INTERNAL_ID);
     }
 
-    public Gender getPnetGender()
-    {
+    public Gender getPnetGender() {
         return Gender.fromOidcValue(getGender());
     }
 
-    public Locale getPnetLocale()
-    {
+    public Locale getPnetLocale() {
         String localeAsString = getLocale();
 
-        if (localeAsString == null)
-        {
+        if (localeAsString == null) {
             return null;
         }
 
         return Locale.forLanguageTag(localeAsString);
     }
 
-    public Integer getFavoriteCompanyId()
-    {
+    public Integer getFavoriteCompanyId() {
         return userInfoClaims(USER_INFO_FAVORITE_COMPANY_ID);
     }
 
-    public String getFavoriteBrand()
-    {
+    public String getFavoriteBrand() {
         return userInfoClaims(USER_INFO_FAVORITE_BRAND);
     }
 
-    public Collection<Integer> getContactCompanyIds()
-    {
+    public Collection<Integer> getContactCompanyIds() {
         return userInfoClaims(USER_INFO_CONTACT_COMPANIES);
     }
 
-    public String getResponsibleUserExternalId()
-    {
+    public String getResponsibleUserExternalId() {
         return userInfoClaims(USER_INFO_RESPONSIBLE_USER_EXTERNAL_ID);
     }
 
-    public String getResponsibleUserName()
-    {
+    public String getResponsibleUserName() {
         return userInfoClaims(USER_INFO_RESPONSIBLE_USER_NAME);
     }
 
-    public String getResponsibleUserEmail()
-    {
+    public String getResponsibleUserEmail() {
         return userInfoClaims(USER_INFO_RESPONSIBLE_USER_EMAIL);
     }
 
-    public String getResponsibleUserGuid()
-    {
+    public String getResponsibleUserGuid() {
         return userInfoClaims(USER_INFO_RESPONSIBLE_USER_GUID);
     }
 
-    public Collection<Integer> getSupportContactCompanyIds()
-    {
+    public Collection<Integer> getSupportContactCompanyIds() {
         return userInfoClaims(USER_INFO_SUPPORT_CONTACT_COMPANIES);
     }
 
-    public Collection<PartnerNetCompanyTypeDTO> getCompanyTypes()
-    {
+    public Collection<PartnerNetCompanyTypeDTO> getCompanyTypes() {
         return userInfoClaims(USER_INFO_COMPANY_TYPES);
     }
 
-    public Collection<PartnerNetCompanyTypeDTO> getSupportCompanyTypes()
-    {
+    public Collection<PartnerNetCompanyTypeDTO> getSupportCompanyTypes() {
         return userInfoClaims(USER_INFO_SUPPORT_COMPANY_TYPES);
     }
 
-    private <T> T idTokenClaim(String claimName)
-    {
+    private <T> T idTokenClaim(String claimName) {
         return getIdToken().getClaim(claimName);
     }
 
-    private <T> T userInfoClaims(String claimName)
-    {
+    private <T> T userInfoClaims(String claimName) {
         return getUserInfo().getClaim(claimName);
     }
 }

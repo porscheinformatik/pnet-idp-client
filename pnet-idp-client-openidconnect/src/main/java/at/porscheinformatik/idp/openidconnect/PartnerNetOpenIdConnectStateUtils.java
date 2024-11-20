@@ -4,19 +4,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public final class PartnerNetOpenIdConnectStateUtils
-{
+public final class PartnerNetOpenIdConnectStateUtils {
+
     public static final String CUSTOM_STATE_DELIMITER = ":";
 
-    private PartnerNetOpenIdConnectStateUtils()
-    {
+    private PartnerNetOpenIdConnectStateUtils() {
         super();
     }
 
-    public static String buildState(String randomPart, String customPart)
-    {
-        if (randomPart == null || randomPart.isEmpty())
-        {
+    public static String buildState(String randomPart, String customPart) {
+        if (randomPart == null || randomPart.isEmpty()) {
             throw new IllegalArgumentException("randomPart cannot be null or empty");
         }
 
@@ -25,10 +22,8 @@ public final class PartnerNetOpenIdConnectStateUtils
         return Base64.getEncoder().encodeToString(state.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String getCustomState(String state)
-    {
-        if (state == null)
-        {
+    public static String getCustomState(String state) {
+        if (state == null) {
             return null;
         }
 
@@ -38,8 +33,7 @@ public final class PartnerNetOpenIdConnectStateUtils
         return indexOfDelimiter != -1 ? decodedState.substring(indexOfDelimiter + 1) : null;
     }
 
-    public static String getCustomState(HttpServletRequest request)
-    {
+    public static String getCustomState(HttpServletRequest request) {
         String state = request.getParameter("state");
         return getCustomState(state);
     }

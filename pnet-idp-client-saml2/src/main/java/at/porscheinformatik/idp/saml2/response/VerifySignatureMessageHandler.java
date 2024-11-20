@@ -7,9 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import javax.annotation.Nonnull;
-
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.common.SignableSAMLObject;
@@ -32,50 +31,42 @@ import org.opensaml.xmlsec.signature.support.SignatureValidationParametersCriter
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-
 /**
  * @author Daniel Furtlehner
  */
-public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler
-{
+public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler {
+
     private static final SAMLSignatureProfileValidator SIGNATURE_PROFILE_VALIDATOR =
         new SAMLSignatureProfileValidator();
 
     @Override
-    public void invoke(MessageContext messageContext) throws MessageHandlerException
-    {
+    public void invoke(MessageContext messageContext) throws MessageHandlerException {
         Response response = getResponse(messageContext);
 
         // Successful responses MUST be signed. Error responses MAY be signed.
         boolean signatureRequired = Objects.equals(response.getStatus().getStatusCode().getValue(), StatusCode.SUCCESS);
         boolean isSigned = response.isSigned();
 
-        if (signatureRequired && !isSigned)
-        {
+        if (signatureRequired && !isSigned) {
             throw new MessageHandlerException("Response must be signed but no signature present");
         }
 
-        if (isSigned)
-        {
+        if (isSigned) {
             String idpEntityId = response.getIssuer().getValue();
             Collection<Saml2X509Credential> credentials = getAuthenticationToken(messageContext)
                 .getRelyingPartyRegistration()
                 .getAssertingPartyDetails()
                 .getVerificationX509Credentials();
 
-            if (credentials.isEmpty())
-            {
+            if (credentials.isEmpty()) {
                 throw new MessageHandlerException(
-                    String.format("No verification credentials found for %s", idpEntityId));
+                    String.format("No verification credentials found for %s", idpEntityId)
+                );
             }
 
-            try
-            {
+            try {
                 verifySignature(response, credentials);
-            }
-            catch (SignatureException e)
-            {
+            } catch (SignatureException e) {
                 throw new MessageHandlerException("Error validating signature", e);
             }
         }
@@ -92,8 +83,7 @@ public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler
      * @throws SignatureException when the signature is not valid
      */
     private void verifySignature(SignableSAMLObject signable, Collection<Saml2X509Credential> credentials)
-        throws SignatureException
-    {
+        throws SignatureException {
         SIGNATURE_PROFILE_VALIDATOR.validate(signable.getSignature());
 
         SignatureTrustEngine trustEngine = buildTrustEngine(credentials);
@@ -101,22 +91,17 @@ public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler
         CriteriaSet trustBasisCriteria = new CriteriaSet();
         trustBasisCriteria.add(new SignatureValidationParametersCriterion(buildSignatureValidationParameters()));
 
-        try
-        {
-            if (!trustEngine.validate(signable.getSignature(), trustBasisCriteria))
-            {
+        try {
+            if (!trustEngine.validate(signable.getSignature(), trustBasisCriteria)) {
                 throw new SignatureException("Failed to validate signature with all available certificates.");
             }
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             throw new SignatureException("Failed to validate signature with all available certificates.", e);
         }
     }
 
     @Nonnull
-    private SignatureTrustEngine buildTrustEngine(Collection<Saml2X509Credential> credentials)
-    {
+    private SignatureTrustEngine buildTrustEngine(Collection<Saml2X509Credential> credentials) {
         List<Credential> samlCredentials = credentials //
             .stream()
             .map(key -> new BasicX509Credential(key.getCertificate()))
@@ -129,8 +114,7 @@ public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler
     }
 
     @Nonnull
-    private SignatureValidationParameters buildSignatureValidationParameters()
-    {
+    private SignatureValidationParameters buildSignatureValidationParameters() {
         SignatureValidationConfiguration validationConfiguration =
             SecurityConfigurationSupport.getGlobalSignatureValidationConfiguration();
 
@@ -140,5 +124,4 @@ public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler
 
         return params;
     }
-
 }

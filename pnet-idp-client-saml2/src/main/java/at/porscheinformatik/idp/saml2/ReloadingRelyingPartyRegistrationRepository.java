@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.apache.http.client.HttpClient;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -28,12 +30,8 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.Saml2MessageBinding;
 
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
+public class ReloadingRelyingPartyRegistrationRepository implements RelyingPartyRegistrationRepository {
 
-public class ReloadingRelyingPartyRegistrationRepository implements RelyingPartyRegistrationRepository
-{
     private final String registrationId;
     private final Saml2CredentialsManager credentialsManager;
     private final RelyingPartyRegistrationMetadataResolver resolver;
@@ -41,12 +39,16 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
     private final String loginProcessingUrl;
     private final String entityIdPath;
 
-    public ReloadingRelyingPartyRegistrationRepository(String registrationId, String idpEntityId, String idpMetadataUrl,
-        Saml2CredentialsManager credentialsManager, HttpClientFactory clientFactory, String loginProcessingUrl,
-        String entityIdPath)
-    {
+    public ReloadingRelyingPartyRegistrationRepository(
+        String registrationId,
+        String idpEntityId,
+        String idpMetadataUrl,
+        Saml2CredentialsManager credentialsManager,
+        HttpClientFactory clientFactory,
+        String loginProcessingUrl,
+        String entityIdPath
+    ) {
         super();
-
         this.registrationId = registrationId;
         this.credentialsManager = credentialsManager;
         this.clientFactory = clientFactory;
@@ -56,22 +58,16 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
     }
 
     @Override
-    public RelyingPartyRegistration findByRegistrationId(String registrationId)
-    {
-        if (!Objects.equals(this.registrationId, registrationId))
-        {
+    public RelyingPartyRegistration findByRegistrationId(String registrationId) {
+        if (!Objects.equals(this.registrationId, registrationId)) {
             return null;
         }
 
-        if (!resolver.isInitialized())
-        {
-            try
-            {
+        if (!resolver.isInitialized()) {
+            try {
                 resolver.initialize();
                 resolver.prepareRegistration();
-            }
-            catch (ComponentInitializationException | ResolverException e)
-            {
+            } catch (ComponentInitializationException | ResolverException e) {
                 throw new Saml2Exception("Error initializing Metadata. Trying again in a few minutes", e);
             }
         }
@@ -79,24 +75,26 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         return resolver.getRegistration();
     }
 
-    private RelyingPartyRegistrationMetadataResolver buildResolver(String entityId, String metadataUrl)
-    {
-        try
-        {
-            RelyingPartyRegistrationMetadataResolver resolver =
-                new RelyingPartyRegistrationMetadataResolver(clientFactory.newClient(), entityId, metadataUrl,
-                    registrationId, loginProcessingUrl, entityIdPath, credentialsManager);
+    private RelyingPartyRegistrationMetadataResolver buildResolver(String entityId, String metadataUrl) {
+        try {
+            RelyingPartyRegistrationMetadataResolver resolver = new RelyingPartyRegistrationMetadataResolver(
+                clientFactory.newClient(),
+                entityId,
+                metadataUrl,
+                registrationId,
+                loginProcessingUrl,
+                entityIdPath,
+                credentialsManager
+            );
 
             return resolver;
-        }
-        catch (ResolverException e)
-        {
+        } catch (ResolverException e) {
             throw new Saml2Exception("Error initializing metadata resolver", e);
         }
     }
 
-    private static class RelyingPartyRegistrationMetadataResolver extends HTTPMetadataResolver
-    {
+    private static class RelyingPartyRegistrationMetadataResolver extends HTTPMetadataResolver {
+
         private final String idpEntityId;
         private final String registrationId;
         private final Saml2CredentialsManager credentialsManager;
@@ -105,12 +103,16 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
 
         private RelyingPartyRegistration registration;
 
-        public RelyingPartyRegistrationMetadataResolver(HttpClient client, String idpEntityId, String idpMetadataUrl,
-            String registrationId, String loginProcessingUrl, String entityIdPath,
-            Saml2CredentialsManager credentialsManager) throws ResolverException
-        {
+        public RelyingPartyRegistrationMetadataResolver(
+            HttpClient client,
+            String idpEntityId,
+            String idpMetadataUrl,
+            String registrationId,
+            String loginProcessingUrl,
+            String entityIdPath,
+            Saml2CredentialsManager credentialsManager
+        ) throws ResolverException {
             super(client, idpMetadataUrl);
-
             this.idpEntityId = idpEntityId;
             this.registrationId = registrationId;
             this.loginProcessingUrl = loginProcessingUrl;
@@ -118,23 +120,20 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
             this.credentialsManager = credentialsManager;
 
             this.credentialsManager.onUpdate(() -> {
-                if (!isInitialized())
-                {
-                    initialize();
-                }
+                    if (!isInitialized()) {
+                        initialize();
+                    }
 
-                prepareRegistration();
-            });
+                    prepareRegistration();
+                });
 
             setRequireValidMetadata(true);
             setId(idpEntityId);
             setParserPool(XMLObjectProviderRegistrySupport.getParserPool());
         }
 
-        public RelyingPartyRegistration getRegistration()
-        {
-            if (registration == null)
-            {
+        public RelyingPartyRegistration getRegistration() {
+            if (registration == null) {
                 throw new Saml2Exception("No metadata loaded right now. Maybe the IDP is not available?");
             }
 
@@ -142,47 +141,44 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
         }
 
         @Override
-        public synchronized void refresh() throws ResolverException
-        {
+        public synchronized void refresh() throws ResolverException {
             super.refresh();
 
-            if (isInitialized())
-            {
+            if (isInitialized()) {
                 prepareRegistration();
             }
         }
 
-        void prepareRegistration() throws ResolverException
-        {
+        void prepareRegistration() throws ResolverException {
             EntityDescriptor descriptor = resolveSingle(new CriteriaSet(new EntityIdCriterion(idpEntityId)));
 
             registration = parseDescriptor(descriptor);
         }
 
-        private RelyingPartyRegistration parseDescriptor(EntityDescriptor descriptor)
-        {
+        private RelyingPartyRegistration parseDescriptor(EntityDescriptor descriptor) {
             return withRegistrationId(registrationId)
                 .entityId("{baseUrl}" + entityIdPath)
                 .assertionConsumerServiceBinding(Saml2MessageBinding.POST)
                 .assertionConsumerServiceLocation("{baseUrl}" + loginProcessingUrl)
-                .decryptionX509Credentials(credentials -> credentials
-                    .addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION)))
-                .assertingPartyDetails(builder -> builder
-                    .entityId(descriptor.getEntityID())
-                    .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
-                    .singleSignOnServiceLocation(getSingleSignOnLocation(descriptor))
-                    .wantAuthnRequestsSigned(wantsAuthnRequestSigned(descriptor))
-                    .verificationX509Credentials(certificates -> certificates.addAll(getSigningKeys(descriptor))))
+                .decryptionX509Credentials(credentials ->
+                    credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION))
+                )
+                .assertingPartyDetails(builder ->
+                    builder
+                        .entityId(descriptor.getEntityID())
+                        .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
+                        .singleSignOnServiceLocation(getSingleSignOnLocation(descriptor))
+                        .wantAuthnRequestsSigned(wantsAuthnRequestSigned(descriptor))
+                        .verificationX509Credentials(certificates -> certificates.addAll(getSigningKeys(descriptor)))
+                )
                 .build();
         }
 
-        private Boolean wantsAuthnRequestSigned(EntityDescriptor descriptor)
-        {
+        private Boolean wantsAuthnRequestSigned(EntityDescriptor descriptor) {
             return Objects.equals(Boolean.TRUE, idpSsoDescritpor(descriptor).getWantAuthnRequestsSigned());
         }
 
-        private List<Saml2X509Credential> getSigningKeys(EntityDescriptor descriptor)
-        {
+        private List<Saml2X509Credential> getSigningKeys(EntityDescriptor descriptor) {
             return idpSsoDescritpor(descriptor) //
                 .getKeyDescriptors()
                 .stream()
@@ -193,27 +189,23 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
                 .collect(Collectors.toList());
         }
 
-        private Stream<X509Certificate> parseKeyInfo(KeyInfo keyInfo) throws Saml2Exception
-        {
-            try
-            {
+        private Stream<X509Certificate> parseKeyInfo(KeyInfo keyInfo) throws Saml2Exception {
+            try {
                 return KeyInfoSupport.getCertificates(keyInfo).stream();
-            }
-            catch (CertificateException e)
-            {
+            } catch (CertificateException e) {
                 throw new Saml2Exception("Error parsing certificates", e);
             }
         }
 
-        private boolean isSigningKey(KeyDescriptor keyDescriptor)
-        {
-            return keyDescriptor.getUse() == null
-                || keyDescriptor.getUse().equals(UsageType.SIGNING)
-                || keyDescriptor.getUse().equals(UsageType.UNSPECIFIED);
+        private boolean isSigningKey(KeyDescriptor keyDescriptor) {
+            return (
+                keyDescriptor.getUse() == null ||
+                keyDescriptor.getUse().equals(UsageType.SIGNING) ||
+                keyDescriptor.getUse().equals(UsageType.UNSPECIFIED)
+            );
         }
 
-        private String getSingleSignOnLocation(EntityDescriptor descriptor)
-        {
+        private String getSingleSignOnLocation(EntityDescriptor descriptor) {
             return idpSsoDescritpor(descriptor)
                 .getSingleSignOnServices() //
                 .stream()
@@ -223,18 +215,16 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
                 .orElseThrow(() -> new Saml2Exception("No SingleSignOnLocation for Redirect binding found"));
         }
 
-        private IDPSSODescriptor idpSsoDescritpor(EntityDescriptor descriptor) throws Saml2Exception
-        {
+        private IDPSSODescriptor idpSsoDescritpor(EntityDescriptor descriptor) throws Saml2Exception {
             IDPSSODescriptor idpssoDescriptor = descriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
 
-            if (idpssoDescriptor == null)
-            {
+            if (idpssoDescriptor == null) {
                 throw new Saml2Exception(
-                    String.format("No IdpSsoDescriptor for Saml 2.0 Protocol found. [%s]", descriptor.getEntityID()));
+                    String.format("No IdpSsoDescriptor for Saml 2.0 Protocol found. [%s]", descriptor.getEntityID())
+                );
             }
 
             return idpssoDescriptor;
         }
-
     }
 }
