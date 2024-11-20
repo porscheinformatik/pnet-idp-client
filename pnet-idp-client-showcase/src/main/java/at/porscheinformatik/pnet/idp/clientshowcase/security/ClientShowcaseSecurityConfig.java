@@ -3,8 +3,10 @@
  */
 package at.porscheinformatik.pnet.idp.clientshowcase.security;
 
-import java.util.List;
-
+import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
+import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
+import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectProvider;
+import at.porscheinformatik.idp.saml2.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -15,18 +17,11 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
-import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
-import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
-import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectProvider;
-import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager;
-import at.porscheinformatik.idp.saml2.EnablePartnerNetSaml2;
-import at.porscheinformatik.idp.saml2.PartnerNetSaml2Configurer;
-import at.porscheinformatik.idp.saml2.PartnerNetSaml2Provider;
-import at.porscheinformatik.idp.saml2.Saml2CredentialsManager;
-import at.porscheinformatik.idp.saml2.Saml2CredentialsProperties;
+import java.util.List;
 
 /**
  * @author Daniel Furtlehner
@@ -76,19 +71,21 @@ public class ClientShowcaseSecurityConfig
     {
         if (environment.acceptsProfiles(LOCAL))
         {
-            http.headers().httpStrictTransportSecurity().disable();
+            http.headers(customizer -> {
+                customizer.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable);
 
-            // We explicitly allow framing for this application for testing purposes only, because the Partner.Net
-            // Portal allows some applications to be displayed in a frame. By default, you should keep framing
-            // restricted.
-            http.headers().frameOptions().disable();
+                // We explicitly allow framing for this application for testing purposes only, because the Partner.Net
+                // Portal allows some applications to be displayed in a frame. By default, you should keep framing
+                // restricted.
+                customizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
+            });
         }
 
         http
-            .apply(new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
+                .with(new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
-                .clientSecret(environment.getProperty("oidc.client.secret")))
-            .customize(oauth -> oauth.failureUrl("/loginerror"));
+                                .clientSecret(environment.getProperty("oidc.client.secret")),
+                        customizer -> customizer.customize(oauth -> oauth.failureUrl("/loginerror")));
 
         PartnerNetSaml2Configurer
             .apply(http, getPartnerNetSaml2Provider(environment))
@@ -107,22 +104,20 @@ public class ClientShowcaseSecurityConfig
             cache.requestCache(requestCache);
         });
 
-        http
-            .exceptionHandling()
-            .accessDeniedPage("/accessdenied")
-            .authenticationEntryPoint(new DecidingAuthenticationEntryPoint());
+        http.exceptionHandling(customizer -> {
+            customizer.accessDeniedPage("/accessdenied");
+            customizer.authenticationEntryPoint(new DecidingAuthenticationEntryPoint());
+        });
 
-        http //
-            .authorizeHttpRequests()
-            .shouldFilterAllDispatcherTypes(true)
-            .requestMatchers("/", "/accessdenied", "/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
-            .permitAll()
-            .requestMatchers("/data/authorization")
-            .fullyAuthenticated()
-            .anyRequest()
-            .denyAll();
+        http.authorizeHttpRequests(customizer ->
+                customizer.requestMatchers("/", "/accessdenied", "/logoutinfo/**", "/logout/**", "/loginerror", "/error", "/favicon.ico")
+                        .permitAll()
+                        .requestMatchers("/data/authorization")
+                        .fullyAuthenticated()
+                        .anyRequest()
+                        .denyAll());
 
-        http.requiresChannel().anyRequest().requiresSecure();
+        http.requiresChannel(customizer -> customizer.anyRequest().requiresSecure());
 
         return http.build();
     }
