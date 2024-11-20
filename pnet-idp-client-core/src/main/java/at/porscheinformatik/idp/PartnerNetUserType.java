@@ -11,6 +11,10 @@ public enum PartnerNetUserType {
     PRIVILEGED_TEST_USER;
 
     public static PartnerNetUserType valueOfOrUnknown(String value) {
+        if (value == null) {
+            return UNKNOWN;
+        }
+
         value = value.toLowerCase();
 
         for (PartnerNetUserType userType : values()) {
