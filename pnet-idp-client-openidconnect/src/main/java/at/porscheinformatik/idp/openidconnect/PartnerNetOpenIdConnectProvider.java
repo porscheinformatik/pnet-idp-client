@@ -25,7 +25,7 @@ public enum PartnerNetOpenIdConnectProvider {
     DEV {
         @Override
         public String getIssuer() {
-            return "https://pnet-identity-web-app-dev.nonprod1.ocp.porscheinformatik.cloud/identity";
+            return "https://pnet-identity-web-app-dev.apps.gp-b2b.ocp4-nonprod.porscheinformatik.cloud/identity";
         }
     },
     LOCAL {
