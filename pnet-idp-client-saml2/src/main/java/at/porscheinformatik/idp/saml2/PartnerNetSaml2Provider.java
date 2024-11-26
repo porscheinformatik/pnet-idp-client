@@ -22,7 +22,7 @@ public enum PartnerNetSaml2Provider {
     DEV {
         @Override
         public String getEntityId() {
-            return "https://pnet-identity-web-app-dev.nonprod1.ocp.porscheinformatik.cloud/identity/saml2";
+            return "https://pnet-identity-web-app-dev.apps.gp-b2b.ocp4-nonprod.porscheinformatik.cloud/identity/saml2";
         }
     },
     LOCAL {
