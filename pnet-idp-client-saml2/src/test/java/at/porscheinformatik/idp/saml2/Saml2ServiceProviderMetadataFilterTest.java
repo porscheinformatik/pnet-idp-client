@@ -53,7 +53,7 @@ public class Saml2ServiceProviderMetadataFilterTest {
         Saml2Initializer.initialize();
     }
 
-    private static final String SP_ENTITY_ID = "https://service.com/saml2/pnet";
+    private static final String SP_ENTITY_ID = "https://service.com:443/saml2/pnet";
     private static final String RESPONSE_DESTINATION = SP_ENTITY_ID + "/authenticate/pnet";
 
     @Test
