@@ -252,6 +252,18 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
         return this;
     }
 
+    public PartnerNetSaml2Configurer failureHandler(AuthenticationFailureHandler failureHandler) {
+        this.failureHandler = failureHandler;
+
+        return this;
+    }
+
+    public PartnerNetSaml2Configurer failureUrl(String failureUrl) {
+        this.failureUrl = failureUrl;
+
+        return this;
+    }
+
     @Override
     public void init(HttpSecurity builder) throws Exception {
         Saml2CredentialsManager credManager = getCredentialsManager();

@@ -8,6 +8,7 @@ import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.saml2.core.Response;
@@ -61,15 +62,15 @@ public class CheckSubjectMessageHandler extends AbstractSuccessResponseMessageHa
         }
 
         HttpRequestContext httpContext = getHttpRequestContext(messageContext);
+        Optional<String> authnRequestId = httpContext.getAuthnRequestId();
 
         if (
-            httpContext.getAuthnRequestId().isEmpty() ||
-            !Objects.equals(httpContext.getAuthnRequestId().get(), subjectConfirmationData.getInResponseTo())
+            authnRequestId.isEmpty() || !Objects.equals(authnRequestId.get(), subjectConfirmationData.getInResponseTo())
         ) {
             throw new MessageHandlerException(
                 String.format(
                     "Wrong inResponseTo on SubjectConfirmationData. Expected %s but got %s",
-                    httpContext.getAuthnRequestId().orElse(null),
+                    authnRequestId.orElse(null),
                     subjectConfirmationData.getInResponseTo()
                 )
             );

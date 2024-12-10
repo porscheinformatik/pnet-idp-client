@@ -146,11 +146,9 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager {
     private void validateNewConfig(List<Saml2CredentialsConfig> newConfig) {
         Assert.notEmpty(newConfig, MISSING_KEYINFO_MESSAGE);
 
-        newConfig
-            .stream()
-            .filter(entry -> entry.getUsage() == Saml2X509CredentialType.DECRYPTION)
-            .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(MISSING_KEYINFO_MESSAGE));
+        if (newConfig.stream().noneMatch(entry -> entry.getUsage() == Saml2X509CredentialType.DECRYPTION)) {
+            throw new IllegalArgumentException(MISSING_KEYINFO_MESSAGE);
+        }
     }
 
     /**

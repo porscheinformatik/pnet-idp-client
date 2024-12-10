@@ -31,15 +31,17 @@ public class CheckAudienceRestrictionMessageHandler extends AbstractSuccessRespo
         validateConditionsTimeFrame(conditions);
         RelyingPartyRegistration registration = getAuthenticationToken(messageContext).getRelyingPartyRegistration();
 
-        conditions
-            .getAudienceRestrictions()
-            .stream()
-            .flatMap(restriction -> restriction.getAudiences().stream())
-            .filter(audience -> Objects.equals(audience.getURI(), registration.getEntityId()))
-            .findAny()
-            .orElseThrow(() ->
-                new MessageHandlerException(String.format("No Audience matching %s found", registration.getEntityId()))
+        if (
+            conditions
+                .getAudienceRestrictions()
+                .stream()
+                .flatMap(restriction -> restriction.getAudiences().stream())
+                .noneMatch(audience -> Objects.equals(audience.getURI(), registration.getEntityId()))
+        ) {
+            throw new MessageHandlerException(
+                String.format("No Audience matching %s found", registration.getEntityId())
             );
+        }
     }
 
     private void validateConditionsTimeFrame(Conditions conditions) throws MessageHandlerException {
