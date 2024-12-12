@@ -6,7 +6,12 @@ package at.porscheinformatik.pnet.idp.clientshowcase.security;
 import at.porscheinformatik.idp.openidconnect.EnablePartnerNetOpenIdConnect;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectConfigurer;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectProvider;
-import at.porscheinformatik.idp.saml2.*;
+import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager;
+import at.porscheinformatik.idp.saml2.EnablePartnerNetSaml2;
+import at.porscheinformatik.idp.saml2.PartnerNetSaml2Configurer;
+import at.porscheinformatik.idp.saml2.PartnerNetSaml2Provider;
+import at.porscheinformatik.idp.saml2.Saml2CredentialsManager;
+import at.porscheinformatik.idp.saml2.Saml2CredentialsProperties;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,12 +87,12 @@ public class ClientShowcaseSecurityConfig {
             new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
                 .clientSecret(environment.getProperty("oidc.client.secret")),
-            customizer -> customizer.customize(oauth -> oauth.failureUrl("/loginerror"))
+            customizer -> customizer.customize(oauth -> oauth.failureUrl(LOGIN_ERROR_URI))
         );
 
         PartnerNetSaml2Configurer.apply(http, getPartnerNetSaml2Provider(environment))
             .credentials(saml2CredentialsManager)
-            .customizer(saml2 -> saml2.failureUrl("/loginerror"));
+            .customizer(saml2 -> saml2.failureUrl(LOGIN_ERROR_URI));
 
         http.logout(logout -> {
             logout.logoutSuccessUrl("/");
@@ -113,7 +118,7 @@ public class ClientShowcaseSecurityConfig {
                     "/accessdenied",
                     "/logoutinfo/**",
                     "/logout/**",
-                    "/loginerror",
+                    LOGIN_ERROR_URI,
                     "/error",
                     "/favicon.ico"
                 )
@@ -168,4 +173,6 @@ public class ClientShowcaseSecurityConfig {
 
         throw new IllegalArgumentException("No supported profile found.");
     }
+
+    private static final String LOGIN_ERROR_URI = "/loginerror";
 }

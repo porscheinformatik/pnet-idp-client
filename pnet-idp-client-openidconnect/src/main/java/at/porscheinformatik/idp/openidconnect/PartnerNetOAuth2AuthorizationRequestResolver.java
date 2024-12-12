@@ -24,9 +24,13 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
     public static final String ACR_PARAM = "acr";
     public static final String MAX_AGE_PARAM = "max_age";
+    public static final String MAX_AGE_ADDITIONAL_PARAM = MAX_AGE_PARAM;
     public static final String MAX_AGE_MFA_PARAM = "max_age_mfa";
+    public static final String MAX_AGE_MFA_ADDITIONAL_PARAM = MAX_AGE_MFA_PARAM;
     public static final String TENANT_PARAM = "tenant";
+    public static final String TENANT_ADDITIONAL_PARAM = TENANT_PARAM;
     public static final String PRESELECT_TENANT_PARAM = "preselect_tenant";
+    public static final String PRESELECT_TENANT_ADDITIONAL_PARAM = PRESELECT_TENANT_PARAM;
     public static final String CUSTOM_STATE = "custom_state";
 
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
@@ -134,7 +138,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         }
 
         attributes.put(TENANT_PARAM, tenant);
-        additionalParameters.put("tenant", tenant); // not necessarily the same as TENANT_PARAM!
+        additionalParameters.put(TENANT_ADDITIONAL_PARAM, tenant);
     }
 
     private void addRequestedPreselectTenant(
@@ -149,7 +153,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         }
 
         attributes.put(PRESELECT_TENANT_PARAM, tenant);
-        additionalParameters.put("preselect_tenant", tenant); // not necessarily the same as PRESELECT_TENANT_PARAM!
+        additionalParameters.put(PRESELECT_TENANT_ADDITIONAL_PARAM, tenant);
     }
 
     private void addRequestedMaxAge(
@@ -164,7 +168,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         }
 
         attributes.put(MAX_AGE_PARAM, maxAge);
-        additionalParameters.put("max_age", maxAge); // not necessarily the same as MAX_AGE_PARAM!
+        additionalParameters.put(MAX_AGE_ADDITIONAL_PARAM, maxAge);
     }
 
     private void addRequestedMaxAgeMfa(
@@ -179,7 +183,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         }
 
         attributes.put(MAX_AGE_MFA_PARAM, maxAgeMfa);
-        additionalParameters.put("max_age_mfa", maxAgeMfa); // not necessarily the same as MAX_AGE_MFA_PARAM!
+        additionalParameters.put(MAX_AGE_MFA_ADDITIONAL_PARAM, maxAgeMfa);
     }
 
     private void addRequestedAcrParameter(

@@ -6,6 +6,7 @@ import static org.springframework.util.CollectionUtils.*;
 
 import at.porscheinformatik.idp.saml2.AuthnContextClass;
 import at.porscheinformatik.idp.saml2.HttpRequestContextAwareSaml2AuthenticationDetailsSource.HttpRequestContext;
+import javax.annotation.Nonnull;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -13,10 +14,10 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
 
-public class VerifyAuthenticationStrenghMessageHandler extends AbstractSimpleMessageHandler {
+public class VerifyAuthenticationStrengthMessageHandler extends AbstractSimpleMessageHandler {
 
     @Override
-    public void invoke(MessageContext messageContext) throws MessageHandlerException {
+    public void invoke(@Nonnull MessageContext messageContext) throws MessageHandlerException {
         HttpRequestContext httpRequestContext = getHttpRequestContext(messageContext);
 
         Integer requestedNistLevel = getRequestedNistLevel(httpRequestContext.getRequest());
@@ -28,13 +29,23 @@ public class VerifyAuthenticationStrenghMessageHandler extends AbstractSimpleMes
 
         Response response = getResponse(messageContext);
         Assertion assertion = firstElement(response.getAssertions());
+
+        if (assertion == null) {
+            throw new MessageHandlerException("No assertion found in response");
+        }
+
         AuthnStatement authnStatement = firstElement(assertion.getAuthnStatements());
+
+        if (authnStatement == null) {
+            throw new MessageHandlerException("No authentication statement found in assertion");
+        }
+
         AuthnContextClassRef authnContextClassRef = authnStatement.getAuthnContext().getAuthnContextClassRef();
 
         AuthnContextClass authnContextClass = fromReference(authnContextClassRef.getURI()).orElseThrow(() ->
             new MessageHandlerException(
                 String.format(
-                    "Could not validate authentiation strenght as %s is unkown",
+                    "Could not validate authentication strength as %s is unknown",
                     authnContextClassRef.getURI()
                 )
             )

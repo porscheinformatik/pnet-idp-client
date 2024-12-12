@@ -6,7 +6,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -77,7 +76,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
 
     private RelyingPartyRegistrationMetadataResolver buildResolver(String entityId, String metadataUrl) {
         try {
-            RelyingPartyRegistrationMetadataResolver resolver = new RelyingPartyRegistrationMetadataResolver(
+            return new RelyingPartyRegistrationMetadataResolver(
                 clientFactory.newClient(),
                 entityId,
                 metadataUrl,
@@ -86,8 +85,6 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
                 entityIdPath,
                 credentialsManager
             );
-
-            return resolver;
         } catch (ResolverException e) {
             throw new Saml2Exception("Error initializing metadata resolver", e);
         }
@@ -186,7 +183,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
                 .map(KeyDescriptor::getKeyInfo)
                 .flatMap(this::parseKeyInfo)
                 .map(Saml2X509Credential::verification)
-                .collect(Collectors.toList());
+                .toList();
         }
 
         private Stream<X509Certificate> parseKeyInfo(KeyInfo keyInfo) throws Saml2Exception {

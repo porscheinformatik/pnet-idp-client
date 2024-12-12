@@ -32,6 +32,6 @@ public class DefaultPartnerNetSaml2AuthoritiesMapper implements PartnerNetSaml2A
             .map(PartnerNetRoleDTO::getRoleMatchcode)
             .distinct()
             .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
+            .toList();
     }
 }

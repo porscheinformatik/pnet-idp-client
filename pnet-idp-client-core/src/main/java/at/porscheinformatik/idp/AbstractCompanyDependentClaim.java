@@ -16,7 +16,7 @@ public abstract class AbstractCompanyDependentClaim implements Serializable {
 
     private final Integer companyId;
 
-    public AbstractCompanyDependentClaim(Integer companyId) {
+    protected AbstractCompanyDependentClaim(Integer companyId) {
         super();
         this.companyId = companyId;
     }

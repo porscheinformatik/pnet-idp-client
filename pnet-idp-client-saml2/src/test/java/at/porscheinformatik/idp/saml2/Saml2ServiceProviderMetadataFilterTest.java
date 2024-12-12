@@ -106,7 +106,7 @@ public class Saml2ServiceProviderMetadataFilterTest {
             .getEncryptionMethods()
             .stream()
             .map(EncryptionMethod::getAlgorithm)
-            .collect(Collectors.toList());
+            .toList();
         assertThat(
             encryptionMethods.toString(),
             encryptionMethods,
@@ -131,7 +131,7 @@ public class Saml2ServiceProviderMetadataFilterTest {
         )
             .stream()
             .map(SigningMethod::getAlgorithm)
-            .collect(Collectors.toList());
+            .toList();
         assertThat(
             signingMethods,
             containsInAnyOrder(
@@ -146,7 +146,7 @@ public class Saml2ServiceProviderMetadataFilterTest {
         )
             .stream()
             .map(DigestMethod::getAlgorithm)
-            .collect(Collectors.toList());
+            .toList();
         assertThat(digestMethods, containsInAnyOrder(SignatureConstants.ALGO_ID_DIGEST_SHA256));
     }
 
@@ -182,7 +182,7 @@ public class Saml2ServiceProviderMetadataFilterTest {
             .stream()
             .filter(xmlObject -> type.isAssignableFrom(xmlObject.getClass()))
             .map(o -> (T) o)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private <T> T assertSingleList(List<T> list) {

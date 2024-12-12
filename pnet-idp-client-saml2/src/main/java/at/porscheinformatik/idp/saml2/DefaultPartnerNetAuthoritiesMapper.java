@@ -4,7 +4,6 @@ import at.porscheinformatik.idp.PartnerNetRoleDTO;
 import at.porscheinformatik.idp.saml2.Saml2ResponseParserBase.Saml2Data;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.CollectionUtils;
@@ -12,7 +11,7 @@ import org.springframework.util.CollectionUtils;
 /**
  * @deprecated use {@link DefaultPartnerNetSaml2AuthoritiesMapper} instead
  */
-@Deprecated
+@Deprecated(since = "1.0.0")
 public class DefaultPartnerNetAuthoritiesMapper implements PartnerNetSaml2AuthoritiesMapper {
 
     @Override
@@ -30,6 +29,6 @@ public class DefaultPartnerNetAuthoritiesMapper implements PartnerNetSaml2Author
             .map(PartnerNetRoleDTO::getRoleMatchcode)
             .distinct()
             .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
+            .toList();
     }
 }

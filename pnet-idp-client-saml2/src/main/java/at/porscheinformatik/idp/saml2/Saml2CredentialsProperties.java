@@ -24,7 +24,7 @@ public class Saml2CredentialsProperties implements Supplier<List<Saml2Credential
         return credentials //
             .stream()
             .map(this::toConfig)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private Saml2CredentialsConfig toConfig(Saml2CredentialsProperty property) {

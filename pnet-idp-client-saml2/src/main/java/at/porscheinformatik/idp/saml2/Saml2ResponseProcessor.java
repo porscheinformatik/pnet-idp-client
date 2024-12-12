@@ -15,7 +15,7 @@ import at.porscheinformatik.idp.saml2.response.CheckSubjectIdentifierMessageHand
 import at.porscheinformatik.idp.saml2.response.CheckSubjectMessageHandler;
 import at.porscheinformatik.idp.saml2.response.DecryptAssertionsMessageHandler;
 import at.porscheinformatik.idp.saml2.response.ThrowOnMissingIdMessageHandler;
-import at.porscheinformatik.idp.saml2.response.VerifyAuthenticationStrenghMessageHandler;
+import at.porscheinformatik.idp.saml2.response.VerifyAuthenticationStrengthMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifyAuthnInstantMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifySignatureMessageHandler;
 import at.porscheinformatik.idp.saml2.response.VerifyStatusMessageHandler;
@@ -57,7 +57,7 @@ public class Saml2ResponseProcessor {
         handlers.add(new CheckEndpointMessageHandler());
         handlers.add(new VerifyAuthnInstantMessageHandler());
         handlers.add(new CheckSubjectIdentifierMessageHandler());
-        handlers.add(new VerifyAuthenticationStrenghMessageHandler());
+        handlers.add(new VerifyAuthenticationStrengthMessageHandler());
         handlers.add(new CheckRelayStateMessageHandler());
         return new Saml2ResponseProcessor(handlers);
     }

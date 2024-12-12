@@ -179,7 +179,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
      * @return the internal Partner.Net Id of the user
      * @deprecated will be removed in a future release. Migrate to {@link #getExternalId()}
      */
-    @Deprecated
+    @Deprecated(since = "1.0.0")
     public Integer getLegacyId() {
         return userInfoClaims(USER_INFO_INTERNAL_ID);
     }

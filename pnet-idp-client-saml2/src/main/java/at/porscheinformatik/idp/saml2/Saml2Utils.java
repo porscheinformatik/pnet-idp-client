@@ -33,6 +33,10 @@ public class Saml2Utils {
     //Specification says between 128 and 160 bit are perfect
     private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy(20);
 
+    private Saml2Utils() {
+        super();
+    }
+
     /**
      * @return a random indentifier for saml messages
      */

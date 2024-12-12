@@ -50,9 +50,7 @@ public enum AuthnContextClass {
     }
 
     public static List<AuthnContextClass> getAsLeastAsStrongAs(int nistAuthenticationLevel) {
-        return Arrays.stream(values())
-            .filter(entry -> entry.getNistLevel() >= nistAuthenticationLevel)
-            .collect(Collectors.toList());
+        return Arrays.stream(values()).filter(entry -> entry.getNistLevel() >= nistAuthenticationLevel).toList();
     }
 
     public static Optional<AuthnContextClass> fromReference(String authnContextClassRef) {

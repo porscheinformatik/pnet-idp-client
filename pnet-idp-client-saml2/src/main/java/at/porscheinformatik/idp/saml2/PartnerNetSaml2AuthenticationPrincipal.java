@@ -180,7 +180,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
      * @return the internal Partner.Net Id of the user
      * @deprecated will be removed in a future release. Migrate to {@link #getSubjectIdentifier()}
      */
-    @Deprecated
+    @Deprecated(since = "1.0.0")
     public Integer getLegacyId() {
         return legacyId;
     }
@@ -333,11 +333,11 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
     }
 
     public String getResponsibleUserName() {
-        String givenName = getFirstname();
-        String familyName = getLastname();
+        String givenName = getResponsibleUserFirstname();
+        String familyName = getResponsibleUserLastname();
 
         if (givenName == null || familyName == null) {
-            return getSubjectIdentifier();
+            return getResponsibleUserExternalId();
         }
 
         return givenName + " " + familyName;

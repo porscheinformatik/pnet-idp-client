@@ -159,7 +159,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
         return languageTags //
             .map(Locale::forLanguageTag)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private List<PartnerNetFunctionalNumberDTO> functionalNumbersList(Saml2Data data, String attributeName) {
@@ -171,7 +171,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
                 return new PartnerNetFunctionalNumberDTO(companyId, matchcode, number);
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private List<PartnerNetContractDTO> contractsList(Saml2Data data, String attributeName) {
@@ -183,7 +183,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
                 return new PartnerNetContractDTO(companyId, brandId, matchcode);
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private List<PartnerNetRoleDTO> roleList(Saml2Data data, String attributeName) {
@@ -195,7 +195,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
                 return new PartnerNetRoleDTO(companyId, brandId, matchcode);
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private List<PartnerNetCompanyDTO> employmentList(Saml2Data data, String attributeName) {
@@ -207,7 +207,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
                 return new PartnerNetCompanyDTO(companyId, companyNumber, name);
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private List<PartnerNetCompanyAddressDTO> addressList(Saml2Data data, String attributeName) {
@@ -221,7 +221,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
                 return new PartnerNetCompanyAddressDTO(companyId, street, postalCode, locality, countryCode);
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private List<PartnerNetCompanyTypeDTO> companyTypeList(Saml2Data data, String attributeName) {
@@ -232,11 +232,11 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
                 return new PartnerNetCompanyTypeDTO(companyId, matchcode);
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private Collection<Integer> intList(Saml2Data data, String attributeName) {
-        return intStream(data, attributeName).collect(Collectors.toList());
+        return intStream(data, attributeName).toList();
     }
 
     private Locale singleLocale(Saml2Data data, String attributeName) {

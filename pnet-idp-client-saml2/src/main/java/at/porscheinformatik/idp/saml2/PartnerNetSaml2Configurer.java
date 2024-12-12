@@ -315,10 +315,10 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     }
 
     private AuthenticationProvider buildAuthenticationProvider() {
-        Saml2ResponseProcessor responseProcessor = getResponseProcessor();
+        Saml2ResponseProcessor currentResponseProcessor = getResponseProcessor();
         Saml2ResponseParser parser = getResponseParser();
 
-        return postProcess(new PartnerNetSamlAuthenticationProvider(responseProcessor, parser));
+        return postProcess(new PartnerNetSamlAuthenticationProvider(currentResponseProcessor, parser));
     }
 
     private Saml2ResponseParser getResponseParser() {

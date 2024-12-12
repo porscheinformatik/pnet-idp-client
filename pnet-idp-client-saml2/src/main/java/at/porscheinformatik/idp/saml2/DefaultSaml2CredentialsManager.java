@@ -8,6 +8,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -122,18 +123,18 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager {
                 throw new IllegalArgumentException(String.format("keystore [%s] is not readable", location));
             }
 
-            Assert.hasText(type, "type for location [" + location + "] must not be null");
-            Assert.hasText(password, "password for location [" + location + "] must not be null");
-            Assert.hasText(privateAlias, "privatealias  for location [" + location + "] must not be null");
-            Assert.hasText(publicAlias, "publicalias for location [" + location + "] must not be null");
-            Assert.notNull(usage, "usage for location [" + location + "] must not be null");
+            Assert.hasText(type, "type for location [%s] must not be null".formatted(location));
+            Assert.hasText(password, "password for location [%s] must not be null".formatted(location));
+            Assert.hasText(privateAlias, "privateAlias  for location [%s] must not be null".formatted(location));
+            Assert.hasText(publicAlias, "publicAlias for location [%s] must not be null".formatted(location));
+            Assert.notNull(usage, "usage for location [%s] must not be null".formatted(location));
 
             KeyStore keystore = createKeystore(location, type, password);
             X509Certificate publicKey = extractPublicKey(keystore, publicAlias);
             PrivateKey privateKey = extractPrivateKey(keystore, password, privateAlias);
 
-            Assert.notNull(privateKey, "Private key for location [" + location + "] is null");
-            Assert.notNull(publicKey, "Public key for location [" + location + "] is null");
+            Assert.notNull(privateKey, "Private key for location [%s] is null".formatted(location));
+            Assert.notNull(publicKey, "Public key for location [%s] is null".formatted(location));
 
             newEntries.add(new Saml2X509Credential(privateKey, publicKey, usage));
         }
@@ -191,7 +192,8 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager {
         }
     }
 
-    private KeyStore createKeystore(Resource location, String type, String password) throws Exception {
+    private KeyStore createKeystore(Resource location, String type, String password)
+        throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException {
         LOG.info("Creating keystore [{}] of type [{}]", location.getDescription(), type);
 
         try (InputStream stream = location.getInputStream()) {

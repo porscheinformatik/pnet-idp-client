@@ -5,7 +5,6 @@ package at.porscheinformatik.idp.openidconnect.convert;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 
@@ -26,7 +25,7 @@ public abstract class AbstractCollectionConverter<T> implements Converter<Object
         return sourceCollection //
             .stream()
             .map(this::doConvertEntry)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     protected abstract T doConvertEntry(Map<String, Object> entry);

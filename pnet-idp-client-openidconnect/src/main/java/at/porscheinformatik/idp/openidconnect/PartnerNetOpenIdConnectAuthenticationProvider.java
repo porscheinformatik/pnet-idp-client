@@ -64,14 +64,14 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
 
         if (user.getAuthenticatedAt() == null) {
             throw new OAuth2AuthenticationException(
-                new OAuth2Error("invalid_id_token", "auth_time claim is required when max_age was specified", null)
+                new OAuth2Error(INVALID_ID_TOKEN, "auth_time claim is required when max_age was specified", null)
             );
         }
 
         Instant expiration = user.getAuthenticatedAt().plus(CLOCK_SKEW).plusSeconds(requestedMaxAge);
 
         if (expiration.isBefore(Instant.now())) {
-            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_id_token", "max_age exceeded", null));
+            throw new OAuth2AuthenticationException(new OAuth2Error(INVALID_ID_TOKEN, "max_age exceeded", null));
         }
     }
 
@@ -85,12 +85,12 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
 
         if (tenant == null) {
             throw new OAuth2AuthenticationException(
-                new OAuth2Error("invalid_id_token", "tenant claim is required when tenant was specified", null)
+                new OAuth2Error(INVALID_ID_TOKEN, "tenant claim is required when tenant was specified", null)
             );
         }
 
         if (!requestedTenant.equals(tenant)) {
-            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_id_token", "invalid tenant", null));
+            throw new OAuth2AuthenticationException(new OAuth2Error(INVALID_ID_TOKEN, "invalid tenant", null));
         }
     }
 
@@ -178,4 +178,6 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
 
         return (Collection<String>) acrValues;
     }
+
+    private static final String INVALID_ID_TOKEN = "invalid_id_token";
 }

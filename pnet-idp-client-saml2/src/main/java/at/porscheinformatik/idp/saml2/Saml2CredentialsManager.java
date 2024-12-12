@@ -21,9 +21,6 @@ public interface Saml2CredentialsManager {
     void onUpdate(UpdateListener action);
 
     default List<Saml2X509Credential> getCredentials(Saml2X509CredentialType type) {
-        return getCredentials()
-            .stream()
-            .filter(credential -> credential.getCredentialTypes().contains(type))
-            .collect(Collectors.toList());
+        return getCredentials().stream().filter(credential -> credential.getCredentialTypes().contains(type)).toList();
     }
 }
