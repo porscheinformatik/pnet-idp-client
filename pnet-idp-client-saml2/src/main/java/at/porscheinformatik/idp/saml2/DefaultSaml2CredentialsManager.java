@@ -77,7 +77,8 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager {
         }
     }
 
-    public synchronized void update() throws Exception {
+    public synchronized void update()
+        throws IOException, UnrecoverableEntryException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
         //Remember the new lastupdate before the check. Otherwise we might lose the check time later on
         long newLastupdate = System.currentTimeMillis();
         List<Saml2CredentialsConfig> newConfig = configSupplier.get();

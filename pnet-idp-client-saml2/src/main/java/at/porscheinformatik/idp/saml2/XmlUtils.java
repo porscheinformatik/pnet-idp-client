@@ -7,7 +7,6 @@ import static java.util.Objects.*;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.time.Instant;
 import java.util.List;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
@@ -119,9 +118,7 @@ public final class XmlUtils {
         }
 
         if (xmlObject instanceof XSDateTime xsDateTime) {
-            Instant dateTime = xsDateTime.getValue();
-
-            return dateTime;
+            return xsDateTime.getValue();
         }
 
         if (xmlObject instanceof XSInteger xsInteger) {

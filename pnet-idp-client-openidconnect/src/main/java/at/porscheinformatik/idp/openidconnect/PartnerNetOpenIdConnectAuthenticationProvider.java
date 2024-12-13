@@ -133,8 +133,8 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
             return null;
         }
 
-        if (tenant instanceof String) {
-            return (String) tenant;
+        if (tenant instanceof String stringTenant) {
+            return stringTenant;
         }
 
         throw new IllegalArgumentException("tenant must be a String");
