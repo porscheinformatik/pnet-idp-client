@@ -2,6 +2,7 @@ package at.porscheinformatik.idp.saml2;
 
 import java.io.Serial;
 import java.util.Collection;
+import java.util.Objects;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -29,5 +30,18 @@ public class PartnerNetSaml2Authentication extends AbstractAuthenticationToken {
     @Override
     public PartnerNetSaml2AuthenticationPrincipal getPrincipal() {
         return principal;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        PartnerNetSaml2Authentication that = (PartnerNetSaml2Authentication) o;
+        return Objects.equals(principal, that.principal);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), principal);
     }
 }

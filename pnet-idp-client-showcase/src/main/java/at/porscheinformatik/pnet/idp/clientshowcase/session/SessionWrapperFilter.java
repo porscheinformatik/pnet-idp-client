@@ -89,7 +89,7 @@ public class SessionWrapperFilter extends OncePerRequestFilter {
             try (ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream((byte[]) serialized));) {
                 return stream.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException("Error deserializing session object", e);
+                throw new IllegalStateException("Error deserializing session object", e);
             }
         }
 
@@ -107,7 +107,7 @@ public class SessionWrapperFilter extends OncePerRequestFilter {
 
                 delegate.setAttribute(name, bytes.toByteArray());
             } catch (IOException e) {
-                throw new RuntimeException(String.format("Error serializing session object %s", value), e);
+                throw new IllegalStateException(String.format("Error serializing session object %s", value), e);
             }
         }
 

@@ -105,7 +105,8 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager {
         }
     }
 
-    private void setupEntries(List<Saml2CredentialsConfig> newConfig) throws Exception {
+    private void setupEntries(List<Saml2CredentialsConfig> newConfig)
+        throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableEntryException {
         validateNewConfig(newConfig);
 
         List<Saml2X509Credential> newEntries = new ArrayList<>();
@@ -211,8 +212,7 @@ public class DefaultSaml2CredentialsManager implements Saml2CredentialsManager {
         return (PrivateKey) keystore.getKey(alias, password.toCharArray());
     }
 
-    private X509Certificate extractPublicKey(KeyStore keystore, String alias)
-        throws NoSuchAlgorithmException, UnrecoverableEntryException, KeyStoreException {
+    private X509Certificate extractPublicKey(KeyStore keystore, String alias) throws KeyStoreException {
         LOG.info("Extracting Certificate [{}]", alias);
 
         return (X509Certificate) keystore.getCertificate(alias);

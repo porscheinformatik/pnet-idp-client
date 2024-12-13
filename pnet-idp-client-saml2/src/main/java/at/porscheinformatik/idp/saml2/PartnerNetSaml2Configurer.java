@@ -306,7 +306,10 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     @Override
     public void configure(HttpSecurity builder) throws Exception {
         builder.addFilterBefore(buildMetadataFilter(), Saml2WebSsoAuthenticationFilter.class);
-        builder.saml2Login().authenticationManager(builder.getSharedObject(AuthenticationManager.class));
+
+        builder.saml2Login(customizer ->
+            customizer.authenticationManager(builder.getSharedObject(AuthenticationManager.class))
+        );
     }
 
     private Filter buildMetadataFilter() {

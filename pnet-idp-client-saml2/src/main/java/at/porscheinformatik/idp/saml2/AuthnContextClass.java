@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public enum AuthnContextClass {
     NONE(-1, "urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified"),
@@ -21,8 +20,8 @@ public enum AuthnContextClass {
     SMARTCARDPKI(3, "urn:oasis:names:tc:SAML:2.0:ac:classes:SmartcardPKI"),
     SOFTWAREPKI(3, "urn:oasis:names:tc:SAML:2.0:ac:classes:SoftwarePKI");
 
-    private int nistLevel;
-    private String samlReference;
+    private final int nistLevel;
+    private final String samlReference;
 
     AuthnContextClass(int nistLevel, String samlReference) {
         this.nistLevel = nistLevel;
@@ -33,16 +32,8 @@ public enum AuthnContextClass {
         return nistLevel;
     }
 
-    public void setNistLevel(int nistLevel) {
-        this.nistLevel = nistLevel;
-    }
-
     public String getSamlReference() {
         return samlReference;
-    }
-
-    public void setSamlReference(String samlReference) {
-        this.samlReference = samlReference;
     }
 
     boolean isStrongerThan(AuthnContextClass other) {

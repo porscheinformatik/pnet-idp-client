@@ -33,7 +33,7 @@ public class CheckIssuerMessageHandler extends AbstractSimpleMessageHandler {
 
         RelyingPartyRegistration relyingParty = getAuthenticationToken(messageContext).getRelyingPartyRegistration();
 
-        String entityId = relyingParty.getAssertingPartyDetails().getEntityId();
+        String entityId = relyingParty.getAssertingPartyMetadata().getEntityId();
 
         if (!Objects.equals(entityId, issuer.getValue())) {
             throw new MessageHandlerException(String.format("Invalid issuer %s", issuer.getValue()));

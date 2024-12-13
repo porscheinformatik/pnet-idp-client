@@ -8,9 +8,9 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
-import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.endpoint.RestClientAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -93,7 +93,7 @@ public class PartnerNetOpenIdConnectConfigurer
     public void init(HttpSecurity builder) throws Exception {
         final ClientRegistrationRepository clientRegistrationRepository = getClientRegistrationRepository();
         final OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient =
-            new DefaultAuthorizationCodeTokenResponseClient();
+            new RestClientAuthorizationCodeTokenResponseClient();
 
         builder.authenticationProvider(
             new PartnerNetOpenIdConnectAuthenticationProvider(accessTokenResponseClient, userService)

@@ -58,12 +58,12 @@ public class AuthenticationDisplayController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
-        if (principal instanceof PartnerNetOpenIdConnectUser) {
-            return Optional.of(AuthenticationDTO.of((PartnerNetOpenIdConnectUser) principal));
+        if (principal instanceof PartnerNetOpenIdConnectUser openIdConnectUser) {
+            return Optional.of(AuthenticationDTO.of(openIdConnectUser));
         }
 
-        if (principal instanceof PartnerNetSaml2AuthenticationPrincipal) {
-            return Optional.of(AuthenticationDTO.of((PartnerNetSaml2AuthenticationPrincipal) principal));
+        if (principal instanceof PartnerNetSaml2AuthenticationPrincipal saml2AuthenticationPrincipal) {
+            return Optional.of(AuthenticationDTO.of(saml2AuthenticationPrincipal));
         }
 
         return Optional.empty();

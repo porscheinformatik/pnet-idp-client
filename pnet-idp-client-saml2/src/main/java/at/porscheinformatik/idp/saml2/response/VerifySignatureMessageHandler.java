@@ -55,7 +55,7 @@ public class VerifySignatureMessageHandler extends AbstractSimpleMessageHandler 
             String idpEntityId = response.getIssuer().getValue();
             Collection<Saml2X509Credential> credentials = getAuthenticationToken(messageContext)
                 .getRelyingPartyRegistration()
-                .getAssertingPartyDetails()
+                .getAssertingPartyMetadata()
                 .getVerificationX509Credentials();
 
             if (credentials.isEmpty()) {

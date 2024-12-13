@@ -1,7 +1,6 @@
 package at.porscheinformatik.idp.saml2;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;

@@ -62,7 +62,7 @@ public class PartnerNetSaml2MetadataResolver implements Saml2MetadataResolver {
 
         // We only sign when IDP wants assertions signed
         SPSSODescriptor ssoDescriptor = spSsoDescriptor(
-            relyingPartyRegistration.getAssertingPartyDetails().getWantAuthnRequestsSigned()
+            relyingPartyRegistration.getAssertingPartyMetadata().getWantAuthnRequestsSigned()
         );
 
         ssoDescriptor

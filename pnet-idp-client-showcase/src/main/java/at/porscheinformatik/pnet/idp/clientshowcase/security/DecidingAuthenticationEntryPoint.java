@@ -42,14 +42,11 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         var maxAgeMfa = getIntParameter(request, "max_age_mfa");
         var tenant = getParameter(request, "tenant");
 
-        var builder =
-            switch (protocol) {
-                case "oidc" -> buildOidcPath(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant);
-                case "saml2" -> buildSaml2Path(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant);
-                default -> throw new IllegalArgumentException("Unsupported protocol " + protocol);
-            };
-
-        return builder;
+        return switch (protocol) {
+            case "oidc" -> buildOidcPath(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant);
+            case "saml2" -> buildSaml2Path(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant);
+            default -> throw new IllegalArgumentException("Unsupported protocol " + protocol);
+        };
     }
 
     private String getParameter(HttpServletRequest request, String paramName) {

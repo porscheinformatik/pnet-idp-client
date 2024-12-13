@@ -4,7 +4,6 @@ import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2Creden
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;

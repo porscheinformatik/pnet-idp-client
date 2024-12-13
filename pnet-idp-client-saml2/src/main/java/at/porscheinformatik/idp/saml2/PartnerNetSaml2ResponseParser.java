@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -286,8 +285,8 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
         List<String> stringEntries = new ArrayList<>();
 
-        if (value instanceof String) {
-            stringEntries.add((String) value);
+        if (value instanceof String stringValue) {
+            stringEntries.add(stringValue);
         } else {
             @SuppressWarnings("unchecked")
             List<String> valueList = (List<String>) value;
@@ -307,8 +306,8 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
 
         List<Integer> entries = new ArrayList<>();
 
-        if (value instanceof Integer) {
-            entries.add((Integer) value);
+        if (value instanceof Integer integerValue) {
+            entries.add(integerValue);
         } else {
             @SuppressWarnings("unchecked")
             List<Integer> valueList = (List<Integer>) value;
@@ -330,7 +329,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
     private boolean singleBoolean(Saml2Data data, String attributeName) {
         Boolean booleanValue = data.getAttribute(attributeName);
 
-        return booleanValue != null ? booleanValue : false;
+        return Boolean.TRUE.equals(booleanValue);
     }
 
     private Instant singleInstant(Saml2Data data, String attributeName) {

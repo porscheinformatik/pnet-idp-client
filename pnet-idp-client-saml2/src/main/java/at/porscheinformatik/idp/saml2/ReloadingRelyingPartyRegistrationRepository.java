@@ -160,7 +160,7 @@ public class ReloadingRelyingPartyRegistrationRepository implements RelyingParty
                 .decryptionX509Credentials(credentials ->
                     credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION))
                 )
-                .assertingPartyDetails(builder ->
+                .assertingPartyMetadata(builder ->
                     builder
                         .entityId(descriptor.getEntityID())
                         .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)

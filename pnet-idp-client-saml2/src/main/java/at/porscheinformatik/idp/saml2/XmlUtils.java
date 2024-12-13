@@ -100,40 +100,40 @@ public final class XmlUtils {
      */
     @Nullable
     public static Serializable getXmlValue(XMLObject xmlObject) {
-        if (xmlObject.isNil()) {
+        if (Boolean.TRUE.equals(xmlObject.isNil())) {
             return null;
         }
 
-        if (xmlObject instanceof XSAny) {
-            return ((XSAny) xmlObject).getTextContent();
+        if (xmlObject instanceof XSAny xsAny) {
+            return xsAny.getTextContent();
         }
 
-        if (xmlObject instanceof XSBase64Binary) {
-            String base64String = ((XSBase64Binary) xmlObject).getValue();
+        if (xmlObject instanceof XSBase64Binary xsBase64Binary) {
+            String base64String = xsBase64Binary.getValue();
 
             return Base64.decodeBase64(base64String);
         }
 
-        if (xmlObject instanceof XSBoolean) {
-            return ((XSBoolean) xmlObject).getValue().getValue();
+        if (xmlObject instanceof XSBoolean xsBoolean) {
+            return xsBoolean.getValue().getValue();
         }
 
-        if (xmlObject instanceof XSDateTime) {
-            Instant dateTime = ((XSDateTime) xmlObject).getValue();
+        if (xmlObject instanceof XSDateTime xsDateTime) {
+            Instant dateTime = xsDateTime.getValue();
 
             return dateTime;
         }
 
-        if (xmlObject instanceof XSInteger) {
-            return ((XSInteger) xmlObject).getValue();
+        if (xmlObject instanceof XSInteger xsInteger) {
+            return xsInteger.getValue();
         }
 
-        if (xmlObject instanceof XSString) {
-            return ((XSString) xmlObject).getValue();
+        if (xmlObject instanceof XSString xsString) {
+            return xsString.getValue();
         }
 
-        if (xmlObject instanceof XSURI) {
-            String uriString = ((XSURI) xmlObject).getURI();
+        if (xmlObject instanceof XSURI xsUri) {
+            String uriString = xsUri.getURI();
 
             return URI.create(uriString);
         }

@@ -108,12 +108,12 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
             return null;
         }
 
-        if (maxAge instanceof Integer) {
-            return (Integer) maxAge;
+        if (maxAge instanceof Integer maxAgeInteger) {
+            return maxAgeInteger;
         }
 
-        if (maxAge instanceof String) {
-            return Integer.valueOf((String) maxAge);
+        if (maxAge instanceof String maxAgeString) {
+            return Integer.valueOf(maxAgeString);
         }
 
         throw new IllegalArgumentException("maxAge must be an Integer or a String");

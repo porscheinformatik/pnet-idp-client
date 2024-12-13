@@ -24,8 +24,8 @@ public class ObjectToIntegerConverter implements GenericConverter {
             return null;
         }
 
-        if (source instanceof Number) {
-            return ((Number) source).intValue();
+        if (source instanceof Number sourceNumber) {
+            return sourceNumber.intValue();
         }
 
         return Integer.valueOf(source.toString());

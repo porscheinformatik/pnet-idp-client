@@ -36,8 +36,8 @@ public abstract class AbstractSimpleMessageHandler implements MessageHandler {
     protected Response getResponse(MessageContext messageContext) {
         Object message = messageContext.getMessage();
 
-        if (message instanceof Response) {
-            return (Response) message;
+        if (message instanceof Response response) {
+            return response;
         }
 
         throw new IllegalArgumentException(String.format("Response expected but got %s", message));
