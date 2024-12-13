@@ -7,10 +7,10 @@ import java.util.Base64;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-public class PartnerNetOpenIdConnectStateUtilsTest {
+class PartnerNetOpenIdConnectStateUtilsTest {
 
     @Test
-    public void testBuildState() {
+    void testBuildState() {
         assertThrows(IllegalArgumentException.class, () -> PartnerNetOpenIdConnectStateUtils.buildState(null, "cst"));
         assertThrows(IllegalArgumentException.class, () -> PartnerNetOpenIdConnectStateUtils.buildState("", "cst"));
 
@@ -20,7 +20,7 @@ public class PartnerNetOpenIdConnectStateUtilsTest {
     }
 
     @Test
-    public void testGetCustomState() {
+    void testGetCustomState() {
         assertNull(PartnerNetOpenIdConnectStateUtils.getCustomState((String) null));
         assertNull(PartnerNetOpenIdConnectStateUtils.getCustomState(new MockHttpServletRequest()));
         assertNull(PartnerNetOpenIdConnectStateUtils.getCustomState(encodeBase64("rnd")));

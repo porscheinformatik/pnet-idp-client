@@ -50,7 +50,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 /**
  * @author Daniel Furtlehner
  */
-public class Saml2ResponseProcessorTest {
+class Saml2ResponseProcessorTest {
 
     private static final String IDP_ENTITY_ID = "https://identity.com/identity/saml2";
     private static final String SP_ENTITY_ID = "https://service.com/service/saml2/pnet";
@@ -63,13 +63,13 @@ public class Saml2ResponseProcessorTest {
 
     private final Saml2CredentialsManager credentialsManager;
 
-    public Saml2ResponseProcessorTest() throws Exception {
+    Saml2ResponseProcessorTest() throws Exception {
         super();
         credentialsManager = Saml2TestUtils.defaultCredentialsManager();
     }
 
     @Test
-    public void failsOnOutdatedResponse() throws Exception {
+    void failsOnOutdatedResponse() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(outdatedResponse());
 
         testException(
@@ -80,14 +80,14 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingIssuer() throws Exception {
+    void failsOnMissingIssuer() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noIssuer());
 
         testException(tokenAndResponse, MessageHandlerException.class, "Saml message has no issuer set");
     }
 
     @Test
-    public void failsOnUnknownIssuer() throws Exception {
+    void failsOnUnknownIssuer() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(issuer("https://unkown.com/identity/saml2"));
 
         testException(
@@ -98,7 +98,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongIssuerFormat() throws Exception {
+    void failsOnWrongIssuerFormat() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(issuerFormat(NameIDType.TRANSIENT));
 
         testException(
@@ -109,14 +109,14 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingId() throws Exception {
+    void failsOnMissingId() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noId());
 
         testException(tokenAndResponse, MessageHandlerException.class, "Message ID must not be null.");
     }
 
     @Test
-    public void failsOnMissingAssertion() throws Exception {
+    void failsOnMissingAssertion() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noAssertion());
 
         testException(
@@ -127,7 +127,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMultipleAssertions() throws Exception {
+    void failsOnMultipleAssertions() throws Exception {
         Assertion additionalAssertion = Saml2ObjectUtils.assertion(
             IDP_ENTITY_ID,
             Saml2ObjectUtils.subject(SP_ENTITY_ID, 10, "XYZ"),
@@ -145,7 +145,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingAuthnStatement() throws Exception {
+    void failsOnMissingAuthnStatement() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noAuthnStatement());
 
         testException(
@@ -156,7 +156,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMultipleAuthnStatements() throws Exception {
+    void failsOnMultipleAuthnStatements() throws Exception {
         AuthnStatement additionalAuthnStatement = Saml2ObjectUtils.authnStatement(
             Instant.now(),
             "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
@@ -171,7 +171,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingAttributeStatement() throws Exception {
+    void failsOnMissingAttributeStatement() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noAttributeStatement());
 
         testException(
@@ -182,7 +182,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMultipleAttributeStatements() throws Exception {
+    void failsOnMultipleAttributeStatements() throws Exception {
         AttributeStatement additionalAttributeStatement = Saml2ObjectUtils.attributeStatement();
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(attributeStatement(additionalAttributeStatement));
 
@@ -194,21 +194,21 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingSubject() throws Exception {
+    void failsOnMissingSubject() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noSubject());
 
         testException(tokenAndResponse, MessageHandlerException.class, "Assertion is missing a subject");
     }
 
     @Test
-    public void failsOnWrongSubjectConfirmationMethod() throws Exception {
+    void failsOnWrongSubjectConfirmationMethod() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(wrongSubjectConfirmationMethod());
 
         testException(tokenAndResponse, MessageHandlerException.class, "No bearer SubjectConfirmation found");
     }
 
     @Test
-    public void failsOnMissingSubjectConfirmationData() throws Exception {
+    void failsOnMissingSubjectConfirmationData() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noSubjectConfirmationData());
 
         testException(
@@ -219,7 +219,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongRecipient() throws Exception {
+    void failsOnWrongRecipient() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(wrongRecipient());
 
         testException(
@@ -230,14 +230,14 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnOutdatedSubjectConfirmation() throws Exception {
+    void failsOnOutdatedSubjectConfirmation() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(outdatedSubjectConfirmation());
 
         testException(tokenAndResponse, MessageHandlerException.class, "SubjectConfirmationData already outdated");
     }
 
     @Test
-    public void failsOnNotBeforeSubjectConfirmation() throws Exception {
+    void failsOnNotBeforeSubjectConfirmation() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(notBeforeOnSubjectConfirmation());
 
         testException(
@@ -248,7 +248,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongInResponseTo() throws Exception {
+    void failsOnWrongInResponseTo() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(wrongInResponseTo());
 
         testException(
@@ -259,7 +259,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingAudience() throws Exception {
+    void failsOnMissingAudience() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(noAudienceRestriction());
 
         testException(
@@ -270,7 +270,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnEmptyConditions() throws Exception {
+    void failsOnEmptyConditions() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(emptyConditions());
 
         testException(
@@ -281,7 +281,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongNotBefore() throws Exception {
+    void failsOnWrongNotBefore() throws Exception {
         // Have to account for clock skew so add a bigger value than 5 minutes
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             conditionsValidity(Instant.now().plus(10, MINUTES), Instant.now().plus(15, MINUTES))
@@ -295,7 +295,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongNotOnOrAfter() throws Exception {
+    void failsOnWrongNotOnOrAfter() throws Exception {
         // Have to account for clock skew so add a bigger value than 5 minutes
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             conditionsValidity(Instant.now().minus(10, MINUTES), Instant.now().minus(9, MINUTES))
@@ -309,7 +309,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnConditionsValidityReversed() throws Exception {
+    void failsOnConditionsValidityReversed() throws Exception {
         // Have to account for clock skew so add a bigger value than 5 minutes
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             conditionsValidity(Instant.now().minus(1, MINUTES), Instant.now().minus(5, MINUTES))
@@ -323,7 +323,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongAudienceRestriction() throws Exception {
+    void failsOnWrongAudienceRestriction() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(wrongAudienceRestriction());
 
         testException(
@@ -334,7 +334,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnUnsignedRequest() throws Exception {
+    void failsOnUnsignedRequest() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(false, false, false, false, null, null, null);
 
         testException(
@@ -345,14 +345,14 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongSignature() throws Exception {
+    void failsOnWrongSignature() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, true, false, false, null, null, null);
 
         testException(tokenAndResponse, MessageHandlerException.class, "Error validating signature");
     }
 
     @Test
-    public void failsOnMissingDestination() throws Exception {
+    void failsOnMissingDestination() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(missingDestination());
 
         testException(
@@ -363,7 +363,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnToOldAuthnInstantWhenForcedAuthentication() throws Exception {
+    void failsOnToOldAuthnInstantWhenForcedAuthentication() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             true,
             false,
@@ -383,7 +383,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnToOldAuthnInstantWhenRequestedSessionAge() throws Exception {
+    void failsOnToOldAuthnInstantWhenRequestedSessionAge() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             true,
             false,
@@ -403,14 +403,14 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWrongDestination() throws Exception {
+    void failsOnWrongDestination() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(wrongDestination());
 
         testException(tokenAndResponse, MessageHandlerException.class, "SAML message failed received endpoint check");
     }
 
     @Test
-    public void failsOnMissingSubjectIdentifier() throws Exception {
+    void failsOnMissingSubjectIdentifier() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             true,
             false,
@@ -426,7 +426,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnErrorResponse() throws Exception {
+    void failsOnErrorResponse() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, true, false, null, null, null);
 
         testException(
@@ -437,7 +437,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnWeakAuthentication() throws Exception {
+    void failsOnWeakAuthentication() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 3, null, null);
 
         testException(
@@ -448,7 +448,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void successOnStrongEnoughAuthentication() throws Exception {
+    void successOnStrongEnoughAuthentication() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null, null);
 
         Saml2ResponseProcessor processor = Saml2ResponseProcessor.withDefaultHandlers();
@@ -457,7 +457,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingResponseRelayState() throws Exception {
+    void failsOnMissingResponseRelayState() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             true,
             false,
@@ -474,7 +474,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnMissingRequestRelayState() throws Exception {
+    void failsOnMissingRequestRelayState() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             true,
             false,
@@ -491,7 +491,7 @@ public class Saml2ResponseProcessorTest {
     }
 
     @Test
-    public void failsOnNotMatchingRelayState() throws Exception {
+    void failsOnNotMatchingRelayState() throws Exception {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(
             true,
             false,
@@ -717,17 +717,17 @@ public class Saml2ResponseProcessorTest {
         private final Saml2AuthenticationToken token;
         private final Response response;
 
-        public TokenAndResponse(Saml2AuthenticationToken token, Response response) {
+        TokenAndResponse(Saml2AuthenticationToken token, Response response) {
             super();
             this.token = token;
             this.response = response;
         }
 
-        public Saml2AuthenticationToken getToken() {
+        Saml2AuthenticationToken getToken() {
             return token;
         }
 
-        public Response getResponse() {
+        Response getResponse() {
             return response;
         }
     }

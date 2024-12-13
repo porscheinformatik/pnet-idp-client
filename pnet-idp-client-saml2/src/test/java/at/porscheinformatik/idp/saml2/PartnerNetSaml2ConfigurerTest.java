@@ -28,7 +28,7 @@ import org.springframework.util.ReflectionUtils.FieldCallback;
 /**
  * @author Daniel Furtlehner
  */
-public class PartnerNetSaml2ConfigurerTest {
+class PartnerNetSaml2ConfigurerTest {
 
     private static final String IDP_ENTITY_ID = "https://identity.com/identity/saml2";
 
@@ -37,7 +37,7 @@ public class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    public void requestFilterIsConfigured() throws Exception {
+    void requestFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials);
 
@@ -52,7 +52,7 @@ public class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    public void authenticationFilterIsConfigured() throws Exception {
+    void authenticationFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials); //
 
@@ -67,7 +67,7 @@ public class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    public void metadataFilterIsConfigured() throws Exception {
+    void metadataFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials); //
 
@@ -79,7 +79,7 @@ public class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    public void authenticationProviderIsConfigured() throws Exception {
+    void authenticationProviderIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials); //
 
@@ -97,7 +97,7 @@ public class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    public void missingCredentialsThrowsException() throws Exception {
+    void missingCredentialsThrowsException() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID);
 

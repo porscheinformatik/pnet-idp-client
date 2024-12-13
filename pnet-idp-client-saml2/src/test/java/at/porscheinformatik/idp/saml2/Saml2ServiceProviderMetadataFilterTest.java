@@ -14,7 +14,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
@@ -48,7 +47,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 /**
  * @author Daniel Furtlehner
  */
-public class Saml2ServiceProviderMetadataFilterTest {
+class Saml2ServiceProviderMetadataFilterTest {
     static {
         Saml2Initializer.initialize();
     }
@@ -57,7 +56,7 @@ public class Saml2ServiceProviderMetadataFilterTest {
     private static final String RESPONSE_DESTINATION = SP_ENTITY_ID + "/authenticate/pnet";
 
     @Test
-    public void filterNotCalled() throws Exception {
+    void filterNotCalled() throws Exception {
         TestFilterChain chain = new TestFilterChain();
         Saml2ServiceProviderMetadataFilter filter = buildFilter();
         HttpServletRequest request = buildRequestFromUrl("https://service.com/something");
@@ -70,7 +69,7 @@ public class Saml2ServiceProviderMetadataFilterTest {
     }
 
     @Test
-    public void metadataInResponse() throws Exception {
+    void metadataInResponse() throws Exception {
         TestFilterChain chain = new TestFilterChain();
         Saml2ServiceProviderMetadataFilter filter = buildFilter();
         HttpServletRequest request = buildRequestFromUrl(SP_ENTITY_ID);

@@ -27,13 +27,13 @@ import org.springframework.web.util.UriUtils;
 /**
  * @author Daniel Furtlehner
  */
-public class PartnerNetOAuth2AuthorizationRequestResolverTest {
+class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
     private static final String BASE_URI = "/oauth/authorize";
     private static final String CLIENT_ID = "me_myself_and_i";
 
     @Test
-    public void testAcrParameter() {
+    void testAcrParameter() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -65,7 +65,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
     // Test that the max_age parameter is appended to the authorization request
     @Test
-    public void testMaxAgeParameter() {
+    void testMaxAgeParameter() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -83,7 +83,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
     // Test that forceAuthentication appends a max_age parameter with value 0 to the authorization request
     @Test
-    public void testForceAuthentication() {
+    void testForceAuthentication() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -100,7 +100,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest {
     }
 
     @Test
-    public void testMaxAgeMfaParameter() {
+    void testMaxAgeMfaParameter() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -117,7 +117,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest {
     }
 
     @Test
-    public void testMultipleExtensions() {
+    void testMultipleExtensions() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -140,7 +140,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest {
     }
 
     @Test
-    public void testCustomState() {
+    void testCustomState() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
@@ -159,7 +159,7 @@ public class PartnerNetOAuth2AuthorizationRequestResolverTest {
     }
 
     @Test
-    public void testPreselectTenant() {
+    void testPreselectTenant() {
         PartnerNetOAuth2AuthorizationRequestResolver resolver = buildResolver();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(BASE_URI + "/pnet");
