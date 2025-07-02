@@ -29,8 +29,10 @@ public class Saml2Utils {
     private static final String MAX_SESSION_AGE_PARAM = "maxSessionAge";
     private static final String MAX_AGE_MFA_PARAM = "maxAgeMfa";
     private static final String TENANT_PARAM = "tenant";
+    private static final String PROMPT_PARAM = "prompt";
+    private static final String LOGIN_HINT_PARAM = "login_hint";
 
-    //Specification says between 128 and 160 bit are perfect
+    // Specification says between 128 and 160 bit are perfect
     private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy(20);
 
     private Saml2Utils() {
@@ -105,6 +107,34 @@ public class Saml2Utils {
         return Optional.empty();
     }
 
+    public static UriComponentsBuilder requestPrompt(UriComponentsBuilder uriComponentsBuilder, String prompt) {
+        return uriComponentsBuilder.replaceQueryParam(PROMPT_PARAM, prompt);
+    }
+
+    public static Optional<String> retrievePrompt(HttpServletRequest request) {
+        String value = request.getParameter(PROMPT_PARAM);
+
+        if (value != null && !value.isEmpty()) {
+            return Optional.of(value);
+        }
+
+        return Optional.empty();
+    }
+
+    public static UriComponentsBuilder requestLoginHint(UriComponentsBuilder uriComponentsBuilder, String loginHint) {
+        return uriComponentsBuilder.replaceQueryParam(LOGIN_HINT_PARAM, loginHint);
+    }
+
+    public static Optional<String> retrieveLoginHint(HttpServletRequest request) {
+        String value = request.getParameter(LOGIN_HINT_PARAM);
+
+        if (value != null && !value.isEmpty()) {
+            return Optional.of(value);
+        }
+
+        return Optional.empty();
+    }
+
     public static UriComponentsBuilder requestNistAuthenticationLevel(
         UriComponentsBuilder uriComponentsBuilder,
         int nistLevel
@@ -150,7 +180,8 @@ public class Saml2Utils {
     }
 
     /**
-     * Removes all SAML Processing related parameters from the query part of the given url, if any.
+     * Removes all SAML Processing related parameters from the query part of the
+     * given url, if any.
      *
      * @param url the url to sanitize
      * @return the sanitized url
@@ -165,6 +196,8 @@ public class Saml2Utils {
             .replaceQueryParam(MAX_SESSION_AGE_PARAM)
             .replaceQueryParam(MAX_AGE_MFA_PARAM)
             .replaceQueryParam(TENANT_PARAM)
+            .replaceQueryParam(PROMPT_PARAM)
+            .replaceQueryParam(LOGIN_HINT_PARAM)
             .replaceQueryParam(NIST_LEVEL_PARAM)
             .replaceQueryParam(RELAY_STATE_PARAM)
             .toUriString();

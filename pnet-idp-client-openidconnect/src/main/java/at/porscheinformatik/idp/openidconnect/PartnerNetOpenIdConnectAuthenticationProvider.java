@@ -56,19 +56,22 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
     }
 
     private void validateMaxAge(Integer requestedMaxAge, OAuth2LoginAuthenticationToken openIdAuthentication) {
+        OidcUser user = (OidcUser) openIdAuthentication.getPrincipal();
+        Instant authenticatedAt = user.getAuthenticatedAt();
+
+        System.err.println("Authenticated at: " + authenticatedAt);
+
         if (requestedMaxAge == null) {
             return;
         }
 
-        OidcUser user = (OidcUser) openIdAuthentication.getPrincipal();
-
-        if (user.getAuthenticatedAt() == null) {
+        if (authenticatedAt == null) {
             throw new OAuth2AuthenticationException(
                 new OAuth2Error(INVALID_ID_TOKEN, "auth_time claim is required when max_age was specified", null)
             );
         }
 
-        Instant expiration = user.getAuthenticatedAt().plus(CLOCK_SKEW).plusSeconds(requestedMaxAge);
+        Instant expiration = authenticatedAt.plus(CLOCK_SKEW).plusSeconds(requestedMaxAge);
 
         if (expiration.isBefore(Instant.now())) {
             throw new OAuth2AuthenticationException(new OAuth2Error(INVALID_ID_TOKEN, "max_age exceeded", null));

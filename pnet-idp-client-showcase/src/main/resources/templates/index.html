@@ -37,30 +37,129 @@
                 margin-top: 8px;
             }
         </style>
+        <script>
+            // Function to save form data to localStorage
+            function saveFormData() {
+                const form = document.querySelector("form");
+                const formData = new FormData(form);
+                const data = {};
+
+                // Save all input values
+                const inputs = form.querySelectorAll("input, select");
+                inputs.forEach((input) => {
+                    if (input.type === "radio") {
+                        if (input.checked) {
+                            data[input.name] = input.value;
+                        }
+                    } else if (input.type === "checkbox") {
+                        data[input.name] = input.checked;
+                    } else {
+                        data[input.name] = input.value;
+                    }
+                });
+
+                localStorage.setItem("pnet-idp-client.form-values", JSON.stringify(data));
+            }
+
+            // Function to load form data from localStorage
+            function loadFormData() {
+                const savedData = localStorage.getItem("pnet-idp-client.form-values");
+                if (!savedData) return;
+
+                try {
+                    const data = JSON.parse(savedData);
+
+                    // Restore all input values
+                    Object.keys(data).forEach((name) => {
+                        const elements = document.getElementsByName(name);
+
+                        elements.forEach((element) => {
+                            if (element.type === "radio") {
+                                element.checked = element.value === data[name];
+                            } else if (element.type === "checkbox") {
+                                element.checked = data[name];
+                            } else {
+                                element.value = data[name] || "";
+                            }
+                        });
+                    });
+                } catch (e) {
+                    console.error("Error loading form data from localStorage:", e);
+                }
+            }
+
+            // Function to reset form and clear localStorage
+            function resetFormData() {
+                // Clear localStorage
+                localStorage.removeItem("pnet-idp-client.form-values");
+
+                // Reset form to default values
+                const form = document.querySelector("form");
+
+                // Reset all inputs to their default state
+                form.querySelectorAll("input, select").forEach((element) => {
+                    if (element.type === "radio") {
+                        // Check the default radio button (OIDC)
+                        element.checked = element.hasAttribute("checked");
+                    } else if (element.type === "checkbox") {
+                        element.checked = false;
+                    } else {
+                        element.value = "";
+                    }
+                });
+            }
+
+            // Initialize when page loads
+            document.addEventListener("DOMContentLoaded", function () {
+                loadFormData();
+
+                // Add event listener to save data on form submit
+                const form = document.querySelector("form");
+                form.addEventListener("submit", function (e) {
+                    saveFormData();
+                });
+            });
+        </script>
     </head>
     <body>
         <form th:action="@{/data/authorization}" method="get">
-            <div>
-                <div>
-                    <input type="radio" id="oidc" name="protocol" value="oidc" checked="checked" />
-                    <label for="oidc">OIDC</label>
-
-                    <input type="radio" id="saml2" name="protocol" value="saml2" />
-                    <label for="saml2">SAML2</label>
-                </div>
-
-                <div>
-                    <input type="checkbox" id="require_mfa" name="require_mfa" />
-                    <label for="require_mfa">Require MFA</label>
-                </div>
-            </div>
+            <h3>Protocol and MFA</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="min-width: 12em">Option</th>
+                        <th style="min-width: 16em">Value</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>
+                        <label for="oidc">Protocol</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="oidc" name="protocol" value="oidc" checked="checked" />
+                        <label for="oidc">OIDC</label>
+                        <br />
+                        <input type="radio" id="saml2" name="protocol" value="saml2" />
+                        <label for="saml2">SAML2</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="require_mfa">MFA</label>
+                    </td>
+                    <td>
+                        <input type="checkbox" id="require_mfa" name="require_mfa" />
+                        <label for="require_mfa">Require MFA</label>
+                    </td>
+                </tr>
+            </table>
 
             <h3>Optional Parameters</h3>
             <table>
                 <thead>
                     <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
+                        <th style="min-width: 12em">Parameter</th>
+                        <th style="min-width: 16em">Value</th>
                         <th>Description</th>
                     </tr>
                 </thead>
@@ -74,10 +173,82 @@
                         <input type="number" id="max_age" name="max_age" />
                     </td>
                     <td>
-                        When a user selected "Remember Me" during the login process, the Identity Provider will not ask
-                        the user to enter Username and Password for a specific time. You can override and shorten this
-                        time by setting the max_age parameter.<br />
-                        The value is in seconds.
+                        If a user has selected "Remember Me" when entering the password, the user will not be asked to
+                        enter the password again for twelve hours. The <code>max_age</code> parameter (specified in
+                        seconds) allows you to shorten this time period.<br />
+                    </td>
+                </tr>
+
+                <!-- prompt -->
+                <tr>
+                    <td>
+                        <label for="prompt">prompt</label>
+                    </td>
+                    <td>
+                        <select id="prompt" name="prompt">
+                            <option value=""></option>
+                            <option value="none">none</option>
+                            <option value="select_account">select_account</option>
+                            <option value="login">login</option>
+                        </select>
+                    </td>
+                    <td>
+                        Instructs the Partner.Net IDP to prompt the user for a specific action.<br />
+                        <ul>
+                            <li>
+                                <strong>none</strong>: Avoids user interaction and typically skips account selection by
+                                using the most recent account.
+                            </li>
+                            <li>
+                                <strong>select_account</strong>: Shows the account selection screen, but does not
+                                necessarily require the user to enter their password again.
+                            </li>
+                            <li>
+                                <strong>consent</strong>: Defined by the OpenID specification, but currently not
+                                supported.
+                            </li>
+                            <li>
+                                <strong>login</strong>: Forces the user to enter their credentials again (equivalent to
+                                setting <code>max_age</code> to 0).
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <!-- login_hint -->
+                <tr>
+                    <td>
+                        <label for="login_hint">login_hint</label>
+                    </td>
+                    <td>
+                        <input type="text" id="login_hint" name="login_hint" />
+                    </td>
+                    <td>
+                        The <code>login_hint</code> parameter allows the Partner.Net IDP to pre-select a specific
+                        account, skipping the account selection step. The <code>login_hint</code> will be included in
+                        the authentication response, and you can reuse it to simplify future logins.
+                        <br />
+                        Currently, <code>login_hint</code> is typically a UUID that works only in a browser context
+                        where the user has already authenticated. If the UUID is unknown, you may also use the username.
+                        <br />
+                    </td>
+                </tr>
+
+                <!-- tenant -->
+                <tr>
+                    <td>
+                        <label for="tenant">tenant</label>
+                    </td>
+                    <td>
+                        <input type="text" id="tenant" name="tenant" />
+                    </td>
+                    <td>
+                        Instructs the Partner.Net IDP to use a specific tenant. If the user has a valid employment in
+                        the specified tenant, the tenant selection will be skipped. Otherwise, the user will be prompted
+                        to select another tenant. Note that providing this parameter does not guarantee the user will
+                        use the specified tenant.
+                        <br />
+                        Example: <code>AT</code>, <code>BA</code>, <code>CZ</code>, <code>DE</code>, ...
                     </td>
                 </tr>
 
@@ -111,24 +282,10 @@
                         The value is in seconds.
                     </td>
                 </tr>
-
-                <!-- tenant -->
-                <tr>
-                    <td>
-                        <label for="tenant">tenant</label>
-                    </td>
-                    <td>
-                        <input type="text" id="tenant" name="tenant" />
-                    </td>
-                    <td>
-                        Forces a login, if the user is already logged in at the Identity Provider but to another
-                        tenant.<br />
-                        Example values: AT, DE, CZ, etc.
-                    </td>
-                </tr>
             </table>
 
             <button type="submit">Login</button>
+            <button type="button" onclick="resetFormData()">Reset</button>
         </form>
     </body>
 </html>

@@ -14,7 +14,7 @@ public class PartnerNetSaml2Configuration {
         Saml2Initializer.initialize();
     }
 
-    private PartnerNetSaml2Configuration() {
+    PartnerNetSaml2Configuration() {
         super();
     }
 }

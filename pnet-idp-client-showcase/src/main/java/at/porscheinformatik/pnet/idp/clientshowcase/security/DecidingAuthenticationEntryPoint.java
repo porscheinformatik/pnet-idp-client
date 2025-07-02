@@ -14,8 +14,10 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- * This authentication entry point decides what authentication should be used based on the "protocol" query parameter.
- * It also appends the additional parameters (max_age, tenant, etc.) to the authentication request.
+ * This authentication entry point decides what authentication should be used
+ * based on the "protocol" query parameter.
+ * It also appends the additional parameters (max_age, tenant, etc.) to the
+ * authentication request.
  */
 public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -41,10 +43,20 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         var forceAuthentication = getBooleanParameter(request, "force_authentication");
         var maxAgeMfa = getIntParameter(request, "max_age_mfa");
         var tenant = getParameter(request, "tenant");
+        var prompt = getParameter(request, "prompt");
+        var loginHint = getParameter(request, "login_hint");
 
         return switch (protocol) {
-            case "oidc" -> buildOidcPath(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant);
-            case "saml2" -> buildSaml2Path(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant);
+            case "oidc" -> buildOidcPath(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant, prompt, loginHint);
+            case "saml2" -> buildSaml2Path(
+                requireMfa,
+                maxAge,
+                forceAuthentication,
+                maxAgeMfa,
+                tenant,
+                prompt,
+                loginHint
+            );
             default -> throw new IllegalArgumentException("Unsupported protocol " + protocol);
         };
     }
@@ -72,7 +84,9 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         Integer maxAge,
         boolean forceAuthentication,
         Integer maxAgeMfa,
-        String tenant
+        String tenant,
+        String prompt,
+        String loginHint
     ) {
         var builder = UriComponentsBuilder.fromPath("/saml2/authenticate/pnet");
 
@@ -96,6 +110,14 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
             Saml2Utils.requestTenant(builder, tenant.toUpperCase());
         }
 
+        if (prompt != null) {
+            Saml2Utils.requestPrompt(builder, prompt);
+        }
+
+        if (loginHint != null) {
+            Saml2Utils.requestLoginHint(builder, loginHint);
+        }
+
         return builder;
     }
 
@@ -104,7 +126,9 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         Integer maxAge,
         boolean forceAuthentication,
         Integer maxAgeMfa,
-        String tenant
+        String tenant,
+        String prompt,
+        String loginHint
     ) {
         var builder = UriComponentsBuilder.fromPath("/oauth2/authorization/pnet");
 
@@ -124,6 +148,14 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
 
         if (tenant != null) {
             PartnerNetOAuth2AuthorizationRequestResolver.requestTenant(builder, tenant.toUpperCase());
+        }
+
+        if (tenant != null) {
+            PartnerNetOAuth2AuthorizationRequestResolver.requestPrompt(builder, prompt);
+        }
+
+        if (loginHint != null) {
+            PartnerNetOAuth2AuthorizationRequestResolver.requestLoginHint(builder, loginHint);
         }
 
         return builder;

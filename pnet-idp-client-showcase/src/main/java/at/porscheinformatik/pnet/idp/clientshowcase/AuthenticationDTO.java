@@ -31,6 +31,7 @@ public class AuthenticationDTO {
             principal.getTransientSessionId(),
             principal.isSupportDataAvailable(),
             principal.getNistAuthenticationLevel(),
+            principal.getAuthenticatedAt(),
             principal.getUserType(),
             principal.getName(),
             principal.getEmail(),
@@ -75,6 +76,7 @@ public class AuthenticationDTO {
             principal.getTransientSessionId(),
             principal.isSupportDataAvailable(),
             principal.getAuthnContextClass().getNistLevel(),
+            null,
             principal.getUserType(),
             principal.getName(),
             principal.getMailAddress(),
@@ -118,6 +120,7 @@ public class AuthenticationDTO {
     private final String transientSessionId;
     private final boolean supportDataAvailable;
     private final int nistAuthenticationLevel;
+    private final Instant authenticatedAt;
     private final PartnerNetUserType userType;
     private final String name;
     private final String email;
@@ -159,6 +162,7 @@ public class AuthenticationDTO {
         String transientSessionId,
         boolean supportDataAvailable,
         int nistAuthenticationLevel,
+        Instant authenticatedAt,
         PartnerNetUserType userType,
         String name,
         String email,
@@ -200,6 +204,7 @@ public class AuthenticationDTO {
         this.transientSessionId = transientSessionId;
         this.supportDataAvailable = supportDataAvailable;
         this.nistAuthenticationLevel = nistAuthenticationLevel;
+        this.authenticatedAt = authenticatedAt;
         this.userType = userType;
         this.name = name;
         this.email = email;
@@ -257,6 +262,10 @@ public class AuthenticationDTO {
 
     public int getNistAuthenticationLevel() {
         return nistAuthenticationLevel;
+    }
+
+    public Instant getAuthenticatedAt() {
+        return authenticatedAt;
     }
 
     public PartnerNetUserType getUserType() {

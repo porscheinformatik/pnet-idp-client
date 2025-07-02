@@ -16,7 +16,8 @@ import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- * Customized implementation of Spring Securities default request resolver, that allows for a bit more flexibility.
+ * Customized implementation of Spring Securities default request resolver, that
+ * allows for a bit more flexibility.
  *
  * @author Daniel Furtlehner
  */
@@ -31,6 +32,10 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
     public static final String TENANT_ADDITIONAL_PARAM = TENANT_PARAM;
     public static final String PRESELECT_TENANT_PARAM = "preselect_tenant";
     public static final String PRESELECT_TENANT_ADDITIONAL_PARAM = PRESELECT_TENANT_PARAM;
+    public static final String PROMPT_PARAM = "prompt";
+    public static final String PROMPT_ADDITIONAL_PARAM = PROMPT_PARAM;
+    public static final String LOGIN_HINT_PARAM = "login_hint";
+    public static final String LOGIN_HINT_ADDITIONAL_PARAM = LOGIN_HINT_PARAM;
     public static final String CUSTOM_STATE = "custom_state";
 
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
@@ -60,6 +65,14 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
     public static UriComponentsBuilder requestTenant(UriComponentsBuilder uri, String tenant) {
         return uri.queryParam(TENANT_PARAM, tenant);
+    }
+
+    public static UriComponentsBuilder requestPrompt(UriComponentsBuilder uri, String prompt) {
+        return uri.queryParam(PROMPT_PARAM, prompt);
+    }
+
+    public static UriComponentsBuilder requestLoginHint(UriComponentsBuilder uri, String loginHint) {
+        return uri.queryParam(LOGIN_HINT_PARAM, loginHint);
     }
 
     public static UriComponentsBuilder requestPreselectTenant(UriComponentsBuilder uri, String tenant) {
@@ -111,6 +124,8 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
         addRequestedMaxAgeMfa(request, additionalParameters, attributes);
         addRequestedTenant(request, additionalParameters, attributes);
         addRequestedPreselectTenant(request, additionalParameters, attributes);
+        addRequestedPrompt(request, additionalParameters, attributes);
+        addRequestedLoginHint(request, additionalParameters, attributes);
 
         String state = PartnerNetOpenIdConnectStateUtils.buildState(
             //
@@ -124,6 +139,36 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
             .additionalParameters(additionalParameters)
             .attributes(attributes)
             .build();
+    }
+
+    private void addRequestedLoginHint(
+        HttpServletRequest request,
+        Map<String, Object> additionalParameters,
+        Map<String, Object> attributes
+    ) {
+        String loginHint = request.getParameter(LOGIN_HINT_PARAM);
+
+        if (loginHint == null || loginHint.isEmpty()) {
+            return;
+        }
+
+        attributes.put(LOGIN_HINT_PARAM, loginHint);
+        additionalParameters.put(LOGIN_HINT_ADDITIONAL_PARAM, loginHint);
+    }
+
+    private void addRequestedPrompt(
+        HttpServletRequest request,
+        Map<String, Object> additionalParameters,
+        Map<String, Object> attributes
+    ) {
+        String prompt = request.getParameter(PROMPT_PARAM);
+
+        if (prompt == null || prompt.isEmpty()) {
+            return;
+        }
+
+        attributes.put(PROMPT_PARAM, prompt);
+        additionalParameters.put(PROMPT_ADDITIONAL_PARAM, prompt);
     }
 
     private void addRequestedTenant(
