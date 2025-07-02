@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -55,6 +57,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>exec</classifier>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -90,14 +95,16 @@
                                 <workdir>/opt/app-root</workdir>
 
                                 <entryPoint>
-                                    <shell>java $JAVA_OPTIONS -jar pnet-idp-client-showcase-${project.version}.jar</shell>
+                                    <shell>java $JAVA_OPTIONS -jar
+                                        pnet-idp-client-showcase-${project.version}-exec.jar</shell>
                                 </entryPoint>
 
                                 <assembly>
                                     <inline>
                                         <files>
                                             <file>
-                                                <source>${project.build.directory}/${project.build.finalName}.jar
+                                                <source>
+                                                    ${project.build.directory}/${project.build.finalName}-exec.jar
                                                 </source>
                                                 <outputDirectory>.</outputDirectory>
                                             </file>
