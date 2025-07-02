@@ -16,3 +16,4 @@ buildNumber.properties
 # IntelliJ's project's and code style
 .idea/
 node_modules/
+.vscode/
