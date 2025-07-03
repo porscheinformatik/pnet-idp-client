@@ -150,7 +150,7 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
             PartnerNetOAuth2AuthorizationRequestResolver.requestTenant(builder, tenant.toUpperCase());
         }
 
-        if (tenant != null) {
+        if (prompt != null) {
             PartnerNetOAuth2AuthorizationRequestResolver.requestPrompt(builder, prompt);
         }
 
