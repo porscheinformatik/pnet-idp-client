@@ -31,6 +31,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
     public static final String ID_TOKEN_TRANSIENT_SESSION = "transient_session_id";
     public static final String ID_TOKEN_RESPONSIBLE_USER_AVAILABLE = "pnet_responsible_user_available";
     public static final String ID_TOKEN_SUPPORT_AVAILABLE = "pnet_support_available";
+    public static final String ID_TOKEN_LOGIN_HINT = "login_hint";
 
     private static final String USER_INFO_INTERNAL_ID = "pnet_internal_id";
     public static final String USER_INFO_USER_TYPE = "pnet_person_type";
@@ -93,6 +94,10 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
         Boolean value = idTokenClaim(ID_TOKEN_SUPPORT_AVAILABLE);
 
         return value != null && value;
+    }
+
+    public String getLoginHint() {
+        return idTokenClaim(ID_TOKEN_LOGIN_HINT);
     }
 
     public int getNistAuthenticationLevel() {

@@ -25,6 +25,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
     private final String transientSessionId;
     private final AuthnContextClass authnContextClass;
     private final Instant lastUpdate;
+    private final String loginHint;
 
     private final String guid;
     private final String personnelNumber;
@@ -77,6 +78,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         String transientSessionId,
         AuthnContextClass authnContextClass,
         Instant lastUpdate,
+        String loginHint,
         String guid,
         String personnelNumber,
         Integer legacyId,
@@ -121,6 +123,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         this.transientSessionId = transientSessionId;
         this.authnContextClass = authnContextClass;
         this.lastUpdate = lastUpdate;
+        this.loginHint = loginHint;
         this.guid = guid;
         this.personnelNumber = personnelNumber;
         this.legacyId = legacyId;
@@ -357,5 +360,9 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     public Instant getLastUpdate() {
         return lastUpdate;
+    }
+
+    public String getLoginHint() {
+        return loginHint;
     }
 }

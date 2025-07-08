@@ -53,6 +53,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
         String nameId = data.getNameId();
         AuthnContextClass contextClass = data.getAuthnContextClass();
 
+        String loginHint = singleString(data, attributeName("login_hint"));
         String guid = singleString(data, attributeName("guid"));
         String personnelNumber = singleString(data, attributeName("personnel_number"));
         Integer legacyId = singleInteger(data, attributeName("person_id"));
@@ -113,6 +114,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
             nameId,
             contextClass,
             lastUpdate,
+            loginHint,
             guid,
             personnelNumber,
             legacyId,
