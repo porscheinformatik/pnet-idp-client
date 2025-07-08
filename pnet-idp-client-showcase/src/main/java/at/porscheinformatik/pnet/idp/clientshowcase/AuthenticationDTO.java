@@ -29,6 +29,7 @@ public class AuthenticationDTO {
             principal.getExternalId(),
             principal.getNistAuthenticationLevel() > 2,
             principal.getTransientSessionId(),
+            principal.getLoginHint(),
             principal.isSupportDataAvailable(),
             principal.getNistAuthenticationLevel(),
             principal.getAuthenticatedAt(),
@@ -74,6 +75,7 @@ public class AuthenticationDTO {
             principal.getSubjectIdentifier(),
             principal.isStronglyAuthenticated(),
             principal.getTransientSessionId(),
+            principal.getLoginHint(),
             principal.isSupportDataAvailable(),
             principal.getAuthnContextClass().getNistLevel(),
             null,
@@ -118,6 +120,7 @@ public class AuthenticationDTO {
     private final boolean secondFactorUsed;
 
     private final String transientSessionId;
+    private final String loginHint;
     private final boolean supportDataAvailable;
     private final int nistAuthenticationLevel;
     private final Instant authenticatedAt;
@@ -160,6 +163,7 @@ public class AuthenticationDTO {
         String externalId,
         boolean secondFactorUsed,
         String transientSessionId,
+        String loginHint,
         boolean supportDataAvailable,
         int nistAuthenticationLevel,
         Instant authenticatedAt,
@@ -202,6 +206,7 @@ public class AuthenticationDTO {
         this.externalId = externalId;
         this.secondFactorUsed = secondFactorUsed;
         this.transientSessionId = transientSessionId;
+        this.loginHint = loginHint;
         this.supportDataAvailable = supportDataAvailable;
         this.nistAuthenticationLevel = nistAuthenticationLevel;
         this.authenticatedAt = authenticatedAt;
@@ -254,6 +259,10 @@ public class AuthenticationDTO {
 
     public String getTransientSessionId() {
         return transientSessionId;
+    }
+
+    public String getLoginHint() {
+        return loginHint;
     }
 
     public boolean isSupportDataAvailable() {
