@@ -12,6 +12,7 @@ import at.porscheinformatik.idp.PartnerNetFunctionalNumberDTO;
 import at.porscheinformatik.idp.PartnerNetRoleDTO;
 import at.porscheinformatik.idp.PartnerNetUserType;
 import java.io.Serial;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -32,6 +33,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
     public static final String ID_TOKEN_RESPONSIBLE_USER_AVAILABLE = "pnet_responsible_user_available";
     public static final String ID_TOKEN_SUPPORT_AVAILABLE = "pnet_support_available";
     public static final String ID_TOKEN_LOGIN_HINT = "login_hint";
+    public static final String ID_TOKEN_AUTH_TIME_MFA = "auth_time_mfa";
 
     private static final String USER_INFO_INTERNAL_ID = "pnet_internal_id";
     public static final String USER_INFO_USER_TYPE = "pnet_person_type";
@@ -98,6 +100,10 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
 
     public String getLoginHint() {
         return idTokenClaim(ID_TOKEN_LOGIN_HINT);
+    }
+
+    public Instant getAuthTimeMfa() {
+        return this.getClaimAsInstant(ID_TOKEN_AUTH_TIME_MFA);
     }
 
     public int getNistAuthenticationLevel() {

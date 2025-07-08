@@ -33,6 +33,7 @@ public class AuthenticationDTO {
             principal.isSupportDataAvailable(),
             principal.getNistAuthenticationLevel(),
             principal.getAuthenticatedAt(),
+            principal.getAuthTimeMfa(),
             principal.getUserType(),
             principal.getName(),
             principal.getEmail(),
@@ -79,6 +80,7 @@ public class AuthenticationDTO {
             principal.isSupportDataAvailable(),
             principal.getAuthnContextClass().getNistLevel(),
             null,
+            null,
             principal.getUserType(),
             principal.getName(),
             principal.getMailAddress(),
@@ -124,6 +126,7 @@ public class AuthenticationDTO {
     private final boolean supportDataAvailable;
     private final int nistAuthenticationLevel;
     private final Instant authenticatedAt;
+    private final Instant authenticatedMfaAt;
     private final PartnerNetUserType userType;
     private final String name;
     private final String email;
@@ -167,6 +170,7 @@ public class AuthenticationDTO {
         boolean supportDataAvailable,
         int nistAuthenticationLevel,
         Instant authenticatedAt,
+        Instant authenticatedMfaAt,
         PartnerNetUserType userType,
         String name,
         String email,
@@ -210,6 +214,7 @@ public class AuthenticationDTO {
         this.supportDataAvailable = supportDataAvailable;
         this.nistAuthenticationLevel = nistAuthenticationLevel;
         this.authenticatedAt = authenticatedAt;
+        this.authenticatedMfaAt = authenticatedMfaAt;
         this.userType = userType;
         this.name = name;
         this.email = email;
@@ -275,6 +280,10 @@ public class AuthenticationDTO {
 
     public Instant getAuthenticatedAt() {
         return authenticatedAt;
+    }
+
+    public Instant getAuthenticatedMfaAt() {
+        return authenticatedMfaAt;
     }
 
     public PartnerNetUserType getUserType() {

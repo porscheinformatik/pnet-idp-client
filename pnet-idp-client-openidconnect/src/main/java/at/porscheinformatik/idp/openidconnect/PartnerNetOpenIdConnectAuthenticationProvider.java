@@ -42,6 +42,7 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         Collection<String> requestedAcrValues = getRequestedAcrValues(authentication);
         Integer requestedMaxAge = getRequestedMaxAge(authentication);
+        Integer requestedMaxAgeMfa = getRequestedMaxAgeMfa(authentication);
         String requestedTenant = getRequestedTenant(authentication);
 
         OAuth2LoginAuthenticationToken openIdAuthentication = (OAuth2LoginAuthenticationToken) super.authenticate(
@@ -50,6 +51,7 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
 
         validateAcrValues(requestedAcrValues, openIdAuthentication);
         validateMaxAge(requestedMaxAge, openIdAuthentication);
+        validateMaxAgeMfa(requestedMaxAgeMfa, openIdAuthentication);
         validateTenant(requestedTenant, openIdAuthentication);
 
         return openIdAuthentication;
@@ -75,6 +77,27 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
 
         if (expiration.isBefore(Instant.now())) {
             throw new OAuth2AuthenticationException(new OAuth2Error(INVALID_ID_TOKEN, "max_age exceeded", null));
+        }
+    }
+
+    private void validateMaxAgeMfa(Integer requestedMaxAgeMfa, OAuth2LoginAuthenticationToken openIdAuthentication) {
+        OidcUser user = (OidcUser) openIdAuthentication.getPrincipal();
+        Instant mfaAuthenticatedAt = user.getClaimAsInstant(PartnerNetOpenIdConnectUser.ID_TOKEN_AUTH_TIME_MFA);
+
+        if (requestedMaxAgeMfa == null) {
+            return;
+        }
+
+        if (mfaAuthenticatedAt == null) {
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error(INVALID_ID_TOKEN, "auth_time_mfa claim is required when max_age_mfa was specified", null)
+            );
+        }
+
+        Instant expiration = mfaAuthenticatedAt.plus(CLOCK_SKEW).plusSeconds(requestedMaxAgeMfa);
+
+        if (expiration.isBefore(Instant.now())) {
+            throw new OAuth2AuthenticationException(new OAuth2Error(INVALID_ID_TOKEN, "max_age_mfa exceeded", null));
         }
     }
 
@@ -120,6 +143,31 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
         }
 
         throw new IllegalArgumentException("maxAge must be an Integer or a String");
+    }
+
+    private Integer getRequestedMaxAgeMfa(Authentication authentication) {
+        OAuth2LoginAuthenticationToken authorizationCodeAuthentication =
+            (OAuth2LoginAuthenticationToken) authentication;
+
+        OAuth2AuthorizationRequest authorizationRequest = authorizationCodeAuthentication
+            .getAuthorizationExchange()
+            .getAuthorizationRequest();
+
+        Object maxAgeMfa = authorizationRequest.getAttribute(PartnerNetOAuth2AuthorizationRequestResolver.MAX_AGE_MFA_PARAM);
+
+        if (maxAgeMfa == null) {
+            return null;
+        }
+
+        if (maxAgeMfa instanceof Integer maxAgeMfaInteger) {
+            return maxAgeMfaInteger;
+        }
+
+        if (maxAgeMfa instanceof String maxAgeMfaString) {
+            return Integer.valueOf(maxAgeMfaString);
+        }
+
+        throw new IllegalArgumentException("maxAgeMfa must be an Integer or a String");
     }
 
     private String getRequestedTenant(Authentication authentication) {
