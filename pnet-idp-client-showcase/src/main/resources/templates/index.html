@@ -196,8 +196,8 @@
                         Instructs the Partner.Net IDP to prompt the user for a specific action.<br />
                         <ul>
                             <li>
-                                <strong>none</strong>: Avoids user interaction and typically skips account selection by
-                                using the most recent account.
+                                <strong>none</strong>: In this case, the Authorization Server MUST return an error if an
+                                End-User is not already authenticated or could not be silently authenticated.
                             </li>
                             <li>
                                 <strong>select_account</strong>: Shows the account selection screen, but does not
