@@ -1,6 +1,7 @@
 package at.porscheinformatik.idp.saml2;
 
 import at.porscheinformatik.idp.Gender;
+import at.porscheinformatik.idp.PartnerNetAuthenticationProvider;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
@@ -26,6 +27,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
     private final AuthnContextClass authnContextClass;
     private final Instant lastUpdate;
     private final String loginHint;
+    private final PartnerNetAuthenticationProvider authenticationProvider;
 
     private final String guid;
     private final String personnelNumber;
@@ -73,50 +75,50 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
     private final Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes;
 
     public PartnerNetSaml2AuthenticationPrincipal(
-        String subjectIdentifier,
-        String relayState,
-        String transientSessionId,
-        AuthnContextClass authnContextClass,
-        Instant lastUpdate,
-        String loginHint,
-        String guid,
-        String personnelNumber,
-        Integer legacyId,
-        PartnerNetUserType userType,
-        String academicTitle,
-        String academicTitlePostNominal,
-        String firstname,
-        String lastname,
-        Gender gender,
-        Locale language,
-        List<Locale> additionalLanguages,
-        String mailAddress,
-        String phoneNumber,
-        String tenant,
-        String costCenter,
-        Integer favoriteCompanyId,
-        String favoriteBrand,
-        List<PartnerNetFunctionalNumberDTO> functionalNumbers,
-        List<PartnerNetCompanyDTO> employments,
-        List<PartnerNetCompanyAddressDTO> employmentsAddress,
-        List<PartnerNetRoleDTO> roles,
-        List<PartnerNetContractDTO> contracts,
-        Collection<Integer> contactCompanyIds,
-        Collection<PartnerNetCompanyTypeDTO> companyTypes,
-        boolean responsibleUser,
-        String responsibleUserExternalId,
-        String responsibleUserFirstname,
-        String responsibleUserLastname,
-        String responsibleUserEmail,
-        String responsibleUserGuid,
-        boolean supportData,
-        List<PartnerNetCompanyDTO> supportEmployments,
-        List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
-        List<PartnerNetRoleDTO> supportRoles,
-        List<PartnerNetContractDTO> supportContracts,
-        Collection<Integer> supportContactCompanyIds,
-        Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes
-    ) {
+            String subjectIdentifier,
+            String relayState,
+            String transientSessionId,
+            AuthnContextClass authnContextClass,
+            Instant lastUpdate,
+            String loginHint,
+            PartnerNetAuthenticationProvider authenticationProvider,
+            String guid,
+            String personnelNumber,
+            Integer legacyId,
+            PartnerNetUserType userType,
+            String academicTitle,
+            String academicTitlePostNominal,
+            String firstname,
+            String lastname,
+            Gender gender,
+            Locale language,
+            List<Locale> additionalLanguages,
+            String mailAddress,
+            String phoneNumber,
+            String tenant,
+            String costCenter,
+            Integer favoriteCompanyId,
+            String favoriteBrand,
+            List<PartnerNetFunctionalNumberDTO> functionalNumbers,
+            List<PartnerNetCompanyDTO> employments,
+            List<PartnerNetCompanyAddressDTO> employmentsAddress,
+            List<PartnerNetRoleDTO> roles,
+            List<PartnerNetContractDTO> contracts,
+            Collection<Integer> contactCompanyIds,
+            Collection<PartnerNetCompanyTypeDTO> companyTypes,
+            boolean responsibleUser,
+            String responsibleUserExternalId,
+            String responsibleUserFirstname,
+            String responsibleUserLastname,
+            String responsibleUserEmail,
+            String responsibleUserGuid,
+            boolean supportData,
+            List<PartnerNetCompanyDTO> supportEmployments,
+            List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
+            List<PartnerNetRoleDTO> supportRoles,
+            List<PartnerNetContractDTO> supportContracts,
+            Collection<Integer> supportContactCompanyIds,
+            Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes) {
         super();
         this.subjectIdentifier = subjectIdentifier;
         this.relayState = relayState;
@@ -124,6 +126,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         this.authnContextClass = authnContextClass;
         this.lastUpdate = lastUpdate;
         this.loginHint = loginHint;
+        this.authenticationProvider = authenticationProvider;
         this.guid = guid;
         this.personnelNumber = personnelNumber;
         this.legacyId = legacyId;
@@ -181,7 +184,8 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     /**
      * @return the internal Partner.Net Id of the user
-     * @deprecated will be removed in a future release. Migrate to {@link #getSubjectIdentifier()}
+     * @deprecated will be removed in a future release. Migrate to
+     *             {@link #getSubjectIdentifier()}
      */
     @Deprecated(since = "1.0.0")
     public Integer getLegacyId() {
@@ -364,5 +368,9 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     public String getLoginHint() {
         return loginHint;
+    }
+
+    public PartnerNetAuthenticationProvider getAuthenticationProvider() {
+        return authenticationProvider;
     }
 }
