@@ -84,6 +84,13 @@ public final class Saml2Initializer {
             new PromptMarshaller(),
             new PromptUnmarshaller()
         );
+
+        registry.registerObjectProvider(
+            XmlUtils.LOGIN_HINT_ELEMENT_NAME,
+            new LoginHintBuilder(),
+            new LoginHintMarshaller(),
+            new LoginHintUnmarshaller()
+        );
     }
 
     private static void setupSignatureAlgorithmWhitelists() {

@@ -10,6 +10,7 @@ public final class PartnerNetSaml2AuthenticationRequestUtils {
     private static final String MAX_AGE_MFA_ATTR = "poi.saml2.max_age_mfa";
     private static final String TENANT_ATTR = "poi.saml2.tenant";
     private static final String PROMPT_ATTR = "poi.saml2.prompt";
+    private static final String LOGIN_HINT_ATTR = "poi.saml2.login_hint";
     private static final String NIST_LEVEL_ATTR = "poi.saml2.nist_level";
 
     private PartnerNetSaml2AuthenticationRequestUtils() {
@@ -70,6 +71,18 @@ public final class PartnerNetSaml2AuthenticationRequestUtils {
 
     public static String promptRequested(HttpServletRequest request) {
         return (String) request.getSession().getAttribute(PROMPT_ATTR);
+    }
+
+    public static void storeLoginHint(HttpServletRequest request, Optional<String> loginHint) {
+        if (loginHint.isPresent()) {
+            request.getSession().setAttribute(LOGIN_HINT_ATTR, loginHint.get());
+        } else {
+            request.getSession().removeAttribute(LOGIN_HINT_ATTR);
+        }
+    }
+
+    public static String loginHintRequested(HttpServletRequest request) {
+        return (String) request.getSession().getAttribute(LOGIN_HINT_ATTR);
     }
 
     public static void storeNistLevel(HttpServletRequest request, Optional<Integer> nistLevel) {
