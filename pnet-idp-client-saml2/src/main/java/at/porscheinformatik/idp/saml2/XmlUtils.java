@@ -45,6 +45,7 @@ public final class XmlUtils {
     public static final QName MAX_SESSION_AGE_ELEMENT_NAME = new QName(PNET_NAMESPACE, "MaxSessionAge", DEFAULT_PREFIX);
     public static final QName MAX_AGE_MFA_ELEMENT_NAME = new QName(PNET_NAMESPACE, "MaxAgeMfa", DEFAULT_PREFIX);
     public static final QName TENANT_ELEMENT_NAME = new QName(PNET_NAMESPACE, "Tenant", DEFAULT_PREFIX);
+    public static final QName PROMPT_ELEMENT_NAME = new QName(PNET_NAMESPACE, "Prompt", DEFAULT_PREFIX);
 
     private XmlUtils() {
         super();
@@ -155,11 +156,19 @@ public final class XmlUtils {
     }
 
     public static Tenant tenantRequest(String tenant) {
-        Tenant renantRequest = createXmlObject(TENANT_ELEMENT_NAME);
+        Tenant tenantRequest = createXmlObject(TENANT_ELEMENT_NAME);
 
-        renantRequest.setTenant(tenant);
+        tenantRequest.setTenant(tenant);
 
-        return renantRequest;
+        return tenantRequest;
+    }
+
+    public static Prompt promptRequest(String prompt) {
+        Prompt promptRequest = createXmlObject(PROMPT_ELEMENT_NAME);
+
+        promptRequest.setPrompt(prompt);
+
+        return promptRequest;
     }
 
     public static RequestedAuthnContext requestedAuthnContext(List<AuthnContextClass> authnContextClasses) {

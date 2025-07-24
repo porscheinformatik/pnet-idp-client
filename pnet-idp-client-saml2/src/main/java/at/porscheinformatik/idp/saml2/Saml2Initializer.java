@@ -77,6 +77,13 @@ public final class Saml2Initializer {
             new TenantMarshaller(),
             new TenantUnmarshaller()
         );
+
+        registry.registerObjectProvider(
+            XmlUtils.PROMPT_ELEMENT_NAME,
+            new PromptBuilder(),
+            new PromptMarshaller(),
+            new PromptUnmarshaller()
+        );
     }
 
     private static void setupSignatureAlgorithmWhitelists() {
