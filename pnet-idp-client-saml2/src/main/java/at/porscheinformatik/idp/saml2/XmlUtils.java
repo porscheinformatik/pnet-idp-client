@@ -46,6 +46,7 @@ public final class XmlUtils {
     public static final QName MAX_AGE_MFA_ELEMENT_NAME = new QName(PNET_NAMESPACE, "MaxAgeMfa", DEFAULT_PREFIX);
     public static final QName TENANT_ELEMENT_NAME = new QName(PNET_NAMESPACE, "Tenant", DEFAULT_PREFIX);
     public static final QName PROMPT_ELEMENT_NAME = new QName(PNET_NAMESPACE, "Prompt", DEFAULT_PREFIX);
+    public static final QName LOGIN_HINT_ELEMENT_NAME = new QName(PNET_NAMESPACE, "LoginHint", DEFAULT_PREFIX);
 
     private XmlUtils() {
         super();
@@ -169,6 +170,14 @@ public final class XmlUtils {
         promptRequest.setPrompt(prompt);
 
         return promptRequest;
+    }
+
+    public static LoginHint loginHintRequest(String loginHint) {
+        LoginHint loginHintRequest = createXmlObject(LOGIN_HINT_ELEMENT_NAME);
+
+        loginHintRequest.setLoginHint(loginHint);
+
+        return loginHintRequest;
     }
 
     public static RequestedAuthnContext requestedAuthnContext(List<AuthnContextClass> authnContextClasses) {
