@@ -29,6 +29,7 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
         Optional<Integer> maxSessionAge = getMaxSessionAge(request);
         Optional<Integer> maxAgeMfa = getMaxAgeMfa(request);
         Optional<String> tenant = getTenant(request);
+        Optional<String> prompt = getPrompt(request);
         Optional<Integer> nistLevel = getNistLevel(request);
         String authnRequestId = Saml2Utils.generateId();
         List<AuthnContextClass> authnContextClasses = calculateAuthnContextClasses(nistLevel);
@@ -39,6 +40,7 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
         storeSessionAge(request, maxSessionAge);
         storeMaxAgeMfa(request, maxAgeMfa);
         storeTenant(request, tenant);
+        storePrompt(request, prompt);
 
         authnRequest.setID(authnRequestId);
 
@@ -51,7 +53,7 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
         }
 
         // Add Extensions:
-        if (maxSessionAge.isPresent() || maxAgeMfa.isPresent() || tenant.isPresent()) {
+        if (maxSessionAge.isPresent() || maxAgeMfa.isPresent() || tenant.isPresent() || prompt.isPresent()) {
             authnRequest.setExtensions(createSamlObject(Extensions.DEFAULT_ELEMENT_NAME));
         }
 
@@ -61,6 +63,7 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
         maxAgeMfa.ifPresent(maxAge -> authnRequest.getExtensions().getUnknownXMLObjects().add(maxAgeMfaRequest(maxAge))
         );
         tenant.ifPresent(t -> authnRequest.getExtensions().getUnknownXMLObjects().add(tenantRequest(t)));
+        prompt.ifPresent(p -> authnRequest.getExtensions().getUnknownXMLObjects().add(promptRequest(p)));
     }
 
     protected boolean isForceAuthn(HttpServletRequest request) {
@@ -77,6 +80,10 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
 
     protected Optional<String> getTenant(HttpServletRequest request) {
         return Saml2Utils.retrieveTenant(request);
+    }
+
+    protected Optional<String> getPrompt(HttpServletRequest request) {
+        return Saml2Utils.retrievePrompt(request);
     }
 
     protected Optional<Integer> getNistLevel(HttpServletRequest request) {
