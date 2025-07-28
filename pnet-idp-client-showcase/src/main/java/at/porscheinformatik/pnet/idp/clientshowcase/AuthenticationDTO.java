@@ -4,6 +4,7 @@
 package at.porscheinformatik.pnet.idp.clientshowcase;
 
 import at.porscheinformatik.idp.Gender;
+import at.porscheinformatik.idp.PartnerNetAuthenticationProvider;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
@@ -30,6 +31,7 @@ public class AuthenticationDTO {
             principal.getNistAuthenticationLevel() > 2,
             principal.getTransientSessionId(),
             principal.getLoginHint(),
+            principal.getAuthenticationProvider(),
             principal.isSupportDataAvailable(),
             principal.getNistAuthenticationLevel(),
             principal.getAuthenticatedAt(),
@@ -77,6 +79,7 @@ public class AuthenticationDTO {
             principal.isStronglyAuthenticated(),
             principal.getTransientSessionId(),
             principal.getLoginHint(),
+            principal.getAuthenticationProvider(),
             principal.isSupportDataAvailable(),
             principal.getAuthnContextClass().getNistLevel(),
             null,
@@ -123,6 +126,7 @@ public class AuthenticationDTO {
 
     private final String transientSessionId;
     private final String loginHint;
+    private final PartnerNetAuthenticationProvider authenticationProvider;
     private final boolean supportDataAvailable;
     private final int nistAuthenticationLevel;
     private final Instant authenticatedAt;
@@ -167,6 +171,7 @@ public class AuthenticationDTO {
         boolean secondFactorUsed,
         String transientSessionId,
         String loginHint,
+        PartnerNetAuthenticationProvider authenticationProvider,
         boolean supportDataAvailable,
         int nistAuthenticationLevel,
         Instant authenticatedAt,
@@ -211,6 +216,7 @@ public class AuthenticationDTO {
         this.secondFactorUsed = secondFactorUsed;
         this.transientSessionId = transientSessionId;
         this.loginHint = loginHint;
+        this.authenticationProvider = authenticationProvider;
         this.supportDataAvailable = supportDataAvailable;
         this.nistAuthenticationLevel = nistAuthenticationLevel;
         this.authenticatedAt = authenticatedAt;
@@ -268,6 +274,10 @@ public class AuthenticationDTO {
 
     public String getLoginHint() {
         return loginHint;
+    }
+
+    public PartnerNetAuthenticationProvider getAuthenticationProvider() {
+        return authenticationProvider;
     }
 
     public boolean isSupportDataAvailable() {

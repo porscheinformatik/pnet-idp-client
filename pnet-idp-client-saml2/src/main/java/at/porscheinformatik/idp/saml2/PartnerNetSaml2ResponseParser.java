@@ -4,6 +4,7 @@
 package at.porscheinformatik.idp.saml2;
 
 import at.porscheinformatik.idp.Gender;
+import at.porscheinformatik.idp.PartnerNetAuthenticationProvider;
 import at.porscheinformatik.idp.PartnerNetCompanyAddressDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyDTO;
 import at.porscheinformatik.idp.PartnerNetCompanyTypeDTO;
@@ -54,6 +55,10 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
         AuthnContextClass contextClass = data.getAuthnContextClass();
 
         String loginHint = singleString(data, attributeName("login_hint"));
+        PartnerNetAuthenticationProvider authenticationProvider = singleAuthProvider(
+            data,
+            attributeName("auth_provider")
+        );
         String guid = singleString(data, attributeName("guid"));
         String personnelNumber = singleString(data, attributeName("personnel_number"));
         Integer legacyId = singleInteger(data, attributeName("person_id"));
@@ -108,6 +113,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
             attributeName("support_employment_companytypes")
         );
 
+        // saml data saml attributes
         return new PartnerNetSaml2AuthenticationPrincipal(
             subjectIdentifier,
             relayState,
@@ -115,6 +121,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
             contextClass,
             lastUpdate,
             loginHint,
+            authenticationProvider,
             guid,
             personnelNumber,
             legacyId,
@@ -268,6 +275,16 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
         }
 
         return PartnerNetUserType.valueOfOrUnknown(value);
+    }
+
+    private PartnerNetAuthenticationProvider singleAuthProvider(Saml2Data data, String attributeName) {
+        String value = singleString(data, attributeName);
+
+        if (value == null) {
+            return null;
+        }
+
+        return PartnerNetAuthenticationProvider.valueOfOrUnknown(value);
     }
 
     private Stream<String[]> entryStream(Saml2Data data, String attributeName) {

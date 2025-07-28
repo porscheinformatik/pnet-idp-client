@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.2.1
+
+-   This release adds information about which authentication provider was used for the authentication to the SAML2 and OpenID-Connect principals.
+
 ## 1.0.0
 
 This release makes the pnet-idp-client Spring Boot 3 compatible. It will drop support for Releases prior to Spring Boot 3.0.0.
