@@ -90,7 +90,11 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
 
         if (mfaAuthenticatedAt == null) {
             throw new OAuth2AuthenticationException(
-                new OAuth2Error(INVALID_ID_TOKEN, "auth_time_mfa claim is required when max_age_mfa was specified", null)
+                new OAuth2Error(
+                    INVALID_ID_TOKEN,
+                    "auth_time_mfa claim is required when max_age_mfa was specified",
+                    null
+                )
             );
         }
 
@@ -153,7 +157,9 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
             .getAuthorizationExchange()
             .getAuthorizationRequest();
 
-        Object maxAgeMfa = authorizationRequest.getAttribute(PartnerNetOAuth2AuthorizationRequestResolver.MAX_AGE_MFA_PARAM);
+        Object maxAgeMfa = authorizationRequest.getAttribute(
+            PartnerNetOAuth2AuthorizationRequestResolver.MAX_AGE_MFA_PARAM
+        );
 
         if (maxAgeMfa == null) {
             return null;

@@ -55,7 +55,13 @@ public class PartnerNetSaml2AuthnRequestCustomizer implements Consumer<AuthnRequ
         }
 
         // Add Extensions:
-        if (maxSessionAge.isPresent() || maxAgeMfa.isPresent() || tenant.isPresent() || prompt.isPresent() || loginHint.isPresent()) {
+        if (
+            maxSessionAge.isPresent() ||
+            maxAgeMfa.isPresent() ||
+            tenant.isPresent() ||
+            prompt.isPresent() ||
+            loginHint.isPresent()
+        ) {
             authnRequest.setExtensions(createSamlObject(Extensions.DEFAULT_ELEMENT_NAME));
         }
 
