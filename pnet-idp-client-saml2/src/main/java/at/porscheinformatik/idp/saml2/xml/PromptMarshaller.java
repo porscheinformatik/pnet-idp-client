@@ -8,11 +8,11 @@ import org.opensaml.core.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.w3c.dom.Element;
 
-
 public class PromptMarshaller extends AbstractXMLObjectMarshaller {
 
     @Override
-    protected void marshallElementContent(@Nonnull XMLObject xmlObject, @Nonnull Element domElement) throws MarshallingException {
+    protected void marshallElementContent(@Nonnull XMLObject xmlObject, @Nonnull Element domElement)
+        throws MarshallingException {
         Prompt element = (Prompt) xmlObject;
 
         ElementSupport.appendTextContent(domElement, element.getPrompt());

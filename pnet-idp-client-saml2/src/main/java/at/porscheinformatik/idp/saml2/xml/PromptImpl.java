@@ -1,17 +1,21 @@
 package at.porscheinformatik.idp.saml2.xml;
 
 import at.porscheinformatik.idp.saml2.Prompt;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-
 public class PromptImpl extends AbstractXMLObject implements Prompt {
+
     private String value;
 
-    protected PromptImpl(@Nullable String namespaceURI, @Nonnull String elementLocalName, @Nullable String namespacePrefix) {
+    protected PromptImpl(
+        @Nullable String namespaceURI,
+        @Nonnull String elementLocalName,
+        @Nullable String namespacePrefix
+    ) {
         super(namespaceURI, elementLocalName, namespacePrefix);
     }
 
