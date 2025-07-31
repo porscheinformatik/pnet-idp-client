@@ -36,6 +36,11 @@
             button {
                 margin-top: 8px;
             }
+
+            .deprecated {
+                color: #888;
+                opacity: 0.6;
+            }
         </style>
         <script>
             // Function to save form data to localStorage
@@ -243,10 +248,27 @@
                         <input type="text" id="tenant" name="tenant" />
                     </td>
                     <td>
-                        Instructs the Partner.Net IDP to use a specific tenant. If the user has a valid employment in
-                        the specified tenant, the tenant selection will be skipped. Otherwise, the user will be prompted
-                        to select another tenant. Note that providing this parameter does not guarantee the user will
-                        use the specified tenant.
+                        Instructs the Partner.Net IDP to use a specific tenant. The user must have a valid employment in
+                        the specified tenant, otherwise the login will fail. If the user has a valid employment in the
+                        specified tenant, the tenant selection will be skipped.
+                        <br />
+                        Example: <code>AT</code>, <code>BA</code>, <code>CZ</code>, <code>DE</code>, ...
+                    </td>
+                </tr>
+
+                <!-- preselect_tenant -->
+                <tr class="deprecated">
+                    <td>
+                        <label for="preselect_tenant">preselect_tenant (Deprecated)</label>
+                    </td>
+                    <td>
+                        <input type="text" id="preselect_tenant" name="preselect_tenant" />
+                    </td>
+                    <td>
+                        Deprecated: OIDC only. Suggests a specific tenant to be preselected in the tenant selection
+                        screen. Unlike the
+                        <code>tenant</code> parameter, this is only a suggestion and the user can still select a
+                        different tenant if they don't have a valid employment in the preselected tenant.
                         <br />
                         Example: <code>AT</code>, <code>BA</code>, <code>CZ</code>, <code>DE</code>, ...
                     </td>

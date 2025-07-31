@@ -43,11 +43,21 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         var forceAuthentication = getBooleanParameter(request, "force_authentication");
         var maxAgeMfa = getIntParameter(request, "max_age_mfa");
         var tenant = getParameter(request, "tenant");
+        var preselectTenant = getParameter(request, "preselect_tenant");
         var prompt = getParameter(request, "prompt");
         var loginHint = getParameter(request, "login_hint");
 
         return switch (protocol) {
-            case "oidc" -> buildOidcPath(requireMfa, maxAge, forceAuthentication, maxAgeMfa, tenant, prompt, loginHint);
+            case "oidc" -> buildOidcPath(
+                requireMfa,
+                maxAge,
+                forceAuthentication,
+                maxAgeMfa,
+                tenant,
+                preselectTenant,
+                prompt,
+                loginHint
+            );
             case "saml2" -> buildSaml2Path(
                 requireMfa,
                 maxAge,
@@ -127,6 +137,7 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         boolean forceAuthentication,
         Integer maxAgeMfa,
         String tenant,
+        String preselectTenant,
         String prompt,
         String loginHint
     ) {
@@ -148,6 +159,10 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
 
         if (tenant != null) {
             PartnerNetOAuth2AuthorizationRequestResolver.requestTenant(builder, tenant.toUpperCase());
+        }
+
+        if (preselectTenant != null) {
+            PartnerNetOAuth2AuthorizationRequestResolver.requestPreselectTenant(builder, preselectTenant.toUpperCase());
         }
 
         if (prompt != null) {
