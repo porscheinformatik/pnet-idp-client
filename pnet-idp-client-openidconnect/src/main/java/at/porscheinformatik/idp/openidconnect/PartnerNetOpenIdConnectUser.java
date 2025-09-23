@@ -54,6 +54,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
     public static final String USER_INFO_FAVORITE_BRAND = "pnet_favorite_brand";
     public static final String USER_INFO_CONTACT_COMPANIES = "pnet_contact_companies";
     public static final String USER_INFO_COMPANY_TYPES = "pnet_company_types";
+    public static final String USER_TAX_NUMBER = "pnet_tax_number";
 
     public static final String USER_INFO_RESPONSIBLE_USER_EXTERNAL_ID = "pnet_responsible_user_external_id";
     public static final String USER_INFO_RESPONSIBLE_USER_NAME = "pnet_responsible_user_name";
@@ -142,6 +143,10 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
 
     public String getGuid() {
         return userInfoClaims(USER_INFO_GUID);
+    }
+
+    public String getTaxNumber() {
+        return userInfoClaims(USER_TAX_NUMBER);
     }
 
     public String getCostcentre() {

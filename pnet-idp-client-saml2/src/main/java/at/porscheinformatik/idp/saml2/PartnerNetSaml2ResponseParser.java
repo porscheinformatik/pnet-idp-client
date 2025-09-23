@@ -72,6 +72,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
         List<Locale> additionalLanguages = localeList(data, attributeName("additional_languages"));
         String mailAddress = singleString(data, attributeName("email"));
         String phoneNumber = singleString(data, attributeName("phone_number"));
+        String taxNumber = singleString(data, attributeName("tax_number"));
         String tenant = singleString(data, attributeName("tenant"));
         String costCenter = singleString(data, attributeName("cost_center"));
         List<PartnerNetFunctionalNumberDTO> functionalNumbers = functionalNumbersList(
@@ -135,6 +136,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
             additionalLanguages,
             mailAddress,
             phoneNumber,
+            taxNumber,
             tenant,
             costCenter,
             favoriteCompanyId,
