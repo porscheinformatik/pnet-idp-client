@@ -40,6 +40,7 @@ public class AuthenticationDTO {
             principal.getName(),
             principal.getEmail(),
             principal.getPhoneNumber(),
+            principal.getTaxNumber(),
             principal.getPnetGender(),
             principal.getPnetLocale(),
             principal.getUpdatedAt(),
@@ -88,6 +89,7 @@ public class AuthenticationDTO {
             principal.getName(),
             principal.getMailAddress(),
             principal.getPhoneNumber(),
+            principal.getTaxNumber(),
             principal.getGender(),
             principal.getLanguage(),
             principal.getLastUpdate(),
@@ -135,6 +137,7 @@ public class AuthenticationDTO {
     private final String name;
     private final String email;
     private final String phoneNumber;
+    private final String taxNumber;
     private final Gender gender;
     private final Locale locale;
     private final Instant updatedAt;
@@ -180,6 +183,7 @@ public class AuthenticationDTO {
         String name,
         String email,
         String phoneNumber,
+        String taxNumber,
         Gender gender,
         Locale locale,
         Instant updatedAt,
@@ -225,6 +229,7 @@ public class AuthenticationDTO {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.taxNumber = taxNumber;
         this.gender = gender;
         this.locale = locale;
         this.updatedAt = updatedAt;
@@ -426,5 +431,9 @@ public class AuthenticationDTO {
 
     public Collection<PartnerNetCompanyTypeDTO> getSupportCompanyTypes() {
         return supportCompanyTypes;
+    }
+
+    public String getTaxNumber() {
+        return taxNumber;
     }
 }

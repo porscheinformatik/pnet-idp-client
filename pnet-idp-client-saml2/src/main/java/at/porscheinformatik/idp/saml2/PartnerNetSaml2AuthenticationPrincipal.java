@@ -45,6 +45,8 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
     private final String mailAddress;
     private final String phoneNumber;
 
+    private final String taxNumber;
+
     private final String tenant;
     private final String costCenter;
     private final Integer favoriteCompanyId;
@@ -95,6 +97,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         List<Locale> additionalLanguages,
         String mailAddress,
         String phoneNumber,
+        String taxNumber,
         String tenant,
         String costCenter,
         Integer favoriteCompanyId,
@@ -141,6 +144,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         this.additionalLanguages = additionalLanguages;
         this.mailAddress = mailAddress;
         this.phoneNumber = phoneNumber;
+        this.taxNumber = taxNumber;
         this.tenant = tenant;
         this.costCenter = costCenter;
         this.favoriteCompanyId = favoriteCompanyId;
@@ -373,5 +377,9 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     public PartnerNetAuthenticationProvider getAuthenticationProvider() {
         return authenticationProvider;
+    }
+
+    public String getTaxNumber() {
+        return taxNumber;
     }
 }
