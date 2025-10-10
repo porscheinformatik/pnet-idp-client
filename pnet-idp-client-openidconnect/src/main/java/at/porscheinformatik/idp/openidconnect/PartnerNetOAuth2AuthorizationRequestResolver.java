@@ -103,7 +103,10 @@ public class PartnerNetOAuth2AuthorizationRequestResolver implements OAuth2Autho
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String registrationId) {
-        OAuth2AuthorizationRequest authorizationRequest = defaultAuthorizationRequestResolver.resolve(request);
+        OAuth2AuthorizationRequest authorizationRequest = defaultAuthorizationRequestResolver.resolve(
+            request,
+            registrationId
+        );
 
         return resolve(request, authorizationRequest);
     }

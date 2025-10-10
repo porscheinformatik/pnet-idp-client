@@ -181,7 +181,10 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
         UriComponents uri = builder.build();
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setPathInfo(uri.getPath());
+        request.setMethod("GET");
+        request.setRequestURI(uri.getPath());
+        request.setServletPath(uri.getPath());
+        request.setPathInfo(null);
         request.setQueryString(uri.getQuery());
 
         for (Entry<String, List<String>> param : uri.getQueryParams().entrySet()) {
