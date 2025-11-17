@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.3.1
+
+-   Add BDO-ID to SAML2 and OpenID-Connect principals.
+
 ## 1.2.1
 
 -   This release adds information about which authentication provider was used for the authentication to the SAML2 and OpenID-Connect principals.

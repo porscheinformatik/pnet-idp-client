@@ -47,6 +47,8 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     private final String taxNumber;
 
+    private final String bdoId;
+
     private final String tenant;
     private final String costCenter;
     private final Integer favoriteCompanyId;
@@ -98,6 +100,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         String mailAddress,
         String phoneNumber,
         String taxNumber,
+        String bdoId,
         String tenant,
         String costCenter,
         Integer favoriteCompanyId,
@@ -145,6 +148,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         this.mailAddress = mailAddress;
         this.phoneNumber = phoneNumber;
         this.taxNumber = taxNumber;
+        this.bdoId = bdoId;
         this.tenant = tenant;
         this.costCenter = costCenter;
         this.favoriteCompanyId = favoriteCompanyId;
@@ -381,5 +385,9 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     public String getTaxNumber() {
         return taxNumber;
+    }
+
+    public String getBdoId() {
+        return bdoId;
     }
 }

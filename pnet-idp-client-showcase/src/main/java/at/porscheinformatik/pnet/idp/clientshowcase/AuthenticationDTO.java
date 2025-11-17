@@ -41,6 +41,7 @@ public class AuthenticationDTO {
             principal.getEmail(),
             principal.getPhoneNumber(),
             principal.getTaxNumber(),
+            principal.getBdoId(),
             principal.getPnetGender(),
             principal.getPnetLocale(),
             principal.getUpdatedAt(),
@@ -90,6 +91,7 @@ public class AuthenticationDTO {
             principal.getMailAddress(),
             principal.getPhoneNumber(),
             principal.getTaxNumber(),
+            principal.getBdoId(),
             principal.getGender(),
             principal.getLanguage(),
             principal.getLastUpdate(),
@@ -138,6 +140,7 @@ public class AuthenticationDTO {
     private final String email;
     private final String phoneNumber;
     private final String taxNumber;
+    private final String bdoId;
     private final Gender gender;
     private final Locale locale;
     private final Instant updatedAt;
@@ -184,6 +187,7 @@ public class AuthenticationDTO {
         String email,
         String phoneNumber,
         String taxNumber,
+        String bdoId,
         Gender gender,
         Locale locale,
         Instant updatedAt,
@@ -230,6 +234,7 @@ public class AuthenticationDTO {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.taxNumber = taxNumber;
+        this.bdoId = bdoId;
         this.gender = gender;
         this.locale = locale;
         this.updatedAt = updatedAt;
@@ -435,5 +440,9 @@ public class AuthenticationDTO {
 
     public String getTaxNumber() {
         return taxNumber;
+    }
+
+    public String getBdoId() {
+        return bdoId;
     }
 }
