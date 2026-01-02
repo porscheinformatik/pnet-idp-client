@@ -33,13 +33,12 @@ public class PartnerNetCompanyDTO extends AbstractCompanyDependentClaim {
     @Override
     public String toString() {
         return (
-            "OpenIdUserInfoCompanyDTO [companyNumber=" +
-            companyNumber +
-            ", name=" +
-            name +
-            ", getCompanyId()=" +
-            getCompanyId() +
-            "]"
+            String.format(
+                "OpenIdUserInfoCompanyDTO [companyNumber=%s, name=%s, getCompanyId()=%s]",
+                companyNumber,
+                name,
+                getCompanyId()
+            )
         );
     }
 }

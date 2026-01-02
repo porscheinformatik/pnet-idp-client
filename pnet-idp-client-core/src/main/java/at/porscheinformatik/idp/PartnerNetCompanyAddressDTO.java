@@ -51,15 +51,13 @@ public class PartnerNetCompanyAddressDTO extends AbstractCompanyDependentClaim {
     @Override
     public String toString() {
         return (
-            "OpenIdUserInfoCompanyAddressDTO [street=" +
-            street +
-            ", postalCode=" +
-            postalCode +
-            ", city=" +
-            city +
-            ", countryCode=" +
-            countryCode +
-            "]"
+            String.format(
+                "OpenIdUserInfoCompanyAddressDTO [street=%s, postalCode=%s, city=%s, countryCode=%s]",
+                street,
+                postalCode,
+                city,
+                countryCode
+            )
         );
     }
 }

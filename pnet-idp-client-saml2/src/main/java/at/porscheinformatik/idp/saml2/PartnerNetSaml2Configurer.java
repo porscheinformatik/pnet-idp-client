@@ -7,14 +7,10 @@ import static at.porscheinformatik.idp.saml2.Saml2Utils.*;
 import static java.lang.String.*;
 import static java.util.Objects.*;
 
-import at.porscheinformatik.idp.saml2.DefaultSaml2CredentialsManager.Saml2CredentialsConfig;
 import jakarta.servlet.Filter;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -114,36 +110,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      */
     public PartnerNetSaml2Configurer failOnStartup() {
         failOnStartup = true;
-
-        return this;
-    }
-
-    /**
-     * @param credentialConfigs static list of credentials to use for authentication
-     * @return the builder for a fluent api
-     * @deprecated Do not use this method, as it is buggy! It instantiates the DefaultSaml2CredentialsManager, that
-     * contains annotated methods which only work inside a Spring bean! This is not fixable. As a result, this is an
-     * intended breaking change. Use the {@link #credentials(Saml2CredentialsManager)} method instead and pass a
-     * DefaultSaml2CredentialsManager bean as manager!
-     */
-    @Deprecated(forRemoval = true)
-    PartnerNetSaml2Configurer credentials(Saml2CredentialsConfig... credentialConfigs) {
-        credentialsManager = new DefaultSaml2CredentialsManager(() -> Arrays.asList(credentialConfigs));
-
-        return this;
-    }
-
-    /**
-     * @param supplier the supplier that will be called periodically to load the most up to date set of credentials
-     * @return the builder for a fluent api
-     * @deprecated Do not use this method, as it is buggy! It instantiates the DefaultSaml2CredentialsManager, that
-     * contains annotated methods which only work inside a Spring bean! This is not fixable. As a result, this is an
-     * intended breaking change. Use the {@link #credentials(Saml2CredentialsManager)} method instead and pass a
-     * DefaultSaml2CredentialsManager bean as manager!
-     */
-    @Deprecated(forRemoval = true)
-    PartnerNetSaml2Configurer credentials(Supplier<List<Saml2CredentialsConfig>> supplier) {
-        credentialsManager = new DefaultSaml2CredentialsManager(supplier);
 
         return this;
     }

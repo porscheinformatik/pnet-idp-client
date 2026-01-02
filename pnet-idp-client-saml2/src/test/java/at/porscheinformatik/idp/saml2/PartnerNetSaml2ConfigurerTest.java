@@ -39,7 +39,7 @@ class PartnerNetSaml2ConfigurerTest {
     @Test
     void requestFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials);
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils.defaultCredentialsManager());
 
         DefaultSecurityFilterChain filterChain = http.build();
 
@@ -54,7 +54,7 @@ class PartnerNetSaml2ConfigurerTest {
     @Test
     void authenticationFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials); //
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils.defaultCredentialsManager());
 
         DefaultSecurityFilterChain filterChain = http.build();
 
@@ -69,7 +69,7 @@ class PartnerNetSaml2ConfigurerTest {
     @Test
     void metadataFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials); //
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils.defaultCredentialsManager());
 
         DefaultSecurityFilterChain filterChain = http.build();
 
@@ -81,7 +81,7 @@ class PartnerNetSaml2ConfigurerTest {
     @Test
     void authenticationProviderIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
-        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils::defaultCredentials); //
+        PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils.defaultCredentialsManager());
 
         DefaultSecurityFilterChain filterChain = http.build();
 

@@ -27,13 +27,12 @@ public class PartnerNetRoleDTO extends AbstractCompanyBrandDependentClaim {
     @Override
     public String toString() {
         return (
-            "OpenIdUserInfoRoleDTO [roleMatchcode=" +
-            roleMatchcode +
-            ", brandId=" +
-            getBrandId() +
-            ", companyId=" +
-            getCompanyId() +
-            "]"
+            String.format(
+                "OpenIdUserInfoRoleDTO [roleMatchcode=%s, brandId=%s, companyId=%s]",
+                roleMatchcode,
+                getBrandId(),
+                getCompanyId()
+            )
         );
     }
 }

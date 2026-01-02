@@ -26,14 +26,11 @@ public class PartnerNetContractDTO extends AbstractCompanyBrandDependentClaim {
 
     @Override
     public String toString() {
-        return (
-            "OpenIdUserInfoContractDTO [contractMatchcode=" +
-            contractMatchcode +
-            ", getBrandId()=" +
-            getBrandId() +
-            ", getCompanyId()=" +
-            getCompanyId() +
-            "]"
+        return String.format(
+            "PartnerNetContractDTO [contractMatchcode=%s, brandId=%s, companyId=%s]",
+            contractMatchcode,
+            getBrandId(),
+            getCompanyId()
         );
     }
 }

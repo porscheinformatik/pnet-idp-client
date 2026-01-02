@@ -27,11 +27,11 @@ public class PartnerNetCompanyTypeDTO extends AbstractCompanyDependentClaim {
     @Override
     public String toString() {
         return (
-            "PartnerNetCompanyTypeDTO [companyTypeMatchcode=" +
-            companyTypeMatchcode +
-            ", getCompanyId()=" +
-            getCompanyId() +
-            "]"
+            String.format(
+                "PartnerNetCompanyTypeDTO [companyTypeMatchcode=%s, getCompanyId()=%s]",
+                companyTypeMatchcode,
+                getCompanyId()
+            )
         );
     }
 }
