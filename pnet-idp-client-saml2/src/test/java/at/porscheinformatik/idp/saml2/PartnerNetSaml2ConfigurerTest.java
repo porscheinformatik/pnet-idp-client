@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
@@ -22,6 +21,7 @@ import org.springframework.security.saml2.provider.service.web.Saml2WebSsoAuthen
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2AuthenticationRequestResolver;
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 
@@ -37,7 +37,6 @@ class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    @Disabled("Requires Spring MVC setup for request matcher initialization in Spring Security 7.x")
     void requestFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils.defaultCredentialsManager());
@@ -54,7 +53,6 @@ class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    @Disabled("Requires Spring MVC setup for request matcher initialization in Spring Security 7.x")
     void authenticationFilterIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils.defaultCredentialsManager());
@@ -71,7 +69,6 @@ class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    @Disabled("Requires Spring MVC setup for request matcher initialization in Spring Security 7.x")
     void authenticationProviderIsConfigured() throws Exception {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID).credentials(Saml2TestUtils.defaultCredentialsManager());
@@ -91,7 +88,6 @@ class PartnerNetSaml2ConfigurerTest {
     }
 
     @Test
-    @Disabled("Requires Spring MVC setup for request matcher initialization in Spring Security 7.x")
     void missingCredentialsThrowsException() {
         HttpSecurity http = buildHttpSecurity();
         PartnerNetSaml2Configurer.apply(http, IDP_ENTITY_ID);
@@ -133,6 +129,7 @@ class PartnerNetSaml2ConfigurerTest {
         AuthenticationManagerBuilder authenticationBuilder = new AuthenticationManagerBuilder(objectPostProcessor);
         HashMap<Class<?>, Object> sharedObjects = new HashMap<>();
         sharedObjects.put(ApplicationContext.class, applicationContext);
+        sharedObjects.put(PathPatternRequestMatcher.Builder.class, PathPatternRequestMatcher.withDefaults());
 
         return new HttpSecurity(objectPostProcessor, authenticationBuilder, sharedObjects);
     }
@@ -161,7 +158,6 @@ class PartnerNetSaml2ConfigurerTest {
         private Object value;
 
         FieldValueCallback(Object o, String fieldName) {
-            super();
             this.o = o;
             this.fieldName = fieldName;
         }
