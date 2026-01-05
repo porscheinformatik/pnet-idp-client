@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true" scanPeriod="15 seconds">
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>
-                %date | %-5level | %msg | \(%file:%line\) [%thread | %logger]%n%exception
-            </pattern>
-        </encoder>
-    </appender>
+    <property
+        name="CONSOLE_LOG_PATTERN"
+        value="%clr(%d{${LOG_DATEFORMAT_PATTERN}}){faint} %clr(%-5level){} | %message%n%clr(%exception){faint}%n"
+    />
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
     <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
