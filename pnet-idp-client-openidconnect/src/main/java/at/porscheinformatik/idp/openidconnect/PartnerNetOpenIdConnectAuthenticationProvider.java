@@ -61,8 +61,6 @@ public class PartnerNetOpenIdConnectAuthenticationProvider extends OidcAuthoriza
         OidcUser user = (OidcUser) openIdAuthentication.getPrincipal();
         Instant authenticatedAt = user.getAuthenticatedAt();
 
-        System.err.println("Authenticated at: " + authenticatedAt);
-
         if (requestedMaxAge == null) {
             return;
         }

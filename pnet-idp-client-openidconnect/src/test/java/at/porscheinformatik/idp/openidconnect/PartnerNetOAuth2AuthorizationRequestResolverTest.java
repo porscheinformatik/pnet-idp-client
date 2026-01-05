@@ -6,7 +6,6 @@ package at.porscheinformatik.idp.openidconnect;
 import static at.porscheinformatik.idp.openidconnect.PartnerNetOAuth2AuthorizationRequestResolver.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.web.util.UriComponentsBuilder.*;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -42,7 +41,9 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
         OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
 
-        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+        UriComponents requestUri = UriComponentsBuilder.fromUriString(
+            authorizationRequest.getAuthorizationRequestUri()
+        ).build(true);
 
         MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
         assertThat(requestUri.getScheme(), equalTo("https"));
@@ -74,7 +75,9 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
         OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
 
-        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+        UriComponents requestUri = UriComponentsBuilder.fromUriString(
+            authorizationRequest.getAuthorizationRequestUri()
+        ).build(true);
 
         MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
 
@@ -92,7 +95,9 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
         OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
 
-        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+        UriComponents requestUri = UriComponentsBuilder.fromUriString(
+            authorizationRequest.getAuthorizationRequestUri()
+        ).build(true);
 
         MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
 
@@ -109,7 +114,9 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
         OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
 
-        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+        UriComponents requestUri = UriComponentsBuilder.fromUriString(
+            authorizationRequest.getAuthorizationRequestUri()
+        ).build(true);
 
         MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
 
@@ -129,7 +136,9 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
         OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
 
-        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+        UriComponents requestUri = UriComponentsBuilder.fromUriString(
+            authorizationRequest.getAuthorizationRequestUri()
+        ).build(true);
 
         MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
 
@@ -149,7 +158,9 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
         OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
 
-        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+        UriComponents requestUri = UriComponentsBuilder.fromUriString(
+            authorizationRequest.getAuthorizationRequestUri()
+        ).build(true);
 
         MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
 
@@ -169,7 +180,9 @@ class PartnerNetOAuth2AuthorizationRequestResolverTest {
 
         OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
 
-        UriComponents requestUri = fromHttpUrl(authorizationRequest.getAuthorizationRequestUri()).build(true);
+        UriComponents requestUri = UriComponentsBuilder.fromUriString(
+            authorizationRequest.getAuthorizationRequestUri()
+        ).build(true);
 
         MultiValueMap<String, String> queryParams = requestUri.getQueryParams();
 

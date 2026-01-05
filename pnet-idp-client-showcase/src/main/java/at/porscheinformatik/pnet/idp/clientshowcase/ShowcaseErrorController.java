@@ -7,15 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.error.ErrorAttributeOptions.Include;
-import org.springframework.boot.web.servlet.error.ErrorAttributes;
-import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.boot.webmvc.error.ErrorAttributes;
+import org.springframework.boot.webmvc.error.ErrorController;
 import org.springframework.security.web.WebAttributes;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
 
-@Controller
+@RestController
 public class ShowcaseErrorController implements ErrorController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -23,12 +22,10 @@ public class ShowcaseErrorController implements ErrorController {
     private final ErrorAttributes errorAttributes;
 
     public ShowcaseErrorController(ErrorAttributes errorAttributes) {
-        super();
         this.errorAttributes = errorAttributes;
     }
 
     @GetMapping("/error")
-    @ResponseBody
     public String getErrorMessage(HttpServletRequest request) {
         ServletWebRequest requestAttributes = new ServletWebRequest(request);
 
@@ -37,17 +34,16 @@ public class ShowcaseErrorController implements ErrorController {
             ErrorAttributeOptions.of(Include.MESSAGE, Include.EXCEPTION, Include.STACK_TRACE)
         );
 
-        String exception = attributes.get("exception").toString();
-        String trace = attributes.get("trace").toString();
-        String message = attributes.get("message").toString();
+        String exception = attributes.getOrDefault("exception", "").toString();
+        String trace = attributes.getOrDefault("trace", "").toString();
+        String message = attributes.getOrDefault("message", "").toString();
 
         logger.error("Exception {} {}: {}", exception, message, trace);
 
-        return (String) attributes.get("message");
+        return message;
     }
 
     @GetMapping("/loginerror")
-    @ResponseBody
     public String getLoginErrorMessage(HttpServletRequest request) {
         Exception e = extractLoginException(request);
 
@@ -60,7 +56,6 @@ public class ShowcaseErrorController implements ErrorController {
     }
 
     @GetMapping("/accessdenied")
-    @ResponseBody
     public String getAccessDeniedErrorMessage(HttpServletRequest request) {
         Exception e = (Exception) request.getAttribute(WebAttributes.ACCESS_DENIED_403);
 

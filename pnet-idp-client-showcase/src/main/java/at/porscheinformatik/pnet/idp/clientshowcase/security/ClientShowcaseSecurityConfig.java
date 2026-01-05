@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -71,7 +72,7 @@ public class ClientShowcaseSecurityConfig {
         HttpSecurity http,
         Environment environment,
         Saml2CredentialsManager saml2CredentialsManager
-    ) throws Exception {
+    ) {
         if (environment.acceptsProfiles(LOCAL)) {
             http.headers(customizer -> {
                 customizer.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable);
@@ -129,7 +130,7 @@ public class ClientShowcaseSecurityConfig {
                 .denyAll()
         );
 
-        http.requiresChannel(customizer -> customizer.anyRequest().requiresSecure());
+        http.redirectToHttps(Customizer.withDefaults());
 
         return http.build();
     }

@@ -218,7 +218,6 @@ public class AuthenticationDTO {
         Collection<PartnerNetContractDTO> supportContract,
         Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes
     ) {
-        super();
         this.info = info;
         this.externalId = externalId;
         this.secondFactorUsed = secondFactorUsed;

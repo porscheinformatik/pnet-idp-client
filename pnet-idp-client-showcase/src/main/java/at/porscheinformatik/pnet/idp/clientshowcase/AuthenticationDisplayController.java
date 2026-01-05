@@ -6,7 +6,6 @@ package at.porscheinformatik.pnet.idp.clientshowcase;
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
 import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import tools.jackson.databind.ObjectMapper;
 
 @Controller
 public class AuthenticationDisplayController {

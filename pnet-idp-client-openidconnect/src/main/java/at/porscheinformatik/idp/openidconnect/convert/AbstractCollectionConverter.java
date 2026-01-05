@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Map;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.lang.NonNull;
 
 /**
  * @author Daniel Furtlehner
@@ -15,12 +14,12 @@ import org.springframework.lang.NonNull;
  */
 public abstract class AbstractCollectionConverter<T> implements Converter<Object, Collection<T>> {
 
-    public static final ParameterizedTypeReference<Map<String, Object>> MAP = new ParameterizedTypeReference<>() {
+    protected static final ParameterizedTypeReference<Map<String, Object>> MAP = new ParameterizedTypeReference<>() {
         // Nothing to do here.
     };
 
     @Override
-    public Collection<T> convert(@NonNull Object source) {
+    public Collection<T> convert(Object source) {
         Collection<Map<String, Object>> sourceCollection = ConverterUtils.cast(source, MAP);
 
         return sourceCollection //

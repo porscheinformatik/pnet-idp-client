@@ -4,8 +4,6 @@
 package at.porscheinformatik.idp.openidconnect;
 
 import at.porscheinformatik.idp.openidconnect.convert.PartnerNetClaimTypeConverterFactory;
-import java.util.HashSet;
-import java.util.Set;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -18,10 +16,9 @@ public class PartnerNetOpenIdConnectUserService extends OidcUserService {
 
     public PartnerNetOpenIdConnectUserService() {
         super();
-        Set<String> accessibleScopes = new HashSet<>();
-        accessibleScopes.add("openid");
-
-        setAccessibleScopes(accessibleScopes);
+        // Note: setAccessibleScopes was removed in Spring Security 7.x
+        // Accessible scopes are now managed through the OAuth2 client configuration
+        // The "openid" scope is typically included by default
         setClaimTypeConverterFactory(new PartnerNetClaimTypeConverterFactory());
     }
 

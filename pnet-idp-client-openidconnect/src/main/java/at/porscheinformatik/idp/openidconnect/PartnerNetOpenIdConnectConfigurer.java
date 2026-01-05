@@ -29,9 +29,7 @@ public class PartnerNetOpenIdConnectConfigurer
     private boolean failOnStartup;
     private String clientId;
     private String clientSecret;
-    private Customizer<OAuth2LoginConfigurer<HttpSecurity>> customizer = oauth2Login -> {
-        // Noop customizer. Users can override this to add custom configurations
-    };
+    private Customizer<OAuth2LoginConfigurer<HttpSecurity>> customizer = Customizer.withDefaults();
 
     private OidcUserService userService = new PartnerNetOpenIdConnectUserService();
 
@@ -40,7 +38,6 @@ public class PartnerNetOpenIdConnectConfigurer
     }
 
     public PartnerNetOpenIdConnectConfigurer(String issuerUrl) {
-        super();
         this.issuerUrl = issuerUrl;
     }
 
@@ -90,7 +87,7 @@ public class PartnerNetOpenIdConnectConfigurer
     }
 
     @Override
-    public void init(HttpSecurity builder) throws Exception {
+    public void init(HttpSecurity builder) {
         final ClientRegistrationRepository clientRegistrationRepository = getClientRegistrationRepository();
         final OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient =
             new RestClientAuthorizationCodeTokenResponseClient();
@@ -122,7 +119,7 @@ public class PartnerNetOpenIdConnectConfigurer
     }
 
     @Override
-    public void configure(HttpSecurity builder) throws Exception {
+    public void configure(HttpSecurity builder) {
         // Nothing to do here
     }
 

@@ -45,13 +45,13 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
         }
 
         if (registration == null) {
-            tryToloadRegistration();
+            tryToLoadRegistration();
         }
 
         return registration;
     }
 
-    private void tryToloadRegistration() {
+    private void tryToLoadRegistration() {
         try {
             registration = ClientRegistrations.fromOidcIssuerLocation(issuerUrl)
                 .clientId(clientId)

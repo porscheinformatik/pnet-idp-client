@@ -27,15 +27,19 @@ public class DecidingAuthenticationEntryPoint implements AuthenticationEntryPoin
         HttpServletResponse response,
         AuthenticationException authException
     ) throws IOException {
-        String uri = buildUri(request).toUriString();
+        UriComponentsBuilder uri = buildUri(request);
 
-        response.sendRedirect(uri);
+        if (uri != null) {
+            response.sendRedirect(uri.toUriString());
+        }
     }
 
     private UriComponentsBuilder buildUri(HttpServletRequest request) {
         var protocol = getParameter(request, "protocol");
         if (protocol == null) {
-            throw new IllegalArgumentException("Missing protocol parameter");
+            // This happens if the access denied page has been called without a protocol parameter. Just handle the
+            // issue as common error. Only perform a login redirect if the protocol parameter is present.
+            return null;
         }
 
         var requireMfa = getBooleanParameter(request, "require_mfa");
