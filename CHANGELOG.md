@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0]
+
+-   Update to Spring Boot 4
+-   Update to Spring Security 7
+
+Before upgrading to this version, please update to at least version 1.4.0 to avoid issues with deprecated and removed
+methods.
+
 ## [1.4.0]
 
 -   Refactored some toString methods
