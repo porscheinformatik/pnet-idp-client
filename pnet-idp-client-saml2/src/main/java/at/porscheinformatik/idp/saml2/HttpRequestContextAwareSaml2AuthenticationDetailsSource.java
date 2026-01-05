@@ -38,7 +38,6 @@ public class HttpRequestContextAwareSaml2AuthenticationDetailsSource
         private final HttpServletRequest request;
 
         public HttpRequestContext(HttpServletRequest request) {
-            super();
             this.request = request;
         }
 

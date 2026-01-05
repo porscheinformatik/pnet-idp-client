@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
@@ -43,6 +43,12 @@ public class Saml2ResponseProcessor {
     public static Saml2ResponseProcessor withDefaultHandlers() {
         MessageLifetimeSecurityHandler lifetimeHandler = new MessageLifetimeSecurityHandler();
         lifetimeHandler.setClockSkew(CLOCK_SKEW);
+
+        try {
+            lifetimeHandler.initialize();
+        } catch (ComponentInitializationException e) {
+            throw new IllegalStateException("Could not initialize lifetime handler", e);
+        }
 
         List<MessageHandler> handlers = new ArrayList<>();
         handlers.add(lifetimeHandler);
@@ -84,7 +90,7 @@ public class Saml2ResponseProcessor {
         messageContext.setMessage(response);
         messageContext.addSubcontext(new Saml2AuthenticationTokenContext(token));
 
-        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+        SAMLBindingContext bindingContext = messageContext.ensureSubcontext(SAMLBindingContext.class);
         bindingContext.setBindingUri(
             isPost ? SAMLConstants.SAML2_POST_BINDING_URI : SAMLConstants.SAML2_REDIRECT_BINDING_URI
         );
@@ -106,7 +112,6 @@ public class Saml2ResponseProcessor {
         private final Saml2AuthenticationToken token;
 
         public Saml2AuthenticationTokenContext(Saml2AuthenticationToken token) {
-            super();
             this.token = token;
         }
 

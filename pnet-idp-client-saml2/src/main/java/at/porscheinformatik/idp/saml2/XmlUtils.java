@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.List;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.codec.binary.Base64;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
@@ -255,14 +255,14 @@ public final class XmlUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends XMLObject> T createXMLObject(QName typeName, QName defaultName) {
+    public static <T extends XMLObject> T createXmlObject(QName typeName, QName defaultName) {
         XMLObjectBuilder<?> builder = XMLObjectSupport.getBuilder(typeName);
 
         return (T) builder.buildObject(defaultName, typeName);
     }
 
     public static XSInteger xmlInt(Integer value) {
-        XSInteger xsInteger = createXMLObject(XSInteger.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
+        XSInteger xsInteger = createXmlObject(XSInteger.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
 
         if (value == null) {
             xsInteger.setNil(Boolean.TRUE);
@@ -274,7 +274,7 @@ public final class XmlUtils {
     }
 
     public static XSBoolean xmlBoolean(Boolean value) {
-        XSBoolean xsBoolean = createXMLObject(XSBoolean.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
+        XSBoolean xsBoolean = createXmlObject(XSBoolean.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
 
         if (value == null) {
             xsBoolean.setNil(Boolean.TRUE);
@@ -290,7 +290,7 @@ public final class XmlUtils {
      * @return XML String
      */
     public static XSString xmlString(String value) {
-        XSString xsstring = createXMLObject(XSString.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
+        XSString xsstring = createXmlObject(XSString.TYPE_NAME, AttributeValue.DEFAULT_ELEMENT_NAME);
 
         if (value == null) {
             xsstring.setNil(Boolean.TRUE);

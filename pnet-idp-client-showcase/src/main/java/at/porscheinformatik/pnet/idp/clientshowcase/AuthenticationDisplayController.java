@@ -5,7 +5,6 @@ package at.porscheinformatik.pnet.idp.clientshowcase;
 
 import at.porscheinformatik.idp.openidconnect.PartnerNetOpenIdConnectUser;
 import at.porscheinformatik.idp.saml2.PartnerNetSaml2AuthenticationPrincipal;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,7 +21,6 @@ public class AuthenticationDisplayController {
 
     @Autowired
     public AuthenticationDisplayController(ObjectMapper objectMapper) {
-        super();
         this.objectMapper = objectMapper;
     }
 
@@ -36,7 +34,7 @@ public class AuthenticationDisplayController {
     }
 
     @GetMapping("/data/authorization")
-    public String getAuthentication(Model model) throws JsonProcessingException {
+    public String getAuthentication(Model model) {
         Optional<AuthenticationDTO> dto = buildAuthentication();
 
         if (dto.isPresent()) {

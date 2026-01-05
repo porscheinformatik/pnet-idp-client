@@ -1,8 +1,8 @@
 package at.porscheinformatik.idp.saml2;
 
 import java.time.Duration;
-import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
-import org.apache.http.client.HttpClient;
+import net.shibboleth.shared.httpclient.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.springframework.security.saml2.Saml2Exception;
 
 @FunctionalInterface

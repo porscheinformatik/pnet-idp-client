@@ -6,18 +6,14 @@ package at.porscheinformatik.idp.saml2;
 import static java.util.Objects.*;
 import static org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport.*;
 
-import java.io.IOException;
 import java.io.StringReader;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.xml.XMLParserException;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -69,7 +65,7 @@ import org.springframework.security.saml2.core.Saml2X509Credential;
 public final class Saml2ObjectUtils {
 
     //ID is required. Specification says between 128 and 160 bit are perfect
-    private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy(20);
+    private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy();
 
     private Saml2ObjectUtils() {
         super();
@@ -222,9 +218,7 @@ public final class Saml2ObjectUtils {
     }
 
     public static AttributeStatement attributeStatement() {
-        AttributeStatement attributeStatement = createSamlObject(AttributeStatement.DEFAULT_ELEMENT_NAME);
-
-        return attributeStatement;
+        return createSamlObject(AttributeStatement.DEFAULT_ELEMENT_NAME);
     }
 
     @Nonnull
@@ -277,7 +271,7 @@ public final class Saml2ObjectUtils {
     }
 
     public static void sign(SignableSAMLObject signable, Saml2X509Credential credential)
-        throws SecurityException, MarshallingException, SignatureException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        throws SecurityException, MarshallingException, SignatureException {
         Credential samlCredential = new BasicX509Credential(credential.getCertificate(), credential.getPrivateKey());
 
         SignatureSigningParameters parameters = new SignatureSigningParameters();

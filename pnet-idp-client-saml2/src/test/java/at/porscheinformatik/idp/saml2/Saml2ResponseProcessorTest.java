@@ -452,6 +452,7 @@ class Saml2ResponseProcessorTest {
         TokenAndResponse tokenAndResponse = buildTokenAndResponse(true, false, false, false, 2, null, null);
 
         Saml2ResponseProcessor processor = Saml2ResponseProcessor.withDefaultHandlers();
+        processor.initialize();
 
         processor.process(tokenAndResponse.getToken(), tokenAndResponse.getResponse());
     }
@@ -517,8 +518,13 @@ class Saml2ResponseProcessorTest {
         String message
     ) {
         Saml2ResponseProcessor processor = Saml2ResponseProcessor.withDefaultHandlers();
+        try {
+            processor.initialize();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize processor", e);
+        }
 
-        MessageHandlerException actual = assertThrows(MessageHandlerException.class, () ->
+        MessageHandlerException actual = assertThrows(expectedException, () ->
             processor.process(tokenAndResponse.getToken(), tokenAndResponse.getResponse())
         );
 
@@ -658,7 +664,7 @@ class Saml2ResponseProcessorTest {
     private MockHttpServletRequest buildRequestFromUrl(String url) {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(url).build();
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(url).build();
 
         request.setScheme(uriComponents.getScheme());
         request.setServerName(uriComponents.getHost());
@@ -694,7 +700,7 @@ class Saml2ResponseProcessorTest {
             .decryptionX509Credentials(credentials ->
                 credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.DECRYPTION))
             )
-            .assertingPartyDetails(builder ->
+            .assertingPartyMetadata(builder ->
                 builder
                     .entityId(IDP_ENTITY_ID)
                     .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)

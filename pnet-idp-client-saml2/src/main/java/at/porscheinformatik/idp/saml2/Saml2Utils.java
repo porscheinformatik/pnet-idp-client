@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class Saml2Utils {
@@ -32,8 +32,7 @@ public class Saml2Utils {
     private static final String PROMPT_PARAM = "prompt";
     private static final String LOGIN_HINT_PARAM = "login_hint";
 
-    // Specification says between 128 and 160 bit are perfect
-    private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy(20);
+    private static final IdentifierGenerationStrategy ID_GENERATOR = new SecureRandomIdentifierGenerationStrategy();
 
     private Saml2Utils() {
         super();

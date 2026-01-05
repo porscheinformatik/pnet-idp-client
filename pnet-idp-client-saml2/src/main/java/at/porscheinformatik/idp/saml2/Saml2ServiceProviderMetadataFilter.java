@@ -9,11 +9,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,7 +33,8 @@ public class Saml2ServiceProviderMetadataFilter extends OncePerRequestFilter {
         Saml2MetadataResolver metadataResolver
     ) {
         super();
-        requestMatcher = new AntPathRequestMatcher(metadataProcessingUrl, "GET");
+        requestMatcher = PathPatternRequestMatcher.pathPattern(HttpMethod.GET, metadataProcessingUrl);
+
         this.relyingPartyRegistrationResolver = relyingPartyRegistrationResolver;
         this.metadataResolver = metadataResolver;
     }

@@ -1,7 +1,7 @@
 package at.porscheinformatik.idp.saml2.xml;
 
 import at.porscheinformatik.idp.saml2.Tenant;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
+import net.shibboleth.shared.xml.ElementSupport;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.core.xml.io.MarshallingException;

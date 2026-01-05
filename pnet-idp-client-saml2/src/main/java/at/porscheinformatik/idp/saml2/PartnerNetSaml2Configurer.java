@@ -22,8 +22,8 @@ import org.springframework.security.saml2.provider.service.metadata.Saml2Metadat
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.web.DefaultRelyingPartyRegistrationResolver;
 import org.springframework.security.saml2.provider.service.web.RelyingPartyRegistrationResolver;
-import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml4AuthenticationRequestResolver;
-import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml4AuthenticationRequestResolver.AuthnRequestContext;
+import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml5AuthenticationRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml5AuthenticationRequestResolver.AuthnRequestContext;
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2AuthenticationRequestResolver;
 import org.springframework.security.saml2.provider.service.web.authentication.Saml2WebSsoAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -41,8 +41,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @return the configurer for further customization
      * @throws Exception when an exception occurs while configuring
      */
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider)
-        throws Exception {
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, PartnerNetSaml2Provider provider) {
         return apply(http, provider.getEntityId(), provider.getEntityId());
     }
 
@@ -52,7 +51,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @return the configurer for further customization
      * @throws Exception on occasion
      */
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId) throws Exception {
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId) {
         return apply(http, entityId, entityId);
     }
 
@@ -63,12 +62,10 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
      * @return the configurer for further customization
      * @throws Exception when an exception occurs while configuring
      */
-    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl)
-        throws Exception {
-        http //
-            .authorizeHttpRequests()
-            .requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH)
-            .permitAll();
+    public static PartnerNetSaml2Configurer apply(HttpSecurity http, String entityId, String metadataUrl) {
+        http.authorizeHttpRequests(authorize -> //
+            authorize.requestMatchers(HttpMethod.GET, DEFAULT_ENTITY_ID_PATH).permitAll()
+        );
 
         return http.apply(new PartnerNetSaml2Configurer(entityId, metadataUrl));
     }
@@ -97,7 +94,6 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     };
 
     private PartnerNetSaml2Configurer(String entityId, String metadataUrl) {
-        super();
         this.entityId = entityId;
         this.metadataUrl = metadataUrl;
     }
@@ -231,7 +227,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     }
 
     @Override
-    public void init(HttpSecurity builder) throws Exception {
+    public void init(HttpSecurity builder) {
         Saml2CredentialsManager credManager = getCredentialsManager();
         RelyingPartyRegistrationRepository relyingPartyRegistrationRepository = getRelyingPartyRegistrationRepository(
             credManager
@@ -270,7 +266,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     }
 
     @Override
-    public void configure(HttpSecurity builder) throws Exception {
+    public void configure(HttpSecurity builder) {
         builder.addFilterBefore(buildMetadataFilter(), Saml2WebSsoAuthenticationFilter.class);
 
         builder.saml2Login(c -> c.authenticationManager(builder.getSharedObject(AuthenticationManager.class)));
@@ -334,7 +330,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
     private Saml2AuthenticationRequestResolver buildRequestResolver(
         RelyingPartyRegistrationResolver relyingPartyRegistrationResolver
     ) {
-        OpenSaml4AuthenticationRequestResolver resolver = new OpenSaml4AuthenticationRequestResolver(
+        OpenSaml5AuthenticationRequestResolver resolver = new OpenSaml5AuthenticationRequestResolver(
             relyingPartyRegistrationResolver
         );
 
@@ -343,7 +339,7 @@ public class PartnerNetSaml2Configurer extends AbstractHttpConfigurer<PartnerNet
             Saml2Utils.getRelayState(request) //
                 .map(relayState -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), relayState)) // pre-append a random string
                 .orElseGet(() -> String.format(AUTO_GENERATED_RELAY_STATE_FORMAT, UUID.randomUUID(), ""))
-        ); // default to the auto generated UUID;
+        );
 
         return resolver;
     }

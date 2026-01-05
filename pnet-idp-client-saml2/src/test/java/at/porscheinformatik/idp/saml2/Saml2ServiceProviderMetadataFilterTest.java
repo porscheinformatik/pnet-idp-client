@@ -216,7 +216,7 @@ class Saml2ServiceProviderMetadataFilterTest {
             .signingX509Credentials(credentials ->
                 credentials.addAll(credentialsManager.getCredentials(Saml2X509CredentialType.SIGNING))
             )
-            .assertingPartyDetails(builder ->
+            .assertingPartyMetadata(builder ->
                 builder
                     .entityId("https://idp.com/saml2")
                     .singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT)
@@ -231,13 +231,14 @@ class Saml2ServiceProviderMetadataFilterTest {
     private MockHttpServletRequest buildRequestFromUrl(String url) {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(url).build();
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(url).build();
 
         request.setScheme(uriComponents.getScheme());
         request.setServerName(uriComponents.getHost());
         request.setServerPort(uriComponents.getPort());
         request.setPathInfo(uriComponents.getPath());
         request.setRequestURI(uriComponents.getPath());
+        request.setMethod("GET"); // Ensure GET method is set
 
         return request;
     }

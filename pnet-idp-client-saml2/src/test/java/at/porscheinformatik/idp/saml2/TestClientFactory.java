@@ -7,20 +7,17 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.io.CloseMode;
 import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.util.StreamUtils;
 
@@ -54,15 +51,15 @@ public class TestClientFactory implements HttpClientFactory {
     private class StaticHttpClient extends CloseableHttpClient {
 
         @Override
-        protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context)
-            throws IOException, ClientProtocolException {
-            String method = request.getRequestLine().getMethod();
+        protected CloseableHttpResponse doExecute(HttpHost target, ClassicHttpRequest request, HttpContext context)
+            throws IOException {
+            String method = request.getMethod();
 
             if (!"GET".equals(method)) {
                 throw new IllegalArgumentException("Only get requests are supported.");
             }
 
-            String uri = request.getRequestLine().getUri();
+            String uri = request.getRequestUri();
 
             if (!Objects.equals(metadataUrl, uri)) {
                 throw new IOException(
@@ -70,7 +67,11 @@ public class TestClientFactory implements HttpClientFactory {
                 );
             }
 
-            return new TestHttpResponse(metadata);
+            BasicClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+
+            response.setEntity(new StringEntity(metadata, ContentType.create("application/samlmetadata+xml", "UTF-8")));
+
+            return CloseableHttpResponse.adapt(response);
         }
 
         @Override
@@ -78,29 +79,9 @@ public class TestClientFactory implements HttpClientFactory {
             // Nothing to close here
         }
 
-        @SuppressWarnings("deprecation")
         @Override
-        public HttpParams getParams() {
-            throw new UnsupportedOperationException("Implement when needed");
-        }
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public ClientConnectionManager getConnectionManager() {
-            throw new UnsupportedOperationException("Implement when needed");
-        }
-    }
-
-    private static class TestHttpResponse extends BasicHttpResponse implements CloseableHttpResponse {
-
-        public TestHttpResponse(String content) {
-            super(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-            setEntity(new StringEntity(content, ContentType.create("application/samlmetadata+xml", "UTF-8")));
-        }
-
-        @Override
-        public void close() throws IOException {
-            // Nothing to close
+        public void close(CloseMode closeMode) {
+            // Nothing to close here
         }
     }
 }
