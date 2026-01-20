@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCo
 import org.springframework.security.oauth2.client.endpoint.RestClientAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistration.ClientSettings;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
@@ -29,6 +30,7 @@ public class PartnerNetOpenIdConnectConfigurer
     private boolean failOnStartup;
     private String clientId;
     private String clientSecret;
+    private boolean requireProofKey = false;
     private Customizer<OAuth2LoginConfigurer<HttpSecurity>> customizer = Customizer.withDefaults();
 
     private OidcUserService userService = new PartnerNetOpenIdConnectUserService();
@@ -61,6 +63,12 @@ public class PartnerNetOpenIdConnectConfigurer
 
     public PartnerNetOpenIdConnectConfigurer clientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+
+        return this;
+    }
+
+    public PartnerNetOpenIdConnectConfigurer requireProofKey(boolean requireProofKey) {
+        this.requireProofKey = requireProofKey;
 
         return this;
     }
@@ -125,11 +133,14 @@ public class PartnerNetOpenIdConnectConfigurer
 
     private ClientRegistrationRepository getClientRegistrationRepository() {
         if (failOnStartup) {
+            ClientSettings settings = ClientSettings.builder().requireProofKey(requireProofKey).build();
+
             ClientRegistration clientRegistration = ClientRegistrations.fromOidcIssuerLocation(issuerUrl)
                 .registrationId("pnet")
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .clientName(issuerUrl)
+                .clientSettings(settings)
                 .build();
 
             return new InMemoryClientRegistrationRepository(clientRegistration);

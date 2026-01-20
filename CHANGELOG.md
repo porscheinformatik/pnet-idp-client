@@ -8,6 +8,8 @@
 Before upgrading to this version, please update to at least version 1.4.0 to avoid issues with deprecated and removed
 methods.
 
+-   Added an option to enable PKCE flow in the PartnerNetOpenIdConnectConfigurer (default: disabled)
+
 ## [1.4.0]
 
 -   Refactored some toString methods
