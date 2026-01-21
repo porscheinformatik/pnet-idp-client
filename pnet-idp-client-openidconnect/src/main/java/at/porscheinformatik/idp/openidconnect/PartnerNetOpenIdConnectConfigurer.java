@@ -146,6 +146,6 @@ public class PartnerNetOpenIdConnectConfigurer
             return new InMemoryClientRegistrationRepository(clientRegistration);
         }
 
-        return new LazyLoadingClientRegistrationRepository(issuerUrl, "pnet", clientId, clientSecret);
+        return new LazyLoadingClientRegistrationRepository(issuerUrl, "pnet", clientId, clientSecret, requireProofKey);
     }
 }

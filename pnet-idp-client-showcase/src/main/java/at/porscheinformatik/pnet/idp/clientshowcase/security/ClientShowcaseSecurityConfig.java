@@ -87,7 +87,8 @@ public class ClientShowcaseSecurityConfig {
         http.with(
             new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
-                .clientSecret(environment.getProperty("oidc.client.secret")),
+                .clientSecret(environment.getProperty("oidc.client.secret"))
+                .requireProofKey(true),
             customizer -> customizer.customize(oauth -> oauth.failureUrl(LOGIN_ERROR_URI))
         );
 

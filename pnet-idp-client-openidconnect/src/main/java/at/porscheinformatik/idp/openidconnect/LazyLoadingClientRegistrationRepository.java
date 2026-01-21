@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistration.ClientSettings;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 
@@ -23,6 +24,7 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
     private final String registrationId;
     private final String clientId;
     private final String clientSecret;
+    private final boolean requireProofKey;
 
     private ClientRegistration registration;
 
@@ -30,12 +32,14 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
         String issuerUrl,
         String registrationId,
         String clientId,
-        String clientSecret
+        String clientSecret,
+        boolean requireProofKey
     ) {
         this.issuerUrl = issuerUrl;
         this.registrationId = registrationId;
         this.clientId = requireNonNull(clientId, "Client Id must not be null");
         this.clientSecret = clientSecret;
+        this.requireProofKey = requireProofKey;
     }
 
     @Override
@@ -52,10 +56,13 @@ public class LazyLoadingClientRegistrationRepository implements ClientRegistrati
     }
 
     private void tryToLoadRegistration() {
+        ClientSettings settings = ClientSettings.builder().requireProofKey(requireProofKey).build();
+
         try {
             registration = ClientRegistrations.fromOidcIssuerLocation(issuerUrl)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
+                .clientSettings(settings)
                 .registrationId(registrationId)
                 .build();
         } catch (Exception e) {

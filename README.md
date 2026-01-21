@@ -16,6 +16,7 @@ Versions not mentioned in this table are not supported anymore
 | 0.5.x           | 2.7.x       | 5.7.x           | 2023-02     | This will be the last version supporting spring-security 5.7.x. spring-security 5.8.x should not have any incopatible changes. Upgrading to 0.9.x should cause no problems.                     |
 | 0.9.x           | 2.7.x       | 5.8.x           | 2023-11     | See https://docs.spring.io/spring-security/reference/5.8/migration/index.html to prepare your application for the upcomming spring boot 3 Change. See **ReleaseNotes.md** for a list of changes |
 | 1.0.x           | 3.0.x       | 6.0.x           | 2023-05     |                                                                                                                                                                                                 |
+| 1.4.x           | 4.0.x       | 7.0.x           | 2026-01     | PKCE for OAtuh and OIDC is available, now (defauts to false)                                                                                                                                    |
 
 ## Run the showcase application
 
