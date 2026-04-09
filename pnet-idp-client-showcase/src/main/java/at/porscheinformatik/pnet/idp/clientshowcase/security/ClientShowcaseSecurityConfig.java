@@ -73,16 +73,16 @@ public class ClientShowcaseSecurityConfig {
         Environment environment,
         Saml2CredentialsManager saml2CredentialsManager
     ) {
-        if (environment.acceptsProfiles(LOCAL)) {
-            http.headers(customizer -> {
+        http.headers(customizer -> {
+            if (environment.acceptsProfiles(LOCAL)) {
                 customizer.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable);
+            }
 
-                // We explicitly allow framing for this application for testing purposes only, because the Partner.Net
-                // Portal allows some applications to be displayed in a frame. By default, you should keep framing
-                // restricted.
-                customizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
-            });
-        }
+            // We explicitly allow framing for this application, because the Partner.Net
+            // Portal allows some applications to be displayed in a frame. By default, you should keep framing
+            // restricted.
+            customizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
+        });
 
         http.with(
             new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))

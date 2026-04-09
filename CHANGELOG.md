@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.1]
+
+-   Allow showcase to be displayed in frame for testing
+
 ## [2.0.0]
 
 -   Update to Spring Boot 4
