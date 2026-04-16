@@ -6,7 +6,8 @@ public enum PartnerNetAuthenticationProvider {
     UNKNOWN,
     PNET,
     PHS_ENTRA_ID,
-    PHS_ENTRA_ID_CF;
+    PHS_ENTRA_ID_CF,
+    GRP;
 
     public static PartnerNetAuthenticationProvider valueOfOrUnknown(String value) {
         if (value == null) {
