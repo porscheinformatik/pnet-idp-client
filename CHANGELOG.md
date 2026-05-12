@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.2]
+
+-   Add TAP-ID to OIDC and SAML2 principals
+
 ## [2.0.1]
 
 -   Allow showcase to be displayed in frame for testing

@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.0.2
+
+-   Add TAP-ID to OIDC and SAML2 principals
+
 ## 1.3.1
 
 -   Add BDO-ID to SAML2 and OpenID-Connect principals.
