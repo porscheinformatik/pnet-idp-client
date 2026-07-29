@@ -42,6 +42,7 @@ public class AuthenticationDTO {
             principal.getPhoneNumber(),
             principal.getTaxNumber(),
             principal.getBdoId(),
+            principal.getEgid(),
             principal.getTapId(),
             principal.getPnetGender(),
             principal.getPnetLocale(),
@@ -93,6 +94,7 @@ public class AuthenticationDTO {
             principal.getPhoneNumber(),
             principal.getTaxNumber(),
             principal.getBdoId(),
+            principal.getEgId(),
             principal.getTapId(),
             principal.getGender(),
             principal.getLanguage(),
@@ -143,6 +145,7 @@ public class AuthenticationDTO {
     private final String phoneNumber;
     private final String taxNumber;
     private final String bdoId;
+    private final String egId;
     private final String tapId;
     private final Gender gender;
     private final Locale locale;
@@ -175,52 +178,53 @@ public class AuthenticationDTO {
     private final Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes;
 
     public AuthenticationDTO(
-        String info,
-        String externalId,
-        boolean secondFactorUsed,
-        String transientSessionId,
-        String loginHint,
-        PartnerNetAuthenticationProvider authenticationProvider,
-        boolean supportDataAvailable,
-        int nistAuthenticationLevel,
-        Instant authenticatedAt,
-        Instant authenticatedMfaAt,
-        PartnerNetUserType userType,
-        String name,
-        String email,
-        String phoneNumber,
-        String taxNumber,
-        String bdoId,
-        String tapId,
-        Gender gender,
-        Locale locale,
-        Instant updatedAt,
-        String academicTitle,
-        String academicTitlePostNominal,
-        String guid,
-        String costcentre,
-        String country,
-        Integer internalId,
-        Integer favoriteCompanyId,
-        String favoriteBrand,
-        List<Locale> additionalLocales,
-        Collection<PartnerNetFunctionalNumberDTO> functionalNumbers,
-        Collection<PartnerNetCompanyDTO> companies,
-        Collection<Integer> contactCompanyIds,
-        Collection<PartnerNetCompanyAddressDTO> companiesAddress,
-        Collection<PartnerNetRoleDTO> roles,
-        Collection<PartnerNetContractDTO> contracts,
-        Collection<PartnerNetCompanyTypeDTO> companyTypes,
-        String responsibleUserExternalId,
-        String responsibleUserName,
-        String responsibleUserEmail,
-        String responsibleUserGuid,
-        Collection<PartnerNetCompanyDTO> supportCompanies,
-        Collection<Integer> supportContactCompanyIds,
-        Collection<PartnerNetCompanyAddressDTO> supportCompaniesAddress,
-        Collection<PartnerNetRoleDTO> supportRoles,
-        Collection<PartnerNetContractDTO> supportContract,
-        Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes
+            String info,
+            String externalId,
+            boolean secondFactorUsed,
+            String transientSessionId,
+            String loginHint,
+            PartnerNetAuthenticationProvider authenticationProvider,
+            boolean supportDataAvailable,
+            int nistAuthenticationLevel,
+            Instant authenticatedAt,
+            Instant authenticatedMfaAt,
+            PartnerNetUserType userType,
+            String name,
+            String email,
+            String phoneNumber,
+            String taxNumber,
+            String bdoId,
+            String egId,
+            String tapId,
+            Gender gender,
+            Locale locale,
+            Instant updatedAt,
+            String academicTitle,
+            String academicTitlePostNominal,
+            String guid,
+            String costcentre,
+            String country,
+            Integer internalId,
+            Integer favoriteCompanyId,
+            String favoriteBrand,
+            List<Locale> additionalLocales,
+            Collection<PartnerNetFunctionalNumberDTO> functionalNumbers,
+            Collection<PartnerNetCompanyDTO> companies,
+            Collection<Integer> contactCompanyIds,
+            Collection<PartnerNetCompanyAddressDTO> companiesAddress,
+            Collection<PartnerNetRoleDTO> roles,
+            Collection<PartnerNetContractDTO> contracts,
+            Collection<PartnerNetCompanyTypeDTO> companyTypes,
+            String responsibleUserExternalId,
+            String responsibleUserName,
+            String responsibleUserEmail,
+            String responsibleUserGuid,
+            Collection<PartnerNetCompanyDTO> supportCompanies,
+            Collection<Integer> supportContactCompanyIds,
+            Collection<PartnerNetCompanyAddressDTO> supportCompaniesAddress,
+            Collection<PartnerNetRoleDTO> supportRoles,
+            Collection<PartnerNetContractDTO> supportContract,
+            Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes
     ) {
         this.info = info;
         this.externalId = externalId;
@@ -238,6 +242,7 @@ public class AuthenticationDTO {
         this.phoneNumber = phoneNumber;
         this.taxNumber = taxNumber;
         this.bdoId = bdoId;
+        this.egId = egId;
         this.tapId = tapId;
         this.gender = gender;
         this.locale = locale;
@@ -448,6 +453,10 @@ public class AuthenticationDTO {
 
     public String getBdoId() {
         return bdoId;
+    }
+
+    public String getEgId() {
+        return egId;
     }
 
     public String getTapId() {

@@ -75,6 +75,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
         String taxNumber = singleString(data, attributeName("tax_number"));
         String bdoId = singleString(data, attributeName("bdo_id"));
         String tapId = singleString(data, attributeName("tap_id"));
+        String egId = singleString(data, attributeName("egid"));
         String tenant = singleString(data, attributeName("tenant"));
         String costCenter = singleString(data, attributeName("cost_center"));
         List<PartnerNetFunctionalNumberDTO> functionalNumbers = functionalNumbersList(
@@ -140,6 +141,7 @@ public class PartnerNetSaml2ResponseParser extends Saml2ResponseParserBase {
             phoneNumber,
             taxNumber,
             bdoId,
+            egId,
             tapId,
             tenant,
             costCenter,

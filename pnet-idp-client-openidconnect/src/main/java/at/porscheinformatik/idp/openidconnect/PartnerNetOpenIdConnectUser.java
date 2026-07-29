@@ -42,6 +42,7 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
     public static final String USER_INFO_ACADEMIC_TITLE = "pnet_academic_title";
     public static final String USER_INFO_ACADEMIC_TITLE_POST_NOMINAL = "pnet_academic_title_post_nominal";
     public static final String USER_INFO_GUID = "pnet_guid";
+    public static final String USER_INFO_EGID = "pnet_egid";
     public static final String USER_INFO_COSTCENTRE = "pnet_costcentre";
     public static final String USER_INFO_COUNTRY = "pnet_country";
     public static final String USER_INFO_ADDITIONAL_LOCALES = "pnet_additional_locales";
@@ -145,6 +146,14 @@ public class PartnerNetOpenIdConnectUser extends DefaultOidcUser {
 
     public String getGuid() {
         return userInfoClaims(USER_INFO_GUID);
+    }
+
+    /**
+     * Returns the employee global identifier, when the EGID claim was granted
+     * to the client.
+     */
+    public String getEgid() {
+        return userInfoClaims(USER_INFO_EGID);
     }
 
     public String getTaxNumber() {

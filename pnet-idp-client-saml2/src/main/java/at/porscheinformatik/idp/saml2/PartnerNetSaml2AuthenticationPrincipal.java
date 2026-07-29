@@ -49,6 +49,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     private final String bdoId;
     private final String tapId;
+    private final String egId;
 
     private final String tenant;
     private final String costCenter;
@@ -80,53 +81,54 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
     private final Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes;
 
     public PartnerNetSaml2AuthenticationPrincipal(
-        String subjectIdentifier,
-        String relayState,
-        String transientSessionId,
-        AuthnContextClass authnContextClass,
-        Instant lastUpdate,
-        String loginHint,
-        PartnerNetAuthenticationProvider authenticationProvider,
-        String guid,
-        String personnelNumber,
-        Integer legacyId,
-        PartnerNetUserType userType,
-        String academicTitle,
-        String academicTitlePostNominal,
-        String firstname,
-        String lastname,
-        Gender gender,
-        Locale language,
-        List<Locale> additionalLanguages,
-        String mailAddress,
-        String phoneNumber,
-        String taxNumber,
-        String bdoId,
-        String tapId,
-        String tenant,
-        String costCenter,
-        Integer favoriteCompanyId,
-        String favoriteBrand,
-        List<PartnerNetFunctionalNumberDTO> functionalNumbers,
-        List<PartnerNetCompanyDTO> employments,
-        List<PartnerNetCompanyAddressDTO> employmentsAddress,
-        List<PartnerNetRoleDTO> roles,
-        List<PartnerNetContractDTO> contracts,
-        Collection<Integer> contactCompanyIds,
-        Collection<PartnerNetCompanyTypeDTO> companyTypes,
-        boolean responsibleUser,
-        String responsibleUserExternalId,
-        String responsibleUserFirstname,
-        String responsibleUserLastname,
-        String responsibleUserEmail,
-        String responsibleUserGuid,
-        boolean supportData,
-        List<PartnerNetCompanyDTO> supportEmployments,
-        List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
-        List<PartnerNetRoleDTO> supportRoles,
-        List<PartnerNetContractDTO> supportContracts,
-        Collection<Integer> supportContactCompanyIds,
-        Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes
+            String subjectIdentifier,
+            String relayState,
+            String transientSessionId,
+            AuthnContextClass authnContextClass,
+            Instant lastUpdate,
+            String loginHint,
+            PartnerNetAuthenticationProvider authenticationProvider,
+            String guid,
+            String personnelNumber,
+            Integer legacyId,
+            PartnerNetUserType userType,
+            String academicTitle,
+            String academicTitlePostNominal,
+            String firstname,
+            String lastname,
+            Gender gender,
+            Locale language,
+            List<Locale> additionalLanguages,
+            String mailAddress,
+            String phoneNumber,
+            String taxNumber,
+            String bdoId,
+            String egId,
+            String tapId,
+            String tenant,
+            String costCenter,
+            Integer favoriteCompanyId,
+            String favoriteBrand,
+            List<PartnerNetFunctionalNumberDTO> functionalNumbers,
+            List<PartnerNetCompanyDTO> employments,
+            List<PartnerNetCompanyAddressDTO> employmentsAddress,
+            List<PartnerNetRoleDTO> roles,
+            List<PartnerNetContractDTO> contracts,
+            Collection<Integer> contactCompanyIds,
+            Collection<PartnerNetCompanyTypeDTO> companyTypes,
+            boolean responsibleUser,
+            String responsibleUserExternalId,
+            String responsibleUserFirstname,
+            String responsibleUserLastname,
+            String responsibleUserEmail,
+            String responsibleUserGuid,
+            boolean supportData,
+            List<PartnerNetCompanyDTO> supportEmployments,
+            List<PartnerNetCompanyAddressDTO> supportEmploymentsAddress,
+            List<PartnerNetRoleDTO> supportRoles,
+            List<PartnerNetContractDTO> supportContracts,
+            Collection<Integer> supportContactCompanyIds,
+            Collection<PartnerNetCompanyTypeDTO> supportCompanyTypes
     ) {
         super();
         this.subjectIdentifier = subjectIdentifier;
@@ -151,6 +153,7 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
         this.phoneNumber = phoneNumber;
         this.taxNumber = taxNumber;
         this.bdoId = bdoId;
+        this.egId = egId;
         this.tapId = tapId;
         this.tenant = tenant;
         this.costCenter = costCenter;
@@ -396,5 +399,9 @@ public class PartnerNetSaml2AuthenticationPrincipal implements Serializable {
 
     public String getTapId() {
         return tapId;
+    }
+
+    public String getEgId() {
+        return egId;
     }
 }
