@@ -1,6 +1,10 @@
 # Changelog
 
-## [2.0.2]
+## [2.0.4]
+
+-   Add EGID (Employee Global ID) to OIDC and SAML2 principals
+
+## [2.0.3]
 
 -   Add TAP-ID to OIDC and SAML2 principals
 
