@@ -42,6 +42,7 @@ public class ClientShowcaseSecurityConfig {
     private static final Profiles QA = Profiles.of("qa");
     private static final Profiles DEV = Profiles.of("dev");
     private static final Profiles LOCAL = Profiles.of("local");
+    private static final Profiles DEVCONTAINER = Profiles.of("devcontainer");
 
     @Bean
     public AuthenticationManager authenticationManager(List<AuthenticationProvider> providers) {
@@ -74,7 +75,7 @@ public class ClientShowcaseSecurityConfig {
         Saml2CredentialsManager saml2CredentialsManager
     ) {
         http.headers(customizer -> {
-            if (environment.acceptsProfiles(LOCAL)) {
+            if (environment.acceptsProfiles(LOCAL) || environment.acceptsProfiles(DEVCONTAINER)) {
                 customizer.httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable);
             }
 
@@ -85,14 +86,19 @@ public class ClientShowcaseSecurityConfig {
         });
 
         http.with(
-            new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcProvider(environment))
+            new PartnerNetOpenIdConnectConfigurer(getPartnerNetOidcIssuer(environment))
                 .clientId(environment.getProperty("oidc.client.id"))
                 .clientSecret(environment.getProperty("oidc.client.secret"))
                 .requireProofKey(true),
             customizer -> customizer.customize(oauth -> oauth.failureUrl(LOGIN_ERROR_URI))
         );
 
-        PartnerNetSaml2Configurer.apply(http, getPartnerNetSaml2Provider(environment))
+        String saml2EntityId = getPartnerNetSaml2EntityId(environment);
+        PartnerNetSaml2Configurer.apply(
+            http,
+            saml2EntityId,
+            environment.getProperty("saml2.metadata-url", saml2EntityId)
+        )
             .credentials(saml2CredentialsManager)
             .customizer(saml2 -> saml2.failureUrl(LOGIN_ERROR_URI));
 
@@ -136,41 +142,51 @@ public class ClientShowcaseSecurityConfig {
         return http.build();
     }
 
-    private PartnerNetOpenIdConnectProvider getPartnerNetOidcProvider(Environment environment) {
+    private String getPartnerNetOidcIssuer(Environment environment) {
+        String issuer = environment.getProperty("oidc.issuer");
+        if (issuer != null) {
+            return issuer;
+        }
+
         if (environment.acceptsProfiles(PROD)) {
-            return PartnerNetOpenIdConnectProvider.PROD;
+            return PartnerNetOpenIdConnectProvider.PROD.getIssuer();
         }
 
         if (environment.acceptsProfiles(QA)) {
-            return PartnerNetOpenIdConnectProvider.QA;
+            return PartnerNetOpenIdConnectProvider.QA.getIssuer();
         }
 
         if (environment.acceptsProfiles(DEV)) {
-            return PartnerNetOpenIdConnectProvider.DEV;
+            return PartnerNetOpenIdConnectProvider.DEV.getIssuer();
         }
 
         if (environment.acceptsProfiles(LOCAL)) {
-            return PartnerNetOpenIdConnectProvider.LOCAL;
+            return PartnerNetOpenIdConnectProvider.LOCAL.getIssuer();
         }
 
         throw new IllegalArgumentException("No supported profile found.");
     }
 
-    private PartnerNetSaml2Provider getPartnerNetSaml2Provider(Environment environment) {
+    private String getPartnerNetSaml2EntityId(Environment environment) {
+        String entityId = environment.getProperty("saml2.entity-id");
+        if (entityId != null) {
+            return entityId;
+        }
+
         if (environment.acceptsProfiles(PROD)) {
-            return PartnerNetSaml2Provider.PROD;
+            return PartnerNetSaml2Provider.PROD.getEntityId();
         }
 
         if (environment.acceptsProfiles(QA)) {
-            return PartnerNetSaml2Provider.QA;
+            return PartnerNetSaml2Provider.QA.getEntityId();
         }
 
         if (environment.acceptsProfiles(DEV)) {
-            return PartnerNetSaml2Provider.DEV;
+            return PartnerNetSaml2Provider.DEV.getEntityId();
         }
 
         if (environment.acceptsProfiles(LOCAL)) {
-            return PartnerNetSaml2Provider.LOCAL;
+            return PartnerNetSaml2Provider.LOCAL.getEntityId();
         }
 
         throw new IllegalArgumentException("No supported profile found.");
