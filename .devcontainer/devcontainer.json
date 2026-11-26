@@ -1,0 +1,48 @@
+{
+    "name": "Partner.Net-IDP-Client",
+    "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+    "runArgs": ["--network=pnet-local"],
+    "containerEnv": {
+        "NPM_CONFIG_USERCONFIG": "/home/vscode/.npm/npmrc"
+    },
+    "forwardPorts": [8443],
+    "portsAttributes": {
+        "8443": {
+            "label": "Partner.Net IDP Client Showcase (HTTPS)",
+            "protocol": "https",
+            "requireLocalPort": true
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/java:1": {
+            "version": "25",
+            "jdkDistro": "ms",
+            "installMaven": true,
+            "mavenVersion": "3.9"
+        },
+        "ghcr.io/devcontainers/features/node:2": {
+            "version": "22",
+            "npmVersion": "11"
+        },
+        "ghcr.io/devcontainers/features/copilot-cli:1": {
+            "version": "latest"
+        }
+    },
+    "mounts": [
+        "source=pnet-maven,target=/home/vscode/.m2,type=volume",
+        "source=pnet-npm,target=/home/vscode/.npm,type=volume",
+        "source=pnet-copilot,target=/home/vscode/.copilot,type=volume"
+    ],
+    "postCreateCommand": {
+        "java-certificates": "bash .devcontainer/init-java-certificates.sh",
+        "maven": "sudo install -d -m 700 -o \"$(id -u)\" -g \"$(id -g)\" /home/vscode/.m2",
+        "npm": "sudo install -d -m 700 -o \"$(id -u)\" -g \"$(id -g)\" /home/vscode/.npm && npm config set registry https://artifactory.porscheinformatik.com/artifactory/api/npm/npm-all/ --location=user",
+        "copilot": "sudo install -d -m 700 -o \"$(id -u)\" -g \"$(id -g)\" /home/vscode/.copilot"
+    },
+    "remoteUser": "vscode",
+    "customizations": {
+        "jetbrains": {
+            "backend": "IntelliJ"
+        }
+    }
+}
